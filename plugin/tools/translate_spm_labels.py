@@ -12,6 +12,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PLUGIN = os.path.dirname(HERE)
 SRC_TRANS = os.path.join(PLUGIN, "translations")
 NAT_TRANS = os.path.join(PLUGIN, "native", "translations")
+MAIN = os.path.join(SRC_TRANS, "dictionary_zh.json")
 
 MAP = {
     "Flexibility": "柔韧性", "General Direction": "总体方向",
@@ -81,18 +82,15 @@ def main():
                     filled[k] = v
         except Exception:
             pass
+    # The consolidated single dictionary is the base.
     out = {}
-    # preserve any previously-written spmlabels entries
-    for p in (os.path.join(SRC_TRANS, "dictionary_spmlabels_zh.json"),
-              os.path.join(NAT_TRANS, "dictionary_spmlabels_zh.json")):
-        if os.path.isfile(p):
-            try:
-                d = json.load(open(p, encoding="utf-8"))
-                for k, v in d.get("translations", {}).items():
-                    if v.strip() and v != "_skip_":
-                        out.setdefault(k, v)
-            except Exception:
-                pass
+    if os.path.isfile(MAIN):
+        try:
+            d = json.load(open(MAIN, encoding="utf-8"))
+            out = {k: v for k, v in d.get("translations", {}).items()
+                   if v.strip() and v != "_skip_"}
+        except Exception:
+            pass
     missing = []
     for l in labels:
         if l in filled: continue
@@ -111,7 +109,7 @@ def main():
     }
     for d in (SRC_TRANS, NAT_TRANS):
         os.makedirs(d, exist_ok=True)
-        p = os.path.join(d, "dictionary_spmlabels_zh.json")
+        p = os.path.join(d, "dictionary_zh.json")
         with open(p, "w", encoding="utf-8") as fh:
             json.dump(payload, fh, ensure_ascii=False, indent=1)
             fh.write("\n")

@@ -16,6 +16,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PLUGIN = os.path.dirname(HERE)
 SRC_TRANS = os.path.join(PLUGIN, "translations")
 NAT_TRANS = os.path.join(PLUGIN, "native", "translations")
+MAIN = os.path.join(SRC_TRANS, "dictionary_zh.json")
 
 
 def load_curated():
@@ -36,23 +37,23 @@ def load_curated():
 
 
 def main():
-    curated = load_curated()
-    complete_path = os.path.join(SRC_TRANS, "dictionary_complete_zh.json")
-    complete = {}
-    if os.path.isfile(complete_path):
+    # The consolidated single dictionary is the base.
+    base = {}
+    if os.path.isfile(MAIN):
         try:
-            d = json.load(open(complete_path, encoding="utf-8-sig"))
-            complete = {k: v for k, v in d.get("translations", {}).items()
-                        if v.strip() and v != "_skip_"}
+            d = json.load(open(MAIN, encoding="utf-8-sig"))
+            base = {k: v for k, v in d.get("translations", {}).items()
+                    if v.strip() and v != "_skip_"}
         except Exception:
             pass
 
     trans = json.load(open(os.path.join(HERE, "scratch", "translated.json"), encoding="utf-8"))
+    complete = dict(base)
     for k, v in trans.items():
         v = v.strip()
         if not v or v == k:          # skip placeholders / untouched noise
             continue
-        if k in curated or k in complete:
+        if k in complete:
             continue
         complete[k] = v
 
@@ -65,15 +66,13 @@ def main():
     }
     for outdir in (SRC_TRANS, NAT_TRANS):
         os.makedirs(outdir, exist_ok=True)
-        out = os.path.join(outdir, "dictionary_complete_zh.json")
+        out = os.path.join(outdir, "dictionary_zh.json")
         with open(out, "w", encoding="utf-8") as fh:
             json.dump(payload, fh, ensure_ascii=False, indent=1)
             fh.write("\n")
         print("wrote", out, "entries", len(complete))
 
-    total = len(curated) + len(complete)
-    print("curated:", len(curated), " complete:", len(complete),
-          " new total:", total)
+    print("merged dictionary:", len(complete), "entries")
 
 
 if __name__ == "__main__":

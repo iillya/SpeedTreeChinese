@@ -13,6 +13,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PLUGIN = os.path.dirname(HERE)
 SRC_TRANS = os.path.join(PLUGIN, "translations")
 NAT_TRANS = os.path.join(PLUGIN, "native", "translations")
+MAIN = os.path.join(SRC_TRANS, "dictionary_zh.json")
 
 # collapsed English -> Chinese
 MAP = {
@@ -127,6 +128,13 @@ def main():
     by_norm = {norm(k): v for k, v in MAP.items()}
 
     out = {}
+    if os.path.isfile(MAIN):
+        try:
+            d = json.load(open(MAIN, encoding="utf-8"))
+            out = {k: v for k, v in d.get("translations", {}).items()
+                   if v.strip() and v != "_skip_"}
+        except Exception:
+            pass
     skipped = []
     for k in tour:
         zh = by_norm.get(norm(k))
@@ -146,7 +154,7 @@ def main():
     }
     for d in (SRC_TRANS, NAT_TRANS):
         os.makedirs(d, exist_ok=True)
-        p = os.path.join(d, "dictionary_tour_zh.json")
+        p = os.path.join(d, "dictionary_zh.json")
         with open(p, "w", encoding="utf-8") as fh:
             json.dump(payload, fh, ensure_ascii=False, indent=1)
             fh.write("\n")
