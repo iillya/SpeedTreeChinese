@@ -32,6 +32,7 @@
 #include <chrono>
 #include <cctype>
 #include <cstdio>
+#include <utility>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QMetaObject>
@@ -432,6 +433,100 @@ static void setLabelSource(QLabel* lbl, const QString& text) {
         lbl->setText(text);
 }
 
+// ---------------------------------------------------------------------------
+// Reversible setText cache.
+//
+// setText modifies the widget's actual text property (so layout/sizeHint follow
+// the Chinese width), which the display-layer hooks cannot undo.  To make the
+// 中/英 toggle fully reversible we remember, per slot, the ORIGINAL English and
+// the Chinese we wrote.  Restoring writes back by the SAME slot index -- never
+// by matching text -- so multi-item controls (menu actions, tabs, combo items)
+// keep their exact order and are never scrambled even with duplicate labels.
+// ---------------------------------------------------------------------------
+enum class RestoreKind { Label, Button, Menu, Tab, Combo };
+struct RestoreEntry {
+    QPointer<QWidget> widget;
+    RestoreKind kind = RestoreKind::Label;
+    std::vector<std::pair<QString, QString>> pairs;  // (original, translation)
+    // Menu actions are remembered by pointer so insert/remove/reorder can
+    // never mis-target restore.  Parallel to pairs() for the Menu kind.
+    std::vector<QPointer<QAction>> actionSlots;
+};
+static std::vector<RestoreEntry> g_restore;
+
+static RestoreEntry* findRestore(QWidget* w) {
+    for (auto& e : g_restore)
+        if (e.widget == w) return &e;
+    return nullptr;
+}
+
+static void rememberText(QWidget* w, RestoreKind kind,
+                         std::vector<std::pair<QString, QString>> pairs,
+                         std::vector<QPointer<QAction>> actions = {}) {
+    if (auto* e = findRestore(w)) {
+        e->kind = kind;
+        e->pairs = std::move(pairs);
+        e->actionSlots = std::move(actions);
+        return;
+    }
+    g_restore.push_back({w, kind, std::move(pairs), std::move(actions)});
+}
+
+// Restore every cached widget back to its original English, in slot order.
+// An empty "translation" slot means it was never changed, so leave it alone.
+static void restoreTexts() {
+    for (auto& e : g_restore) {
+        QWidget* w = e.widget.data();
+        if (!w) continue;
+        switch (e.kind) {
+        case RestoreKind::Label: {
+            auto* lbl = qobject_cast<QLabel*>(w);
+            if (lbl && !e.pairs.empty() && labelSource(lbl) == e.pairs[0].second)
+                setLabelSource(lbl, e.pairs[0].first);
+            break;
+        }
+        case RestoreKind::Button: {
+            auto* b = qobject_cast<QAbstractButton*>(w);
+            if (b && !e.pairs.empty() && b->text() == e.pairs[0].second)
+                b->setText(e.pairs[0].first);
+            break;
+        }
+        case RestoreKind::Menu: {
+            // Restore by action pointer, so menus survive insert/remove/reorder.
+            int n = std::min<int>(e.actionSlots.size(), (int)e.pairs.size());
+            for (int i = 0; i < n; ++i) {
+                QAction* a = e.actionSlots[i].data();
+                if (a && !e.pairs[i].second.isEmpty() &&
+                    a->text() == e.pairs[i].second)
+                    a->setText(e.pairs[i].first);
+            }
+            break;
+        }
+        case RestoreKind::Tab: {
+            auto* tb = qobject_cast<QTabBar*>(w);
+            if (!tb) break;
+            int n = std::min<int>(tb->count(), (int)e.pairs.size());
+            for (int i = 0; i < n; ++i)
+                if (!e.pairs[i].second.isEmpty() &&
+                    tb->tabText(i) == e.pairs[i].second)
+                    tb->setTabText(i, e.pairs[i].first);
+            break;
+        }
+        case RestoreKind::Combo: {
+            auto* cb = qobject_cast<QComboBox*>(w);
+            if (!cb) break;
+            int n = std::min<int>(cb->count(), (int)e.pairs.size());
+            for (int i = 0; i < n; ++i)
+                if (!e.pairs[i].second.isEmpty() &&
+                    cb->itemText(i) == e.pairs[i].second)
+                    cb->setItemText(i, e.pairs[i].first);
+            break;
+        }
+        }
+    }
+    g_restore.clear();
+}
+
 // Translate standard widgets by setText so Qt's sizeHint / layout measure the
 // CHINESE text (width follows the translation, not the English original).
 static void applyWidgetText(QWidget* w) {
@@ -439,33 +534,82 @@ static void applyWidgetText(QWidget* w) {
         QString t = labelSource(lbl);
         if (!t.isEmpty() && !containsCjk(t)) {
             QString tr = translated(t);
-            if (!tr.isEmpty() && tr != t) setLabelSource(lbl, tr);
+            if (!tr.isEmpty() && tr != t) {
+                setLabelSource(lbl, tr);
+                rememberText(w, RestoreKind::Label, {{t, tr}});
+            }
         }
     } else if (auto* btn = qobject_cast<QAbstractButton*>(w)) {
         QString t = btn->text();
         if (!t.isEmpty() && !containsCjk(t)) {
             QString tr = translated(t);
-            if (!tr.isEmpty() && tr != t) btn->setText(tr);
+            if (!tr.isEmpty() && tr != t) {
+                btn->setText(tr);
+                rememberText(w, RestoreKind::Button, {{t, tr}});
+            }
         }
     }
     if (auto* menu = qobject_cast<QMenu*>(w)) {
-        for (QAction* a : menu->actions()) {
+        auto acts = menu->actions();
+        std::vector<std::pair<QString, QString>> pairs;
+        std::vector<QPointer<QAction>> actionSlots;
+        pairs.reserve(acts.size());
+        actionSlots.reserve(acts.size());
+        bool any = false;
+        for (QAction* a : acts) {
             QString t = a->text();
+            QString tr;
+            actionSlots.push_back(a);
             if (!t.isEmpty() && !containsCjk(t)) {
-                QString tr = translated(t);
-                if (!tr.isEmpty() && tr != t) a->setText(tr);
+                tr = translated(t);
+                if (!tr.isEmpty() && tr != t) { a->setText(tr); any = true; }
+                else tr.clear();
             }
+            pairs.push_back({t, tr});
         }
+        if (any) rememberText(w, RestoreKind::Menu, std::move(pairs),
+                              std::move(actionSlots));
     }
     if (auto* tb = qobject_cast<QTabBar*>(w)) {
+        std::vector<std::pair<QString, QString>> pairs;
+        pairs.reserve(tb->count());
+        bool any = false;
         for (int i = 0; i < tb->count(); ++i) {
             QString t = tb->tabText(i);
+            QString tr;
             if (!t.isEmpty() && !containsCjk(t)) {
-                QString tr = translated(t);
-                if (!tr.isEmpty() && tr != t) tb->setTabText(i, tr);
+                tr = translated(t);
+                if (!tr.isEmpty() && tr != t) { tb->setTabText(i, tr); any = true; }
+                else tr.clear();
             }
+            pairs.push_back({t, tr});
         }
+        if (any) rememberText(w, RestoreKind::Tab, std::move(pairs));
     }
+    if (auto* cb = qobject_cast<QComboBox*>(w)) {
+        std::vector<std::pair<QString, QString>> pairs;
+        pairs.reserve(cb->count());
+        bool any = false;
+        for (int i = 0; i < cb->count(); ++i) {
+            QString t = cb->itemText(i);
+            QString tr;
+            if (!t.isEmpty() && !containsCjk(t)) {
+                tr = translated(t);
+                if (!tr.isEmpty() && tr != t) { cb->setItemText(i, tr); any = true; }
+                else tr.clear();
+            }
+            pairs.push_back({t, tr});
+        }
+        if (any) rememberText(w, RestoreKind::Combo, std::move(pairs));
+    }
+}
+
+// Flip the 中/英 state; on the way to English restore every setText widget.
+static void toggleTranslation() {
+    g_enabled = !g_enabled;
+    if (!g_enabled) restoreTexts();
+    repaintAll();
+    Log("toggle enabled=" + std::to_string(g_enabled ? 1 : 0));
 }
 
 // Install the display-layer delegate on item views + setText standard widgets.
@@ -601,11 +745,7 @@ public:
         if (event->type() == QEvent::KeyPress) {
             auto* ke = static_cast<QKeyEvent*>(event);
             if (ke->key() == g_toggleKey) {
-                g_enabled = !g_enabled;
-                // drawText hook + delegate respect g_enabled, so no manual
-                // restore needed: disabling reverts to English on next repaint.
-                repaintAll();
-                Log("F10 toggle enabled=" + std::to_string(g_enabled ? 1 : 0));
+                toggleTranslation();
                 return true;
             }
             if ((ke->key() == Qt::Key_QuoteLeft || ke->key() == Qt::Key_AsciiTilde) &&
@@ -918,9 +1058,7 @@ public:
 static QPointer<QAction> g_langAction;
 
 static void doToggleLanguage() {
-    g_enabled = !g_enabled;
-    repaintAll();
-    Log("中/英 toggle -> " + std::to_string(g_enabled ? 1 : 0));
+    toggleTranslation();
 }
 
 static void openHotkeyDialog() {
