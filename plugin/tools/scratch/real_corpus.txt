@@ -1,0 +1,4689 @@
+Actor Count
+Actual Ambient
+Adaptive Optics AOA File Exporter
+Adaptive Optics AOA File Importer
+Add Image
+Add and update animation
+Add to 'Favorites'
+Additional Scale Factor
+Adjust frond start
+Adjust icon size
+Advanced Options
+After
+Albedo With Generic Alpha
+All (all views)
+All licenses in use
+Alpha Is Opacity
+Alpha test and blending
+Ambient Factor
+Anchor index out of bounds
+As Optical Segments
+Aspect Height
+Aspect Width
+Aspect ratio restricted
+Auto-generate points options
+Average time
+BVHNBuilder Two Level
+Back Ground Color
+Back Plane Rotation
+Background Alpha
+Background Color
+Bad Polygon Size
+Base GenI
+Base Layer
+Baseline Noise
+Before bend edits
+Best Quality Scale
+Billboard
+Billboard Count
+Billboard atlas resolution
+Billboard vertex packing
+Bit Rate
+Bk Color
+Black Level
+Blend Shape
+Blend Weight
+Bone Count
+Boolean
+Bottom blend range
+Branch Rate
+Branch pruned by geometry force (no solution)
+Branch pruned by geometry force (too bent)
+Branch removed by geometry force (no solution)
+Branch removed by geometry force (too bent)
+Branch stopped by geometry force (no solution)
+Branch stopped by geometry force (too bent)
+Buffer overflow
+Buffer overrun detected
+Buffer too large for write
+Builder Two Level
+Bump
+Bump Factor
+Bump Map (NormalMap)
+Byte Count
+CSti Color
+Cache Size
+Capture Frame Rate
+Cell Width
+Center stitch
+Centimeters
+Character Count
+Child
+Clear 'Favorites'
+Clear Shader Cache
+Clear existing objects
+Clear focus
+Clear variances
+Close Group
+Close Other Groups
+Close Others
+Cohesion Offset
+Cohesion Scale
+Collapse Externals
+Color Adjustment Amount
+Color And Alpha
+Color channels
+Color space information
+Color space transformation matrix coefficients
+Compare Node Strength
+Compose
+Compress
+Compress Arrays
+Compress Level
+Compress MinSize
+Compressed Image Size
+Compute Scale
+Conical
+Connect
+Constrained object (Child)
+Constraint Count
+Constraint Group
+Contact Size
+Content Count
+Conversion Tools Helper
+Convert Animation Curves At
+Copy '
+Copy adjustments
+Copy all visible
+Copy color
+Copy edit line for script
+Copy name for script
+Copy pivot from High
+Copy simple block for script
+Copy straighten from High
+Crop Hi Speed
+Cube
+Culling
+Culling Proxies
+Current
+Current Level
+Current Preset
+Current Take Name
+Curve
+Curve Filter Sampling Rate
+Custom Format
+Custom Frame Rate
+Custom Functions
+Custom Width
+Custom image processing
+Custom info
+Custom point
+Custom unit
+Custom vertex colors can be computed by enabling "Compute Flags
+Cylinder
+Data Frame Rate
+Data Rate
+Default Crop Size
+Default Scale
+Default reached in ConvertMouseToProjectionCoordinates( )
+Default reached in DetermineProjection( )
+Delete current layer
+Delete preset
+Delete selected control points
+Deleted Image Count
+Destination Count
+Detach
+Device Count
+Diffuse
+Diffuse Color
+Diffuse Factor
+Digital Creation Time
+Direction of image
+Direction of movement
+Direction offset
+Directional Color
+Disable background image
+Displacement Factor
+Display Object Properties
+Distance to destination
+Divide
+Double
+Double hyphen within comment
+Drawn Curve
+Drop Time, Season
+Duplicate names found in
+Duplicate selected
+Duplicate tag found
+E Base
+Edit Helper
+Edit LOD Properties...
+Edit Map -
+Edit Mesh -
+Edit Status
+Edit Tree Window properties...
+Edit UV Area
+Edit Vertex Color
+Edit background properties...
+Edit global properties
+Edit global settings...
+Edit global wind
+Edit leaf collision...
+Edit light properties...
+Edit script...
+Edit selected object's wind properties
+Edit straighten
+Edit wind properties...
+Edit window properties...
+Embedded Profile
+Emissive Color
+Enable
+Enable externsions (new feature)
+End Of File
+Environment
+FCurve Matrix Converter
+Face Size
+Facing leaves
+Fade
+Far
+Field min
+Field not opened
+Field of view
+File Color Interpolation
+File Exists
+File Format
+File change date and time
+File content
+File does not exist
+File exists
+File format of image file
+File is corrupted
+File is not open
+File is open
+File not created
+File not open for reading
+File not open for writing
+File not opened
+File per frame
+File pointer overflow during reconstruction
+File source
+File too large
+File too short
+File type
+File units converted to
+Fill Timeline
+Fill Timeline Span
+Filter Scale
+FilterScale, No key were changed by filter
+First Changed Index
+First Joint
+Fixed Height
+Fixed Ratio
+Fixed Width
+Flip Opacity
+Flip curve horizontally
+Flip curve vertically
+Flip normal G
+Flip normals
+Float
+Focus Angle
+Focus Step Count
+Fog Color
+Fog Density
+Fold (deformation)
+Fold outH
+Foot Contact Size
+Force Mesh Containers
+Foreground Color
+Foreground Opacity
+Foreground Texture
+Forward
+Frame Color
+Frame Count
+Frame Rate
+Frame Sampling Count
+Frame Time
+Frequency order bitstream
+From Global Position
+Frond area threshold
+Frond mesh has zero width
+Frond optimization
+Front Plane Rotation
+Full Height
+Full Image Size
+Full Texture
+Gain control
+Game Mode Parent Left Elbow Roll
+Game Mode Parent Left Hip Roll
+Game Mode Parent Left Knee Roll
+Game Mode Parent Left Shoulder Roll
+Game Mode Parent Right Elbow Roll
+Game Mode Parent Right Hip Roll
+Game Mode Parent Right Knee Roll
+Game Mode Parent Right Shoulder Roll
+Generate
+Generate Collision Objects
+Generate Log Data
+Generate Points
+Generate adaptive points
+Generate collision objects...
+Generate slices
+Generate slices with center line
+Generate textures...
+Generation Editor
+Generator name
+Generator wind weights and levels
+Geo Pixel Scale
+Geometric Rotation
+Geometry Force has no behaviors, has no effect
+Geometry Force not ready
+Geometry Types
+Geometry force actions
+Geometry normal capture
+Geometry type
+Get Active Processor Count
+Get Active Processor Group Count
+Get Current Ref Count
+Get Shader Property Type And Array Size
+Get Sub Layer Offset
+Get Tick Count
+Global Adjustments
+Global Axisof Gravity
+Global Color
+Global Height
+Global Motion
+Global Palette
+Global Settings
+Global reference
+Global scale
+Global settings
+Global smoothing
+Global space
+Global style
+Gnarl Force
+Gray Response Curve
+Grid size
+Ground Duration, or Material
+Group 3 Options
+Group 4 Options
+Group By Hierarchy Level
+Group not found for add
+Group size scale
+Grouping Hierarchy Level
+Grow scale
+Grow things around it
+Grow things off of it
+Growth Curve
+Growth Wizard
+Growth friendly
+Growth not supported for shells
+Growth wizard...
+Gust frequency
+Gust strength
+HMD Global
+Hand Contact Size
+Height based
+Height exponent
+Height indicator
+Height localization
+Hide selection indicator on edit
+Hierarchy
+Hierarchy Level Range
+Hierarchy level
+Hierarchy not found
+High (active)
+High Color
+High Dynamic Range Image
+High color
+High quality
+Hilite Color
+Hold Instruction None
+Horizontal And Vertical
+Horizontal Fit
+Horizontal billboard
+ICC Profile
+IK Reach Rotation
+IKReach Rotation
+ISO Speed
+Icon Size
+Ignore lightList cache
+Ignore parent
+Ignore smooth LOD
+Ignore spread
+Image Base Color
+Image Count
+Image Data Size
+Image Depth
+Image Full Length
+Image Full Width
+Image Length
+Image Orientation
+Image Processing Count
+Image Render Size
+Image Sequence Offset
+Image Size
+Image Width
+Import SpeedTree Model File
+Import UV Areas
+Import material asset...
+Import mesh asset...
+Import tree parts...
+Include alpha
+Include in model
+Include variations
+Include wind
+Indirect Color
+Individual
+Individual control  LOD
+Infinite Light
+Info
+Initialize Critical Section And Spin Count
+Inner Angle
+Integer
+Integer overflow
+Integer overflow in gtStripContig
+Integer overflow in gtStripSeparate
+Inter Color Profile
+Interoperability Offset
+Interpolate
+Interpolated Color
+Intersection Blending
+Invert
+Invert RGB
+Keep Frame Rate
+Key Attr Ref Count
+Key Count
+LOD enabled
+LOD group
+LZMA2 Compression Preset
+Label
+Last Changed Index
+Layer path is empty
+LayerElement Normal
+LayerElement Tangent
+LayerElement Vertex Color
+Layers
+Leaf AFi
+Leaf Left Arm Roll
+Leaf Left Fore Arm Roll
+Leaf Left Leg Roll
+Leaf Left Up Leg Roll
+Leaf Mesh
+Leaf Right Arm Roll
+Leaf Right Fore Arm Roll
+Leaf Right Leg Roll
+Leaf Right Up Leg Roll
+Leaf Settings
+Leaf card offset A
+Leaf card offset B
+Leaf card offset C
+Leaf card offset D
+Leaf generators
+Leaf mesh
+Leaf style
+Left
+Left Arm Max Extension Angle
+Left Arm Roll
+Left Fore Arm Roll
+Left Leg Max Extension Angle
+Left Leg Roll
+Left Up Leg Roll
+Left angle
+Left break spot
+Left radius scale
+Length (absolute amount)
+Length (absolute)
+Length (relative)
+Length (s)
+Length (sec)
+Length Style
+Length relative
+Level 1
+Level 2
+Level Count
+Level coordinate (
+Level of Detail
+Level of detail
+Level ofI
+Level offset
+Light Ambient
+Light Cross
+Light Diffuse
+Light Map
+Light Specular
+Light object
+Light source
+Limb Length
+Linear Color Interpolation
+Linked Ambient
+Lit
+Local Resolve
+Local licenses which can be checked out
+Local roam file already exists
+Local smoothing
+Local space
+Lock
+Lock aspect ratio
+Lock to parent
+Logical Height
+Logical Width
+Look
+Look at
+Look at focal point
+Low (active)
+Low Color
+Low color
+Low detail navigation
+Low quality
+Magnet Force
+Make New Set...
+Make UV area
+Map
+Map Color
+Map Dialog
+Mask
+Master Scale
+Material Set
+Material load other maps
+Material name
+Material parameter not supported
+Material sets
+Material with back is two-sided
+Materials animation
+Matrix
+Matrix Rotation
+Matrix Scaling
+Matrix Transformation
+Matrix Translation
+Max Branch Length
+Max Focal Length
+Maximize compatibility
+Measured Color
+Media Count
+Merge Layer and Timewarp
+Mesh Asset
+Mesh Offset
+Mesh Wizard
+Mesh asset
+Mesh asset name
+Mesh contribution
+Mesh converter
+Mesh forces
+Mesh helper
+Mesh index
+Mesh load other LODs
+Mesh options
+Mesh output
+Mesh packing
+Metadata
+Meters
+Meters per second
+Meters per second squared
+Microsoft Encrypted File System
+Min Focal Length
+Min Size
+Minolta Image Size
+Model Count
+Model categories
+Motion Base TIn Offset
+Motion Blur Intensity
+Motion Frame Count
+Motion Frame Rate
+Move down
+Move up
+My Scene
+NEFBit Depth
+Named Color
+Near
+Negative value is illegal
+New Games file
+New SpeedTree
+New VFX file
+New branches
+New client connection
+New generator
+New preset
+New section
+Next
+Next Left Weight
+Next sibling
+No "get" routine setup
+No (and delete the file)
+No 16 bit support
+No Fit
+No Local Palette
+No SpeedTree Modeler entitlement found
+No activation URL provided
+No activation key supplied
+No anchor found
+No bends
+No bendsH
+No breaks
+No cache changes
+No child processes
+No comm structs
+No declaration for attribute xmlns
+No displacements
+No errors are pending
+No geometry created (parent too deformed)
+No handle supplied to call
+No heartbeat response received
+No key to be filtered
+No key were changed by filter
+No keys
+No keys were changed by filter
+No locks available
+No longer supported
+No masks
+No material sets
+No materials
+No meshes
+No product definition
+No product name or version specified
+No proxy from GetDefaultProxyConfiguration
+No proxy from GetProxyForUrl
+No proxy from GetProxyForUrl (GetIEProxyConfigForCurrentUser)
+No rehostable root dir
+No render states
+No response from broadcast
+No space for "TransferFunction" tag
+No space for output buffer
+No space for state block
+No space for strip buffer
+No space for tile buffer
+No space left on device
+No specified mesh
+No statistics
+No valid spine on parent
+No valueH
+No vertex selected
+No vertices defined in mesh
+Noise (late)
+Noise Color Interpolation
+Normal (flipped green)
+Normal bias
+Normal blending
+Normal map amount
+Normal map sharpness
+Normalize
+Not a Rotation node
+Number
+Number encoding
+Number of bits per component
+Number of components
+Number of rows per strip
+Nurbs Curve
+Object Preview File Format
+Object Preview File Version
+Obtain Cache Line Size
+Offset direction
+Offset from parent
+One Click Merge
+Orientation of image
+Orientation style
+Orientation time
+Outer Angle
+Output Textures
+Ov Size
+Override V coords for extensions
+Padding value
+Paint Alpha
+Paint Displacement
+Parent Curve
+Parent Level
+Parent amount
+Parent curve count mismatch
+Parent curve reference
+Parent generator must have exactly one node
+Parent levels must be 1 or greater
+Parent must be a Mesh
+Parent sensitivity
+Parent's length segments
+Password Enable
+Paste '
+Paste adjustments
+Paste color
+Paste curve
+Paste into
+Paste map adjustments
+Paste new
+Path must not contain variant selections
+Path not found
+Phase
+Phase One
+Phase One 6
+Phase One iXA
+Phase One iXA - R
+Phase One iXM-RS150F
+Phase One iXR
+Phase One iXU 150
+Phase One iXU 150 - NIR
+Phase One iXU 180
+Pin
+Pin Group
+Pin Group To...
+Pipeline
+Pivot To Null
+Play Speed
+Plugin Information
+Plugin UI Height
+Plugin UI Width
+Pn Size
+Point Light
+Pole Vector Object
+Policy Qualifier User Notice
+Post Rotation
+Post Target Rotation
+Pre Rotation
+Pre Scale
+Premultiply Alpha
+Preset Selected
+Preview Image Length
+Preview Image Size
+Previous
+Previous sibling
+Print Image Matching Info
+Producer Bottom
+Producer Left
+Producer Right
+Producer Top
+Profile Curve
+Proxy Collision
+Pull Iteration Count
+QHash Seed
+Quality Level
+Question
+R"T V
+Radial Color Interpolation
+Radius (absolute)
+Radius (relative to parent)
+Random SL93u
+Random flip
+Random twist direction
+Randomize selected
+Randomize with seed
+Raw Data Offset
+Raw Image Size
+Re-center Root Node
+Reach Actor Chest Rotation
+Reach Actor Head Rotation
+Reach Actor Left Ankle Rotation
+Reach Actor Left Ankle Rotation Rotation
+Reach Actor Left Finger Base Rotation
+Reach Actor Left Toes Base Rotation
+Reach Actor Left Wrist Rotation
+Reach Actor Lower Chest Rotation
+Reach Actor Right Ankle Rotation
+Reach Actor Right Finger Base Rotation
+Reach Actor Right Toes Base Rotation
+Reach Actor Right Wrist Rotation
+Receive Shadows
+Reference Depth
+Reference Number
+Reflection Color
+Related Image Length
+Related Image Width
+Remove anchors
+Remove from 'Favorites'
+Remove points
+Remove selected assets
+Remove selected from
+Remove single key
+Rename (multiple)
+Rename Base R in Prerotation
+Rename Base T in Offset
+Rename Duplicate Names
+Rename selected
+Render Images
+Render Material
+Render Sequence
+Render States
+Render height
+Render mode
+Resample All
+Resampling Rate (fps)
+Reset Color
+Reset General Preferences
+Reset Property Bar Preferences
+Reset Render Preferences
+Reset Tree Window Preferences
+Reset adjustments
+Reset layout...
+Reset manual edits
+Reset straighten
+Reset weights
+Reset wind weights
+Restore culled
+Restore spread
+Return Force
+Rewind to beginning
+Right Arm Max Extension Angle
+Right Arm Roll
+Right Fore Arm Roll
+Right Leg Max Extension Angle
+Right Leg Roll
+Right Up Leg Roll
+Right Weight
+Right angle
+Right break spot
+Right radius scale
+Right rotation
+Right side
+Roam OK, extended
+Roam OK, not extended
+Roll" and "Spine
+Root object
+Rot Angle
+Rotation From Rotations
+Rotation Offset
+Rotation Precision
+Rotation scale
+Sample Rate
+Sampling Rate
+Save Atlas
+Save Console Text
+Save Image
+Save Mesh
+Save SpeedTree Model File
+Save SpeedTree Package
+Save new preset...
+Save options
+Save options...
+Scale Factor
+Scale From Scales
+Scale curve
+Scale in, pop out
+Scaling Offset
+Scaling UV
+Scene
+Scene Ambient
+Scene Scale
+Scene Unit Conversion
+Scene Unit Scale
+Scene capture type
+Scene type
+Scene unit conversion...
+Scene units converted to
+Season Curve
+Season Light Force
+Section
+Section 1
+Section Name Max Length
+Select all control points
+Select and reveal hidden nodes
+Select buddy
+Select force
+Select generators
+Select nodes with edits
+Select points
+Selected
+Selected (all views)
+Selected Attribute Types
+Selection style
+Set Color
+Set Element Size
+Set Occluded To Last Valid Pos
+Set Selected Scale
+Shader
+Shader Source
+Shadow Color
+Shadow Map
+Shadow Planes Section
+Shadow Scale
+Shadow anti-aliasing samples
+Shadow sharpness
+Show UI
+Show View
+Show all
+Show all areas
+Show all meshes
+Show all names
+Show color
+Show fan
+Show me
+Show me:
+Show opacity
+Show recent files...
+Show selected names
+Show summary
+Show unique uvs
+Show vertex colors
+Single
+Single Chain IK
+Single Matrix
+Sink edges until hidden, discard failures
+Sink edges until hidden, keep failures
+Size Asc
+Size Desc
+Size must be at least one
+Size type
+Sketch Scale
+Skip
+Skip texture save
+Skipped Properties
+Slot Add Force
+Slot Add Generator Mesh Force
+Slot Add Mesh Force
+Slot Add To Force
+Slot Arbitrary Scene Scale
+Slot Create Geometry Force
+Slot Growth Curve
+Slot Remove From Force
+Slot Replace In Force
+Slot Reset Background Color
+Slot Reset Foreground Color
+Slot Scale
+Slot Season Curve
+Slot Select All Like Descendants Same Color
+Slot Select All Like Level
+Slot Select All Like Same Color
+Slot Select Force
+Slot Set Background Color
+Slot Set Foreground Color
+Slot Wind Curve
+Smooth Speed
+Smooth bones
+Snap Region
+Snap threshold
+Solid Color
+Source (Parent)
+Source Count
+Special Effect Level
+Specific Distance
+Specular Color
+Specular Factor
+Speed of GPS receiver
+Speed unit
+SpeedTree UV Areas
+Sphere Map
+Sphere threshold
+Spheric XYZ
+Spherical Reflection Map
+Spine Actions
+Spine assignment
+Spine generators
+Split 1
+Split 2
+Spot Light
+Standard (external)
+Standard atmospheres
+Status
+Steps
+Streak
+Streak colors
+Stream too short
+Stream too short, expected SOT
+Strength response time
+Sub Layer Offset
+Subsurface Amount
+Subsurface Color
+Sum
+Sync On Key
+Tagged Image File Format
+Target GI
+Target Generators
+Target locked
+Target polygons
+Target resolution
+Thumbnail Size
+Tile
+Tile (
+Tile Depth
+Tile Length
+Tile Size
+Tile Width
+Tile X coordinates are not supported
+Tile Y coordinates are not supported
+Tile bottom
+Tile index
+Tile length is zero
+Tile top
+Tile width is zero
+Time
+Time Created
+Time Mode Count
+Time Stamping
+Time Zone
+Time elapsed (s)
+Time per cycle must be greater than 0
+Toggle hand drawn
+Toggle highlighting
+Toggle lock on selected
+Toggle selected
+Toggle visibility
+Token-Value pair
+Tone Curve
+Tools support
+Top blend range
+Top down
+Total Units Scale
+Transform
+Transform Scale
+Translate
+Translation Offset
+Translation UV
+Transmittance Color
+Transparent Color
+Tree Generator
+Tree Import Options
+Tree Info
+Tree Model
+Tree Window
+Tree Window Display
+Twist Force
+Twitch Freq Scale
+Tx Size
+U U"U
+U U(U
+U correction
+U lock
+U offset
+U relative
+U scale
+U shift
+U tile
+UV Area
+UV style
+UV tile
+UV warnings
+UVId Count
+Uniform variances
+Unit Scale Factor
+Units
+Units Conversion Factor
+Units Scale
+Unpin (Dock)
+Unwrap Scale
+Up Axis Used in File
+Up Target Rotation
+Update Line Number Area Width
+Update Wind Strength
+Use Frame Color
+Use Matrix From Pose
+Use Native Dialog
+Use Offload Peripheral
+Use Scale Conversion
+Use Specular
+Use background computing
+Use base tex coords
+Use compression
+Use default hilite color
+Use distances
+Use existing maps
+Use group stacking
+Use material
+Use multiple processors
+Use sampling rate from
+Use scene name
+Use screen area
+Use sliders where possible
+Use spherical test for leaves
+Use timeline
+User Profile
+User Shader Constant 1
+User Shader Constant 2
+V Scale
+V V"V
+V V(V
+V offset
+V relative
+V scale
+V tile
+V tolerance
+V-LUX (Typ 114)
+V-Lux 5
+VSdf Layer Offset
+Value Variance
+Value clips
+Value for attribute xmlns
+Value must be greater than 0
+Variance Settings
+Variant selections
+Variation Amount
+Variation Color
+Variation seed
+Vector
+Vector Displacement
+Vector Displacement Color
+Vector Displacement Factor
+Vertex C
+Vertex Cf
+Vertex Color
+Vertex Color Alpha
+Vertex Displacement
+Vertex Edit
+Vertex Opacity
+Vertex Select By Color
+Vertex alpha
+Vertex alpha, interior strips
+Vertex blends
+Vertex color
+Vertex color - blue
+Vertex color - green
+Vertex color - red
+Vertex edits lost
+Vertex height map
+Vertex move
+Vertex normal
+Vertex packing
+Vertex select
+Vertex selection
+Vertical Fit
+Vertical dampening
+Vertical offset
+View as icons
+View based
+View detailed information
+Viewport Height
+Viewport Width
+Volume Light
+W W"W
+W W(W
+WBBlue Level
+WBGreen Level
+WBRed Level
+Water Depth
+Weights
+Weld Scale
+Weld Vertices
+Weld and Sink enabled together
+Weld threshold
+White Level
+Width overflow
+Width scale
+Wind Curve
+Wind Rigging
+Wind Ripple Weight
+Wind Strength
+Wind Wizard
+Wind direction
+Wind level offset causing mid-level skip
+Wind mode not supported
+Wind wizard...
+Window Size
+Window background...
+World Building Export
+World Up Object
+Write Array Count
+XYZ (Z-up RH)
+Y-Up LH
+Y-Up RH
+Yes
+Z-Up LH
+Z-Up RH
+Zoom Source Width
+Zoom Step Count
+Zoom Target Width
+AGe
+Absolute steps
+Acceleration of free fall
+Accessing expired list editor
+Action
+Action Advised
+Activation Pro Unlicensed
+Activation Unlicensed
+Activation key already used
+Activation key disabled
+Activation key expired
+Activation key not found in database
+Activation server version too old
+Actor
+Actor Prefix
+Additive
+Alias
+Alias Definition
+All markup of the conditional section is not in the same entity
+Allow anonymous data to be reported
+Allow separate atlases
+Already have an Object named
+Altitude
+Altitude reference
+Aperture
+Aperture Format
+Application Exit
+Application Record Version
+Application from unlicensed timezone
+Application is inactive
+Application jmp_buf size changed
+ArResolvedPath __cdecl pxrInternal_v0_23__pxrReserved__
+ArResolverContext __cdecl pxrInternal_v0_23__pxrReserved__
+ArchCrashHandlerSystemv unimplemented for Windows
+Area to favor
+As saved
+Assets
+Atlas Creator
+AttValue length too long
+Attempt to write too many entries in the array
+Attempted to construct with null stage
+Attribute default value
+Attribute element not expected
+Attribute index out of bounds
+Attribute list declaration doesn't start and stop in the same entity
+Attribute time samples
+Avoid size scalars
+BOb
+Back
+Background  Blends
+Background image
+Backing store not supported
+Bad Request
+Bad address
+Bad chromaticities
+Bad context client -- possible corruption
+Bad file descriptor
+Bad file type requested from server
+Bad image header box (bad size)
+Bad image type
+Bad initialisation of TileOffsets object
+Bad interval
+Bad level mode getting chunk offset table size
+Bad message
+Bad parameter passed to rlm_checkout()
+Bad period
+Bad request
+Bad return data from webserver (no status)
+Bad sampleCountTableDataSize read from chunk
+Bad type for channel
+Bad value in index array
+Bad weight index detected
+Baking stitches...
+Bayer Pattern
+Bearing of destination
+BeginWriteAt not called
+Best
+Best guess
+Best practices
+Bezier
+Billboards
+Bind Pose
+Black Box
+Blank
+Blank needed here
+Body Rigid
+Body serial number
+Bogus Huffman table definition
+Bogus buffer control mode
+Bogus input colorspace
+Bogus sampling factors
+Bone
+Bone has no direction
+Bone has no name
+Broken pipe
+Browse samples...
+Built-in fallback value
+Bush
+By block
+By entity
+By layer
+Byte
+Bytes
+Bytes per compressed strip
+Cache
+Cache file not found
+Cache file not opened
+Cache shaders to disk
+Cache size
+Can't calculate key for
+Can't find named user
+Can't get ethernet address
+Can't open roam file
+Can't read Activation database
+Can't read bodymass value
+Can't read bone direction
+Can't read bone id value
+Can't read bone local coordinate system
+Can't read bone name
+Can't read cofmass value
+Can't read parent bone name
+Can't read parent name
+Can't read scale factor
+Can't read version
+Can't set both read_data_fn and write_data_fn in the same structure
+Can't set from previous sample before any samples have been written
+Can't write Activation database (licf table)
+Can't write database (keyf table)
+Can't write sCAL (buffer too small)
+Cap variance
+Capsule
+Caption
+Caption Writer
+Capture Mode
+Capture Object
+Card
+Card smoothing
+Categories
+Centered align
+Changed field
+Changing the field of view
+Channels
+Checkout request for too many licenses
+Child U mapping out of range
+Chromaticities of primaries
+Cinema
+Classify State
+Click to set focus
+Client rejected server
+Closest point
+Cluster
+Cohesion
+ColorSpace mismatch
+Comment
+Comment doesn't start and stop in the same entity
+Comment not terminated
+Comment too big found
+Common info
+Common name(s)
+Compare
+Compression scheme
+Compression type in header not valid for deep data
+Compute velocity
+ComputeInstanceTransformsAtTime (Parallel)
+Computed tile row size is zero
+Computing
+Computing focus
+Connected to licensing server
+Connection paths must be absolute prim or property paths
+Connection refused at server
+Constant
+Constant Key Reducer
+Constrained Object
+Constraints
+Consult lightList cache
+Contact
+Contact information supplied is incomplete
+Container Object
+Content
+Content Location Name
+Contribute to collections
+Contributes to scene extents
+Control
+Control Point
+Control by
+Control points
+Control scheme
+Control the shape of the "center line" of the branch
+Controls the size of points
+Controls the size of the manipulator
+Controls the width of lines
+Convert from
+Convert in place...
+Convert to 'Batched Leaves'
+Convert to branch...
+Convert to trunk...
+Corrupted data structure
+Couldn't create tone curve with zero segments and no table
+Couldn't initialize WebPPicture
+Couldn't link the profiles
+Counter not found for meter increment
+Country Name
+Create Reference Node
+Create Singleton
+Create and assign new material...
+Create caps
+Create reference node
+Creator
+Credit
+Cubic
+Cubic meters
+Cull
+Cull scalar
+Cull then spread
+CurrentOpenGLDone() called with unexpected bound context
+Cursor Shape
+Customer name too long
+Cycle detected
+Cycle(s) detected in the scene graph
+D-Lux (Typ 109)
+Data
+DataType on ArraySample iSamp
+Date
+Date Created
+Date and time of digital data generation
+Date and time of original data generation
+DateTime subseconds
+DateTimeDigitized subseconds
+DateTimeOriginal subseconds
+Deferring to variant fallback
+Degradation
+Degrees
+Delay
+Demo activation file already exists
+Deprecated fields cp_cinema or cp_rsiz are used
+Desc
+Description
+Detailed description
+Detected an entity reference loop
+Determines how near and far clipping planes are computed
+Determines the number of viewports visible
+Determines the type of mouse-based navigation
+Device settings description
+Diagnostcs from parsing and conforming default values for Sdr and Sdf type conformance
+Did Change Prim
+Did Change Significantly
+Did not find either origin
+Did not find either origin root
+DidChange -- Checking layer stack relocations against significant prim resyncs
+Didn't expect more than one scan
+Diffie-Hellman routines
+Digital Creation Date
+Digital Zoom
+Digital zoom ratio
+Direct
+Direct Manip
+Directional (palm frond style)
+Directory has not yet been written
+Directory not empty
+Disabled (reset)
+Disconnected client data can't be found
+Display
+Display Object
+Display System
+Display scaling
+Do nothing additional right now
+Do nothing, mine are fine
+Document
+Document Description
+Document History
+Document Notes
+Document References
+Document element not expected
+Document is empty
+Document not supported
+Documents Description
+Draft (active)
+Drag
+Drag to change falloff
+Drag to change size
+Drag to change strength
+Drag to twist
+Draw calls
+Draw ground
+Draw into selected
+Droop properties
+Drop
+Dummy nodes
+Duplicate product name for disconnected transfer
+Duration
+Duration is zero
+Dynamic reservation not found on reclaim
+E-mail Protection
+East or West Longitude
+Edge source
+Edges
+Edges amplitude
+Edges source
+Editing list
+Editor
+Editorial Update
+Element content declaration doesn't start and stop in the same entity
+Element declaration doesn't start and stop in the same entity
+Embed Media
+Embed geometry
+Embedded Files
+Embree Ray Tracing Kernels
+Emissive Factor
+Empty Space
+Empty input file
+Empty mesh assigned
+Empty spine detected
+Empty token response
+Enable vertex colors on the 'Tree' generator
+Enabled (used by global lighting)
+Enables Level-of-Detail optimizations for those objects that use it
+Enables alpha testing
+Enables anti-aliasing for lines
+Enables anti-aliasing for points
+Enables anti-aliasing of manipulator lines
+Enables blending (a must for transparency)
+Enables optimizations based on visibility
+Enables rendering optimizations based on polygon visibility
+Enables rotation snapping
+Enables scale snapping
+Enables text displaying transformation information on the manipulator
+Enables texture mapping
+Enables the rendering of grid lines
+Enables translation snapping
+Encompass percentage
+Encryption type is not supported
+End Joint
+End Of Image
+End Site
+EndEvent (key)
+EndFrame change
+Entity declaration doesn't start and stop in the same entity
+Entity element not expected
+Entity value required
+Esc to exit
+Exact Zero As Occluded
+Excessive depth in document
+Exit the SpeedTree Modeler application
+Extension Request
+External
+External file reference is not supported
+Externals
+Extra
+Extra Options
+Extra attributes
+Extra compressed data
+Extra content at the end of the document
+Extra points
+Extract Folder
+FCurve
+FCurve Key Synchronizer
+FCurve Resample
+Face normal
+Factor
+Falloff distance
+Fan object
+Fast forward to end
+Faster computing
+Favor
+Favor accuracy
+Favor speed
+Favor splits
+Favorites
+Feature vertices disabled due to split
+Feet
+Feet per hour
+Feet per min
+Feet per second
+Feet per second squared
+File too small to contain bootstrap structure
+Files must contain at least one header
+Fill Fit
+Fill with black
+Fill with current color
+Fill with white
+Final
+Final Adjustments
+Firmware Version
+Fit to mesh
+Fixed Resolution
+Fixture Identifier
+Flags
+Floating-point Absolute
+Fluid Ounces
+Focal Plane XSize
+Focal Plane YSize
+Focal plane X resolution
+Focal plane Y resolution
+Focal plane resolution unit
+Focus Mode
+Focus ancestors
+Focus siblings
+Fog
+Fog start
+Folder
+For best results, use the "Orientation" and "Flip" options to orient
+For vertex color wind, simply check the "Wind
+Forbidden bone name
+Forces (temporarily disabled)
+Format
+Format converter
+Found
+Found previously added implied inherit node
+Found primary asset resolver types
+Fractional sampling not implemented yet
+Fragment not allowed
+Frame
+Frame Start
+Frame display time
+Frame disposal method
+Frame left
+Frame range
+Frame rate (fps)
+Frame rate used
+Frame top
+Frames
+From above
+From below
+From bottom
+From curve average
+From curve max
+From curve middle
+From curve min
+From here
+From max
+From middle
+From min
+From selected generators
+From top
+Frustum culling
+Full Screen
+Full frame image
+Full height
+Full width
+Function
+Function not available
+Function not implemented
+Function not supported with web services
+Game
+Games Ripple Motion
+Games Shared Motion
+Gamma
+Gaps As Valid Data
+General Rendering
+General stitch properties
+Generating billboards
+Generating lightmap UVs
+Generator pass too late for Projector
+Generic nodes animation
+Geodetic survey data used
+Give up action
+Go to directory
+Go to mesh
+Go to window settings...
+Google
+Google WebP image format
+Got out-of-range type value
+Got proxy bypass
+Got proxy from auto config
+Got proxy name
+Ground duration
+Ground pruning ignored on extension
+Ground weight
+Growing input buffer
+Growth disabled due to generator based geometry forces
+Half
+Hand Drawing
+Hand drawing
+Hand drawn extension
+Handle zooming by
+Hard
+Hard Cross
+HcA Hi
+HcA Li
+HcB Li
+Header name
+Header not found
+Hidden Green
+Hidden ID
+Hips
+Hips TOffset
+Hold Instruction Call Issuer
+Hold Instruction Reject
+Host
+Host ID
+Host IDs
+Host computer used to generate the image
+Hot key
+Hot key: Tab
+Hot key: Z
+Hour
+Hue
+Huge input lookup
+IK Pull
+IK Pull Hips
+IK Reach Translation
+ISV-defined data
+ITypedArrayProperty ctor
+ITypedGeomParam ctor
+ITypedScalarProperty ctor
+IcA Hi
+IcB Hi
+IcB Li
+Icon colors
+Icon size scale
+If you already sent an email, click
+Ignoring attempt to write bKGD chunk out-of-range for bit_depth
+Ignoring library with no name
+Illegal bpp value in unpackbits
+Illegal character in Customer name
+Illegal character in expiration date
+Illegal character in product name
+Illegal start of Ogawa stream
+Illegal tagged_msg cast
+Illegal value for SubIFD tag
+Image Effects
+Image Options
+Image Type
+Image compression mode
+Image data arrangement
+Image data corrupted
+Image data location
+Image height
+Image input equipment manufacturer
+Image input equipment model
+Image resolution in height direction
+Image resolution in width direction
+Image title
+Image width
+Implementation
+Implementation limitation
+Importing file
+Improperly formed hex color value
+In placeH
+In the material's height channel
+Inappropriate message buffer length
+Inches
+Inches of mercury
+Inches per second
+Inches per second squared
+Incompatible source and destination paths
+Incomplete file data
+Inconsistent number of bytes per row
+Incorrect codec version
+Incorrect match of header datatype
+Incorrect match of schema
+Incorrect number of arguments to kill (should be 0)
+Incorrect number of arguments to set_attribute (should be 3)
+Incorrect number of arguments to set_attribute_integer (should be 3)
+Incorrect number of arguments to set_batch_priority (should be 1)
+Incorrect number of arguments to set_batch_type (should be 1)
+Incorrect number of time samples specified, expected
+Index is not allocated
+Index not found
+Index out of allocated segment slots
+Index out of range
+Index out of requested size range
+Inherit all
+Inherit paths must be an absolute prim path
+Inherited weight scale
+Initial orientation
+Input
+Input ID overflow
+Input Object
+Input connectability is 'interfaceOnly' but source is not an input
+Input connectability is unspecified
+Insert
+Insert collapsed point here
+Insert point here
+Insert pulse to here
+Insert step here
+Inserted null stage in cache
+Instance
+Instance name must be non-empty
+Instancing
+Instruction
+Insufficient memory
+Insufficient memory for hIST chunk data
+Insufficient memory for pCAL parameter
+Insufficient memory for pCAL params
+Insufficient memory for pCAL purpose
+Insufficient memory for pCAL units
+Insufficient memory to process text chunk
+Insufficient memory to store text
+Insufficient vertices for stitching
+Interactive
+Interactive Degradation
+Interoperability IFDOffset
+Interoperability Identification
+Interoperability version
+Interrupted function call
+Interval (min)
+Invalidity Date
+Item
+Items
+Iterator past-the-end
+Jaggedness tile
+Keep action
+Keep aspect ratio
+Keep file frame
+Keep it
+Keep orientation
+Keep override
+Key count is different in the Curves to be filtered
+Key is empty
+Keys are not synchronized
+Kilometers
+Kilometers per hour
+Kilometers per second
+Knot
+Knots per hour
+LODs
+LUT is not suitable to be saved as LutAToB
+LUT is not suitable to be saved as LutBToA
+Language Identifier
+Latitude of destination
+LayerElement Binormal
+LayerElement Edges Crease
+LayerElement Holes
+LayerElement Polygon Groups
+LayerElement Smoothing Groups
+LayerElement User Data
+LayerElement Vertices Crease
+LayerElement Visibility
+Layout
+Layout generators
+Leica
+Length (relative to length of parent)
+Letterboxed image
+Library version mismatch
+Lic product length bad
+Lic ver length bad
+Licensing info...
+Licensing options
+Licensing server connection
+Life duration
+Lighting scalar
+Lightmap UVs
+Lightmap scale
+Lightmap settings
+Lights
+Line
+Line length mismatch
+Line too long
+Linear decay
+Linear gradient
+Linear growth
+Lines
+Lip
+Lip height
+Lip sharpness
+Lip thickness
+List editor is expired
+Load
+Load all loadable prims
+Load no loadable prims
+Load options
+Load options...
+Load prim and all descendants
+Load prim and no descendants
+Logged in
+Logical height
+Logical width
+Longitude of destination
+Loop tolerance scale
+Lua function expected
+Main Thread
+Make
+Make all generator names unique
+Make billboards
+Make cyclical
+Make geometry force from selected
+Make new maps
+Make new material...
+Make straighten curve linear
+MallocTags enabled
+Manage custom packing...
+Manipulator Object
+Mapping mode not supported for textures
+Master Document ID
+Match parent
+Match surface
+Match trunk
+Materials marked 'First' shifted due to welding
+Max Aperture
+Max angle
+Max distance
+Max share
+Max texture resolution
+Maximum entity amplification factor exceeded
+Maximum entity nesting depth exceeded
+Maximum number of tiles exceeded
+Maya Y-up
+Maya Z-up
+Meaning of each component
+Meaningless to get Abc
+Meaningless to set Abc
+Media
+Medium (active)
+Medium quality
+Memory
+Messages for
+Messages for:
+Messages for: Large Cluster
+Messages for: Spline
+Metering mode
+Microsoft
+Microsoft Extension Request
+Microsoft Smartcardlogin
+Microsoft Universal Principal Name
+Miles
+Miles per hour
+Miles per min
+Miles per sec
+Millimeters of mercury
+Min Aperture
+Min distance
+Minimum gap
+Mismatch between Preview Image Attribute size and dimensions
+Modeler
+Models animation
+Modified Asc
+Modified Desc
+Must be multiple of 16 lines until last call
+Must set "ImageWidth" before writing data
+Name Asc
+Name Desc
+Name expected
+Name expected here
+Name of the page
+Name or '(' expected
+Name too long
+Named Proxy
+Named user already on list
+Named user count must be an integer
+Named user min hours must be an integer
+Names
+Navigation type
+Never
+Never Sync
+Newline in activation key
+Newline in extra data
+Nipped
+No appropriate site for inheriting opinions
+No decoded area parameters, set the decoded area to the whole image
+No geometry created (too high on parent)
+No geometry created (too low on parent)
+No implied site for relocation source -- skipping
+No leaf parent to lock to
+No material passed the season test
+No mesh assigned to the assigned material
+No space for Palette mapping table
+No space for PixarLog state block
+No space for SGILog translation buffer
+No space in chunk cache for sPLT
+No space to expand strip arrays
+No support for converting user data format to LogL
+No wind levels available for ribs
+Node
+Node edits
+Nodes
+Nodes are not siblings
+Non-square shaped value
+Normals
+Normals projection
+Normals scale
+North or South Latitude
+Not Found
+Not Implemented
+Not able to export all links for mesh
+Not all channels are animated
+Not available
+Not on the named user list
+Not supported
+Not yet implemented
+Not-a-number value is illegal
+Nothing defined in CGenerationEditor
+Nothing defined in CMainWindow
+Nothing to recompose in cache changes
+Nothing was modified
+Notify in console
+Null
+Null map function
+Num Samples
+Number of resolutions is too high in comparison to the size of tiles
+Number of snap units between each grid line
+Object
+Object Attribute Reference
+Object Cycle
+Object Derivation
+Object Type Reference
+Object X
+Object Y
+Object Z
+Object connections
+Object definitions
+Object has illegal name
+Object name source
+Object not supported
+Object properties
+Objects
+Obstruction distance
+Occlusion
+Ogawa file not cleanly closed while being written
+Order
+Orient X to look vector
+Orient Y to look vector
+Orient Z to look vector
+Orient stitch to look vector
+Orient to look vector
+Ornamental, cultivated tree
+Other
+Other Precision
+Ounces
+Out of descriptors
+Out of disk space
+Out of memory
+Out of range index in
+Out of range index in CprImpl
+Out of range index in OrData
+Out of range index in OwData
+Out of sequence
+Out rotation
+Out-of-range acyclic index
+Outer offset
+Outer rotation
+Outer size
+Outline
+Override base tex coords
+Override bkgd
+Overscan Fit
+Package Options
+Package tree for support...
+Package tree...
+Packing
+Packing textures
+Page doesn't exist
+Page number
+Paint displacement
+Paint feature vertices
+Paint mesh section
+Paint polygon mask
+Paint vertex color
+Paint vertex colors
+Pair of black and white reference values
+Palm tree
+Parent has insufficient length segments for front placement
+Parent too short to support branch (branch removed)
+Path must be an absolute path
+Payload was not included, skipping
+Per vertex smoothing
+Perceptual
+Perceptual preserving black ink
+Perceptual preserving black plane
+Person who created the image
+Pin Active Tab (Press Ctrl to Pin Group)
+Pixel composition
+Please identify what each of the following leaf generators represent
+Please pick the parent node
+Plug In UIHeight
+Plug In UIWidth
+Plugin info file search
+Plugin loading
+Plugin product family
+Plugin registration
+Point density
+Point in sequence
+Point light
+Points
+PopulateClipsForPrim (primHasClips)
+Portable floatmap
+Pose
+Position From Positions
+Precision __cdecl pxrInternal_v0_23__pxrReserved__
+Premature end of input file
+Preserve shape
+Presets
+Preview
+Preview style
+Print debug output during asset resolver initialization
+Print debug output to terminal during prim indexing
+Print scene graph
+PrintIM Tags
+Prints the scene graph to the console each frame
+Private Organization1
+Problem with seek function
+Problematic stitch loop detected
+Process can create no more file descriptors
+Processor groups
+Producer Back
+Producer Front
+Program
+Program Version
+Projection type
+Projector ray
+Property
+Property Bar
+Property count mismatch
+Property not found in IOSettings
+Property type mismatch
+Proxy
+Public
+Public ID
+Pull texture
+Purchase now...
+QName split
+Quadratic
+Quality
+Quaternion
+RGBtoXYZ matrix is degenerate
+Radial gradient
+Rasterized Caption
+Rating tag used by Windows
+Rating tag used by Windows, value in percent
+Raw data size too large for current file mode
+Ray Casting
+Read
+Read interrupted
+Read out-of-bounds
+Read palette index exceeding num_palette
+Reader doesn't support streams
+Recently opened files
+Recursion limit exceeded
+Reference
+Reference Date
+Reference Node
+Reference for bearing of destination
+Reference for direction of image
+Reference for direction of movement
+Reference for distance to destination
+Reference for latitude of destination
+Reference for longitude of destination
+Reference generator's pass too early
+Reference generators do not support growth
+Reference mode is eDirect but
+Reference node
+Refine edges
+Reflection Factor
+Reflection right
+Registering file format plugins
+Rehostable top-level directory exists
+Reinhard (Luminance)
+Relationship target paths must be absolute prim, property or mapper paths
+Relative To Interest
+Relax-NG parser
+Relax-NG validity
+Relocate already exists -- skipping
+Rendering
+Rendering image...
+Rendering images...
+Rendering unwrapped textures
+Replace with selected in
+Report vertices
+Request
+Request for more licenses than remain on key
+Requested feature was omitted at compile time
+Requested option not present
+Requested version not supported
+Resample
+Rescaling light
+Resets the automatic near and far clipping planes based on current scene extents
+Resolve steps
+Resource busy
+Resource deadlock avoided
+Resource deadlock would occur
+Resource temporarily unavailable
+Response Scalars
+Response Times
+Restitch lower LODs
+Restoring Proxies
+Restoring culled leaves
+Restoring leaf positions
+Restrictions
+Result too large
+Resync end
+Retrieving take
+Reverse
+Reverse panning
+Reverse rotating
+Reverse zooming
+Revert all to saved
+Roam data length mismatch
+Roam data length too long
+RotationUnits Degrees
+Roughness (1-Gloss)
+Row has too many bytes to allocate in memory
+Row pointers and types mismatch in count
+SDK Ripple Motion
+SDK Shared Motion
+Samples
+Samples per pixel is zero
+Sampling factors too large for interleaved scan
+San Francisco1
+Saturation preserving black ink
+Saturation preserving black plane
+Saving image
+Scalars
+Scales the icon
+Scaling
+Scaling Precision
+Scan line
+Scan script does not transmit all data
+Schemas parser
+Schemas validity
+Scientific name(s)
+Scientific names
+Scope
+Scope Descriptions
+Screen
+Screen area
+Screen area scale
+Screenshot
+Screenshot Assist
+Script
+Search path
+Search properties...
+Season light
+Season wind
+Second
+Sensitivity
+Separate materials
+Sepia color
+Sequence Options
+Sequence render
+Server
+Server closed connection
+Server has no options data
+Server rejected client
+Server timeout on read
+Set
+Set anatomical weights
+Set automatic wind weights
+Set point sequence...
+Set them for me
+Set to true to use SdfListOp
+Sets the background color
+Sets the color of the viewport labels
+Sets the coordinate system used for mouse-controlled manipulation
+Sets the grid color
+Sets the style used for the grid
+Sets the type of mouse-controlled manipulation currently in use
+Sets the value used for the alpha test
+Setting layer data
+Shape CoH9(u
+Sharpness Factor
+Shift
+Shop for models...
+Short Document ID
+Short Tons
+Signed Encoding
+Similarity Index
+Simple
+Simple leaf
+Skipping non-prim
+Sky sensitive
+Sky sensitivity
+Skylake Server
+Smoothing not supported with nonstandard sampling ratios
+Software
+Software used
+Solid color
+Solid line
+Some geometry hidden by view menu options
+Some normals
+Some objects have been renamed due to naming conflicts
+Sorry, arithmetic coding is not implemented
+Sorry, requested compression method is not configured
+Source
+Space needed here
+Space required after the Public Identifier
+Space required after the attribute default value
+Space required after the attribute name
+Space required after the attribute type
+Space required after the element name
+Space required after the entity name
+Spatial frequency response
+Spatial order bitstream
+Spec does not exist at destination target path
+Specializes paths must be absolute prim path
+Species categories
+Specified time is out of range
+Spectral sensitivity
+SpeedTree Modeler
+Spike height
+Spike radius
+Spot light
+Spread then cull
+Square
+Square centimeters
+Square feet
+Square inches
+Square kilometers
+Square meters
+Square miles
+Square millimeters
+Square yards
+Start Of Scan
+Start Scalars
+Start distance
+Start frame
+Start of Image
+Start of literal
+State
+State mismatch
+Stately shade tree
+Stationary object
+Statistics for registries derived from NdrRegistry
+Step
+Step must be positive
+Sticky  Spread
+Stitch
+Stitch might have problems
+Stitch needs to be baked in
+Stitch properties
+Storing take
+Story Take
+Straighten
+Streaking maps...
+Stretch Fit
+Stretch limit
+Stretched image
+Strip shift
+Strong forces influencing the branch
+Subject
+Subject Reference
+Subject area
+Subject distance
+Subject distance range
+Subject location
+Sublayer offsets do not match sublayer paths
+Sublayer paths must not be empty
+Subsurface scale
+Sun Raster Image
+Supplemental Categories
+Support for modeling issues...
+Surface Adhesion
+Surface adhesion
+Suspension not allowed here
+Swizzle index out of bounds
+Sync index
+Sync with
+Syntax of value for attribute xmlns
+Tab Shape
+Tags
+Take
+Take parent
+Takes and animation section
+Takes section
+Tall pine tree
+TfSafeOutputFile __cdecl pxrInternal_v0_23__pxrReserved__
+The SpeedTree Modeler has detected the presence of the following recovery file
+The X coordinate of the pointer relative to the window (measured in pixels)
+The color to paint
+The directory is not empty
+The first point of the 'Lip
+The last point of the 'Lip
+The object under the pointer
+The path is too long
+The relative matrices do not match
+Tile part length size inconsistent with stream length
+Tile size too large for OpenEXR format
+Time value of key is not incremental
+TimeSamples with
+Timeout on read()
+To Clipboard
+To clipboard
+Token Definition
+TokenIndex __cdecl pxrInternal_v0_23__pxrReserved__
+Tokens section not null-terminated in crate file
+Too many arguments to log session command
+Too many arguments to postmortem command
+Too many color components
+Too many input bytes provided
+Too many links
+Too many open files
+Too many open files in system
+Too much
+Too much data to send
+Too much image data
+Too soon to remove named user
+Total frames
+Total time
+Trace global reporter
+TraceRegistry global collector
+Transition range
+Translated binaries not supported
+Translation
+Translation Precision
+Translation buffer too short
+Translation scale
+Transparency Factor
+Transparent
+Tree Gen
+Tree GenA
+Tree GenI
+Tree filenames
+Tree library
+Tree name
+Triangle
+Tried to create compound property with the wrong property type
+Tried to write opaque value to layer
+Trim Mode
+Tumble min
+Two (over under)
+Two (side by side)
+U offset and U twist disabled
+UVs
+Ultra
+Ultra quality
+Unable to create the the animation stack
+Unable to fit curve that results in the requested aspect ratio
+Unable to fit curve to bottom blend region
+Unable to fit curve to fixed region
+Unable to fit curve to tiling region
+Unable to fit curve to top blend region
+Unable to import file
+Unable to initialize array compressor
+Unable to load material library
+Unable to load texture file
+Unable to open
+Unable to open file
+Unable to read GetModuleFileName() to obtain executable path
+Unable to resolve info
+Unexpected cache scope data
+Unexpected change of input
+Unexpected child node encountered
+Unexpected end of file
+Unexpected file type
+Unexpected part number
+Unexpected response
+Unexpected response from server
+Unexpected size of the ControlPointIndices array
+Unexpected value count
+Unhandled Sdf_PathNode
+Unhandled compression scheme case
+Unhandled range type
+Uninitialized
+Uninitialized row
+Unique Document ID
+Unique image ID
+Unit of X and Y resolution
+Unlicensed platform
+Unregistered function
+Unregistered metadata field
+Unresolved external references
+Unroll Filter
+Unsupported Part-2 extension enabled
+Unsupported color conversion request
+Unsupported color mode
+Unsupported color model
+Unsupported compression type
+Unsupported feature(s) selected
+Unsupported feature(s) selected:
+Unsupported file content
+Unsupported file version
+Unsupported file version detected
+Unsupported format
+Unsupported icon size
+Unsupported image size
+Unsupported opaque mode for transparent texture
+Unsupported parametric curve
+Unwrap UVs
+Unwrapping geometry
+Update
+Update animation
+Update cutouts
+Upgrade generator
+Upgrade legacy generator(s)...
+Use forces to influence the "center line" of the branch
+User
+User Interface
+User comments
+User controlled far clipping plane value
+User controlled near clipping plane value
+User manual...
+Valid image height
+Valid image width
+Valid palette required for paletted images
+Variance edit
+Version mismatch between document and entity
+Vertex editing is not available for the selected node
+Very high quality
+Video tutorials...
+Visibility style
+Visual Effects
+Volume
+VtValue _FindOrCreateDefaultValue
+Warn about node edit losses
+White
+White Balance
+White balance
+White point chromaticity
+Whole map
+Whole map,
+Will check plugin info paths
+Windows
+Windows (64bit)
+Windows Icon
+With
+Word wrap
+World Rigid
+Wrap
+Wrong flag
+Wrong host
+Wrong input color space on transform
+Wrong output color space on transform
+Wrong password
+Wrong path
+Wrong values for
+Wrote palette index exceeding num_palette
+X offset
+X percent
+X pivot offset
+X position
+X position of the image
+Y offset
+Y percent
+Y pivot offset
+Y position
+Y position of the image
+YouTube channel...
+Z offset
+Z scale
+Zero
+Zero strips per image
+Zero tiles
+Zero-copy data range out-of-bounds
+Zoom all
+Zoom allH
+Zoom allH9
+Zoom selH9
+Zoom selected
+Zoom selected bias
+Click placements
+Clip below ground
+Enables lighting
+Ground Effect
+Hot keys
+Late noise disabled
+Lighting adjust
+Pine needles
+Separate meshes
+Slide brush
+Spec changes
+System Clock
+Treat as
+Visibility Inheritance
+Working directory
+Add Geometry
+Add geometry
+Add geometry to selected
+Add geometry to the model based on a set of predefined templates. Once a template has been added
+Add new
+Add new asset
+Add selected to
+Add your custom properties here.
+After bend edits
+Aim At Object
+All anchors
+All available
+All blended
+All children
+All cohesive
+All descendants like selected
+All descendants like selected, same color
+All files
+All gaussian
+All like selected
+All like selected at this level
+All like selected, same color
+All siblings
+All uniform
+Allow negative scaling
+Alpha test only
+Alt Offset
+Always Sync
+Always Yes
+Always yes
+Always no
+Always use native file dialogs
+Ambient Color
+Ambient Specular Scale
+Anatomical anchor
+Anchor Distance Scale
+Anchor Offset
+Anim Curve
+Anti Alias Strength
+Any language
+Axis Conversion
+Auto Axis Conversion
+Axis X
+Axis Y
+Axis Z
+Axis indicator
+Bad segment count
+Bake stitches must be the child of a Mesh generator.
+Band geometry creation failed
+Billboard Top Down Height
+Bone has no length
+Can't read bone length
+Can't read data frame rate
+Can't read frame count
+Can't read frame name
+Can't read frame number
+Can't read frame rotation
+Can't read frame scaling
+Can't read frame translation
+Can't read segment base rotation
+Can't read segment base translation
+Can't read segment count
+Can't read segment length
+Can't read segment name
+Casts Shadows
+Cell Length
+Center window splitter
+Centered surface
+Change texture format
+Change the algorithm by which the model is computed.
+Child Material Season Curve
+Chroma Blur Radius
+Clamp texture size
+Clear freehand edits
+Cluster plane overlap prevention
+Collision Offset
+Collision Scale
+Collision disabled for growth
+Common render states
+Compiling Tree
+Computing LOD data...
+Computing collision solution
+Cone Angle
+Cone angle
+Constraints animation
+Contrast Curve
+Control the shape of the center line of the branch
+Control whether this mask controls what passes or what fails.
+Controls the projection's field of view
+Controls which render states are reset per frame
+Convert to 'Leaf Mesh'
+Copy curve
+Copy curve for script
+Corrupted animation data.
+Corrupted built-in profile.
+Could not export node
+Could not export texture
+Could not find a material to export the texture
+Could not find geometry library
+Could not find texture
+Could not get light for node
+Could not get mesh for node
+Could not make curve cyclical
+Couldn't read profile from NULL pointer
+Create a new tree
+Create fronds
+Ctrl Enforce Gravity
+Curl Force
+Current wind mode unsupported
+Currently, only Mesh generators can be converted or stitched.
+Curve Editor
+Curve Filters
+Curve is clamped
+Curve count is too high. No support above 20 curves
+Custom Height
+Default generator
+Deformed Models
+Direction Force
+Directional light
+Disable growth to use freehand editing
+Disable two sided rendering
+Displacement Color
+Display scaling preview
+Do you wish to open the exported SPM now?
+Do you wish to open the packaged tree now?
+Draw branch as skin
+Edit branch profile
+Edit the source profile
+Enable collision
+Enable growth animation
+End Angle
+End Radius
+End shape
+Facing direction
+Falloff curve
+Fill the frame
+Foliage material
+Force magnitude
+Force type
+Frond length
+Frond width
+Generator type
+Geometry falloff
+Gravity curve
+Grow toward
+Hand drawn
+Height profile
+Hide the model
+Import model
+Inner radius
+Invert the curve
+Keep winding
+Leaf cluster
+Leaf orientation
+Light intensity
+Light direction
+LOD settings
+Loop count
+Loop the animation
+Material color
+Material offset
+Mesh detail
+Mesh geometry
+Minimum radius
+Move to generator
+No wind
+Normal map strength
+Number of branches
+Number of segments
+One sided
+Outer radius
+Parent branch
+Place on ground
+Prune mode
+Quick shader
+Radial segments
+Random curvature
+Random length
+Recompute normals
+Reload geometry
+Remove from parent
+Render scale
+Reverse direction
+Season curve
+Set as default
+Shape curve
+Shortest path
+Show as wireframe
+Show bounding box
+Show detail
+Show in viewport
+Smooth the curve
+Spine length
+Split at
+Spray profile
+Start Angle
+Start Radius
+Start shape
+Stitch to
+Stop animation
+Surface material
+Trunk geometry
+Turn on wind
+Unwrap coordinates
+Use existing material
+Vertex detail
+Vertical segments
+Wind strength
+Wireframe
+Zoom to fit
+Area
+Autumn
+Band_Stitch
+Bark
+Bark Bare
+Bark Bare Cutout
+Bark Bare Cutout 2
+Bark Bare Cutout 3
+Bark Bare Cutout 4
+Bark Bare Smooth Cutout
+Bark Base
+Bark Burned
+Bark Example
+BarkPiece_01
+BarkPiece_02
+BarkPiece_03
+Bark_1
+Bark_2
+Blade_1 Cutout
+Blades_1
+Blades_1 Cutout
+Blue box
+Box
+Branch
+Branch Atlas Medium
+Branch Atlas Part
+Branch Atlas Single
+Branch Atlas Single No Anchor
+Branch Atlas Twigs
+Branch_1
+Branch_2
+Branches
+BrokenBare_01
+BrokenBare_02
+BrokenBark_01
+BrokenBark_01 Cutout
+BrokenBark_02
+BrokenBark_02 Cutout
+Bud_1
+Bud_1 Cutout
+Bump_01
+Bump_01 2
+Bump_01 2 Cutout
+Bump_01 Cutout
+Bump_02
+Bump_02 Burn
+Bump_02_Anchor
+Bump_02_Diffuse
+Bump_02_VFX_High
+Cap
+Chunk_2
+Chunk_2 Cutout
+Color
+ConvertInPlace 1
+Custom
+Custom2
+DamagedBark_basecolor
+Dead
+Dead_Leaf_1
+Dead_Leaf_2
+Displacement
+Displacement 1
+EasternRedbud_bark_1
+EasternRedbud_front_1
+EasternRedbud_front_1 Cutout
+EasternRedbud_front_Fall
+EasternRedbud_front_Spring
+EasternRedbud_front_Summer
+Example
+Example Leaf Fall
+Example Leaf Mesh
+Example Leaf Spring
+Example Leaf Spring Cutout
+Example Leaf Summer
+Example Leaf Winter
+Fall
+Fern
+Fern_Frond_MiddleShoots Cutout
+Fern_Leaf_1_Fall
+Fern_Leaf_1_Spring
+Fern_Leaf_1_Summer
+Fern_Leaf_1_Winter
+Fern_Leaf_1_Winter dead
+Filament Cutout
+Flower Atlas
+Flower Atlas 2
+FlowerBranch 01
+FlowerBranch 02
+FlowerBranch 03
+FlowerBranch 2
+FlowerBranch 3
+FlowerBranch 4
+FlowerBranch_01_Branch
+FlowerBranch_02_Branch
+FlowerBranch_03_Branch
+FlowerBranch_03_BranchPart
+FlowerBranch_03_Leaf
+Flower_Atlas_Summer Cutout
+Flower_Atlas_Summer Cutout 2
+Flower_Atlas_Summer Cutout 3
+Frond Fall
+Frond Spring
+Frond Summer
+Frond Winter
+Front_01_Fall
+Front_01_FallTransition
+Front_01_Spring
+Front_01_Summer
+Front_01_Summer Cutout
+Front_01_Winter
+Front_02_Fall
+Front_02_FallTransition
+Front_02_Summer
+Front_03_Dirt_Fall
+Front_03_Dirt_FallTransition
+Front_03_Dirt_Summer
+Front_Season
+Gloss
+Green Stems
+Green sphere
+Height
+Helper
+Knot Cap
+Knot_01
+Knot_02
+Knot_3
+Large Leaf Clusters
+Leaf
+Leaf 1
+Leaf 2
+Leaf 3
+Leaf Cutout
+Leaf Fall
+Leaf Fall 5
+Leaf Fern
+Leaf Games Spring Cutout
+Leaf Games Spring Cutout 2
+Leaf Games Spring Cutout 3
+Leaf Games Spring Cutout 4
+Leaf Games Summer Cutout
+Leaf Games Summer Cutout 2
+Leaf Games Summer Cutout 3
+Leaf Games Summer Cutout 4
+Leaf Spring
+Leaf Summer
+Leaf Summer 7
+Leaf VFX Fall Cutout
+Leaf VFX Fall Cutout 2
+Leaf VFX Fall Cutout 3
+Leaf VFX Spring Cutout
+Leaf VFX Spring Cutout 2
+Leaf VFX Summer Cutout
+Leaf VFX Summer Cutout 2
+Leaf VFX Summer Cutout 3
+Leaf VFX Summer Cutout 4
+Leaf VFX Winter Cutout
+Leaf VFX Winter Cutout 2
+Leaf Winter
+Leaf Winter 5
+Leaf_1
+Leaf_1 Cutout
+Leaf_1_Dry
+Leaf_1_Fall
+Leaf_1_Fall Transition
+Leaf_1_Spring
+Leaf_1_Summer
+Leaf_1_Winter
+Leaf_2
+Leaf_2 Cutout
+Leaf_2_Fall
+Leaf_3
+Leaf_3 Cutout
+Leaf_3_Fall
+Leaf_3_Fall Transition
+Leaf_3_Spring
+Leaf_3_Summer
+Leaf_3_Winter
+Leaf_4
+Leaf_Cluster_1 Cutout
+Leaf_Cluster_1 Cutout 2
+Leaf_Cluster_1 Cutout 3
+Leaf_Cluster_1_Bare
+Leaf_Cluster_1_Fall
+Leaf_Cluster_1_Fall_Transition
+Leaf_Cluster_1_Spring
+Leaf_Cluster_1_Summer
+Leaf_Cluster_1_Winter
+Leaf_Cluster_2 Cutout
+Leaf_Cluster_2 Set
+Leaf_Cluster_2_Fall
+Leaf_Cluster_2_Fall_Transition
+Leaf_Cluster_2_Spring
+Leaf_Cluster_2_Summer
+Leaf_Cluster_2_Winter
+Leaf_Mesh_Example
+Leaves
+Leaves Bright
+Leaves Cutout
+Leaves Desktop
+Leaves Games
+Leaves Games Desktop
+Leaves VFX
+Leaves_1
+Leaves_Dead_Set
+Leaves_Set_1
+Leaves_Set_2
+Lichen_Dirty
+Lichen_Round
+LongDetail
+LongDetail_01
+Maple_Bark_1
+Maple_Trunk_BaseColor
+Maple_Trunk_Highest
+Material
+Material Cutout
+Material_Leaf_Example
+Mesh
+Metallic
+Moss Cards Cutout
+Moss Small
+Moss_Atlas
+Moss_Atlas Cutout
+Moss_Card_01
+Moss_Card_02
+Moss_Long_Green
+Moss_Round_Brown
+Moss_Round_Green
+Moss_Round_Green NoFern
+Moss_Small_Green
+Mushroom_Tan
+Mushroom_White
+Needle_1
+Needle_1 2
+Needle_2
+Needle_2 2
+Needle_3
+Needle_4
+Needle_Cluster_1
+Needle_Cluster_1 Cutout
+Needle_Cluster_1 Cutout 2
+Needle_Cluster_1 Cutout 3
+Needle_Cluster_2
+Needle_Cluster_2 Cutout
+Needle_Cluster_3
+Needle_Cluster_3 Cutout
+Needle_Cluster_3 Cutout 2
+Needles_1
+Needles_1 Brown
+Needles_1 Cutout
+Needles_1 Yellow
+Needles_Set_1
+Normal
+Oak_Bark_01
+Oak_Bud
+Oak_Bud 2
+Oak_Cap
+Oak_English_Cluster_1
+Oak_English_Cluster_1 Side
+Oak_English_Cluster_Atlas_Dead
+Oak_English_Cluster_Branch
+Oak_English_Cluster_Branch_Dead
+Oak_English_Cluster_Branch_Fall
+Oak_English_Cluster_Branch_FallTransition
+Oak_English_Cluster_Branch_Spring
+Oak_English_Cluster_Branch_Summer
+Oak_English_Cluster_Branch_Winter
+Oak_English_Cluster_Desktop_Leaf_Dead
+Oak_English_Cluster_Desktop_Leaf_Fall
+Oak_English_Cluster_Desktop_Leaf_FallTransition
+Oak_English_Cluster_Desktop_Leaf_Spring
+Oak_English_Cluster_Desktop_Leaf_Summer
+Oak_English_Cluster_Desktop_Leaf_Winter
+Oak_English_Cluster_Leaf_Fall
+Oak_English_Cluster_Leaf_FallTransition
+Oak_English_Cluster_Leaf_Spring
+Oak_English_Cluster_Leaf_Summer
+Oak_English_Cluster_Leaf_Winter
+Oak_Front Cutout Spring
+Oak_Front Cutout Summer
+Oak_bark
+Oak_bark 2
+Palmetto_Leaves_Desktop_6
+Palmetto_Leaves_Desktop_6 Cutout
+Parent
+Petal
+Petal Cutout
+Petal Spring
+Petal Summer
+Petal Winter
+Petals_Cluster Cutout
+Petals_Cluster Cutout 2
+Petals_Cluster Cutout 3
+Petals_Cluster Cutout 4
+Petals_Cluster Cutout Spring
+Pine_Bark
+Pollen
+RedOak_bark_2
+Rock_A
+Rough Bark
+Sample
+Sample Cutout
+Sample Leaf
+Sample Leaf Cutout
+Sample Leaf Mesh
+Sample Material
+Sample Material Cutout
+Sample Petal
+Sample_Bark_1
+Sample_ConvertInPlace
+Sample_ConvertToTrunk
+Sample_Material
+Sign Cutout
+Smooth Bark
+Spanish_moss_1 Cutout
+Spanish_moss_2 Cutout
+Specular
+Sphere
+Spring
+Stem
+Stem Main Summer Cutout
+Stem Summer
+Stem Winter
+Stem_1
+Stem_3
+Stem_3 Cutout
+Stem_3 Cutout 2
+Stem_Green
+Stems
+SubsurfaceAmount
+SubsurfaceColor
+Summer
+Tree_01_LR
+Tree_01_LR_Body_Diffuse
+Trellis
+Trunk
+Twig
+Uniform
+VFX Fall
+VFX FallTransition
+VFX Spring
+VFX Summer
+VFX Winter
+Variance
+Vines
+White_Oak_Summer 2 Cutout
+Winter
+WoodShard
+box
+fall
+green
+grey
+leaf
+leaf Cutout
+move_me
+rook
+sample
+sphere
+spring
+summer
+torus
+trellis
+vine
+vines
+winter
+Left X
+Left Y
+Right X
+Right Y
+Middle X
+Middle Y
+Flip X
+Flip Y
+Flip Z
+Flip V texcoord
+Flip backside normals
+Flip opacity
+Flip twist
+Swap YZ
+Up rotation
+Down rotation
+Reset rotation
+Reset scaling
+Reset translation
+Rotation snap enabled
+Rotation snap units
+Scale snap enabled
+Scale snap units
+Translation snap enabled
+Translation snap spacing
+Apply changes to all projections
+Coordinate system
+Convert to unit
+Copy placement
+Paste placement
+Place at origin
+Placement
+Global anchor
+Local Orientation
+World
+World up
+World units scale
+Scene unit
+Current unit
+Length amount
+Length scalar
+Length segments
+Length style
+Length Scale
+Length scale
+Limit length
+Relative length
+Relative radius
+Radius scalar
+Radius scale
+Radius style
+Radial amount
+Radial scale
+Scale factor
+Scale scalar
+Self scale
+Size Scale
+Size scale
+Size scalar
+Size influence
+Position influence
+Weight scale
+Core weight
+Inner weight
+Outer weight
+Multiplier
+Proportion
+Frond count
+Frond mesh index
+Frond shape segments
+Frond size scalar
+Frond style ripple
+Frond Motion
+Leaf Collision
+Leaf Motion
+Leaf references
+Leaf style fronds
+Set all fronds to global
+Set all leaves to global
+Unify child orientations
+Unify orientation
+Use frond geometry
+Fix leaf winding
+Leaf count
+Leaf density
+Leaf size
+Ring segments
+Rings
+Rings resolution
+Lip resolution
+Lip segments
+Slice segments
+Slices
+Segment multiplier
+Segment style
+Segment length
+Internode length
+Tessellate
+Tesselate
+Tesselation
+Cap override
+Cap rings
+Cap threshold
+Cap weight
+Ribs
+Fins
+Cage
+Extrude
+Sweep
+Contour
+Contour style
+Control point style
+Curve length
+Curve shape
+Line style
+Line width
+Line smooth
+Point size
+Point smooth
+Smooth lines
+Branch Motion
+Branch amplitude
+Branch spines
+Branch volume threshold
+Branch weight
+Games Branch Motion
+SDK Branch Motion
+VFX Branch Motion
+VFX Frond Motion
+VFX Leaf Motion
+Wind gusting
+Wind looping
+Wind strength from
+Wind Anchor
+Wind Commands
+Sway bias
+Sway freq
+Flutter
+Wobble
+Shimmer
+Twitch
+Jitter
+Gusting
+Ripple U
+Ripple V
+Ripple min
+Ripple scale
+Rolling
+Oscillation
+Oscillation style
+Disturbance
+Disturbance seed
+Perturbance
+Flood
+Hang
+Drop time
+Distribution
+Phyllotaxy
+Fan out children
+Spread 1
+Spread 2
+Spread factor
+Spread scalar
+Spread out
+Jink amount
+Jink frequency
+Break chance
+Break seed
+Break spot
+Breakable chance
+Chance
+Frequency
+Interval
+Period
+Per Step
+Per step frequency
+Iterations
+Iteration scale
+Number of children
+Children per node
+Number of iterations
+Force action
+Force debug
+Container forces
+Influence of forces
+Force Containers
+Force ray casts
+Container
+Constraint
+Deflection limit
+Friction
+Grow
+Growth length
+Growth rate
+Relax
+Rise
+Sink
+Repel
+Pull
+Push
+Squeeze
+Twist
+Unfurl
+Whip
+Jumble
+Pinch
+Pinch V
+Squash
+Stretch
+Bending
+Flatten
+Skew correction
+Slope based sink
+Slope limit
+Focal Length
+Far clipping plane scale
+Near clipping plane scale
+Manual far clipping plane
+Manual near clipping plane
+Update automatic planes now
+Automatic clipping planes
+Orthographic
+Perspective
+Light azimuth
+Light pitch
+Spotlight
+Directional
+Specular scale
+Saturation
+Tonemapper
+Fog exponent
+Ambient
+Ambient occluder
+Envelope
+Shadow
+Shadows
+Transfer function
+Show axis indicator
+Show grid
+Show ground
+Show height
+Show influence
+Show labels
+Show light
+Show overlay
+Show text
+Show tiles
+Grid
+Grid lines color
+Grid spacing
+Icon
+Icon scale
+Indicator
+Indicator scale
+Axis
+Thumbnail
+Overlay
+Hover
+Label color
+Focus
+Identify
+Display color
+Display multiplier
+Visible
+Hidden
+AO bias
+Absolute Steps
+Absolute length
+Absolute radius
+Adapt to masks
+Add Control Point
+Adjust frequency
+Adjust lighting
+Adjust size for group
+Align length scale
+Align strength
+Align with look vector
+Align with parent (long branch)
+Align with parent (medium branch)
+Align with parent (short branch)
+Allow V wrapping
+Allow extension control
+Allow forces
+Alpha test
+Alpha test value
+Also remove descendants
+Anatomical sensitivity
+Angle threshold
+Animate displacement
+Animate texture
+Anisotropic filtering
+Apply branch wind
+Apply wind
+Aspect ratio
+Atlas
+Atlas filename
+Atlas resolution
+Attenuation
+Attenuation segments
+Auto Detect
+Axis system is Left Handed
+Backface culling
+Background
+Bad boost
+Bad child
+Bad format
+Bad mode
+Bad name
+Bake
+Bake Stitch Tools
+Balanced
+Band
+Band Material
+Band Region
+Base
+Base Generators
+Base filter
+Before
+Bias
+Bifurcated
+Bifurcation
+Blend Region
+Blend range
+Blend source
+Blend texture
+Blending
+Blockers
+Blur
+Bone style
+Bones
+Boosts
+Border
+Bottom
+Build
+Cache format
+Caches
+Change duration
+Chaos
+Check for OpenGL errors on each object
+Child radius scale
+Child relative scale
+Child shaping
+Children
+Clamp radius
+Classic
+Clear node edits
+Clear point sequence
+Click place
+Collapse
+Collection
+Collections
+Collide
+Collide action
+Collision object
+Collision radius scale
+Collision test
+Combine
+Combine all open trees
+Commands
+Compatible
+Compile
+Cone
+Connected
+Constant force
+Contribute
+Corner
+Count
+Create
+Cross section
+Cutout
+Cutout maps
+Cutout texture
+Dead zone
+Decay
+Decay rate
+Default group
+Depth
+Detail level
+Direction
+Distance
+Dither
+Downward
+Draw order
+Droop
+Duplicate
+Edge
+Edge falloff
+Edit mode
+Elbow
+Emission
+Emissive
+End
+End cap
+Equalize
+Extend
+Extend length
+Facing
+Fall off
+Follow
+Foliage
+Force curve
+Free
+From parent
+Front
+Frost
+Gap
+Generations
+Gravity
+Hardness
+Head
+Horizontal
+How
+Icons
+Ignore
+Inherit
+Inheritance
+Inner ring
+Interpolation
+Joint
+Keep
+Key
+Layer
+Level
+Limit
+Linear
+Loop
+Lower
+Manual control
+Max
+Merge
+Mesh shape
+Minimum
+Mirror
+Noise scale
+Offset
+Outer ring
+Overlap
+Override
+Particle
+Path
+Pivot
+Plane
+Point
+Portion
+Position
+Power
+Preserve
+Profile
+Radius
+Random
+Range
+Ratio
+Rear
+Recursion
+Reflection
+Repeat
+Roughness
+Roundness
+Scale
+Seed
+Select
+Shape
+Sharpness
+Side
+Size
+Smooth
+Snap
+Soft
+Spacing
+Speed
+Spread
+Start
+Strength
+Surface
+Symmetric
+Tangent
+Taper
+Template
+Thickness
+Threshold
+Tilt
+Top
+Total
+Turbulence
+Upper
+Vertical
+Use
+Value
+Weight
+Weld
+Width
+Wind
+Wire
+Zoom
+Accuracy
+Active
+Adjustments
+Align
+Align style
+Allow
+Ancestor
+Anchor
+Balance
+Blend
+Boost
+Boundaries
+Boundary
+Break
+Clamp
+Clamp to parent
+Clip
+Common
+Cross
+Density
+Displacement scale
+Distribution style
+Down
+Early
+Exclude
+Extend parent
+Extension
+Extension style
+Features
+Flip
+Frond
+General
+Ground
+Include
+Index
+Influence
+Inner
+Intensity
+Jink
+Keep chance
+Keep failed
+Knockout
+LOD offset
+Late
+Left-Right Variance
+Length compensation
+Length kill ratio
+Light seam reduction
+Lower scale
+Lower spread
+Match one v tile
+Mesh alignment
+Mode
+Normal smooth
+Orientation
+Out
+Outer
+Parent Curl
+Parent Puffiness
+Pass
+Pivot threshold
+Pruning
+Radial
+Relative basis
+Relax scale
+Resolution
+Right
+Rotate
+Rotation
+Scalar
+Scale U
+Scale V
+Section Variance
+Shade Pruning
+Shape scale
+Side 1
+Side 2
+Speed scale
+Spiral
+Splits
+Spot
+Start angle
+Start angle adjust
+Start offset
+Start roll
+Stitching
+Stop shape control
+Straightness
+Style
+Take descendants
+Time scale
+Transitions
+Two sided
+Unification
+Uniformity
+Unify
+Up
+Upper scale
+Upper spread
+Weld scalar
+Weld start
+Welding
+Zigzag
+Anchor Shift
+Anchors
+Face
+Fix winding
+Keep failed welds
+Kill action
+Match branch parent
+Mesh LOD
+Mesh LOD offset
+Puffiness
+Sky
+Sky influence
+Tolerance
+Use actual size
+Vertex
+Bounce
+Failed
+Look ahead
+Max bend angle
+Max iterations
+Recovery
+Results
+Succeeded
+Variation
+Act
+Age
+Age indicators
+Algorithm
+Allow UV areas
+Anatomy
+Area influence
+Arrangement
+Attach
+Attributes
+Bare
+Base Lichen
+Base Moss
+Base Moss Roots
+Base Roots
+Base Sphere
+Batched Leaf
+Batched Leaves
+BatchedLeaf
+Berry Stalk
+Berry Stalk twigs
+Bifurcating
+Bifurcating branches
+Big
+Big Branches
+Big Stem
+Big Vine
+BigVine
+BigBranches
+BigRoots
+Billboard atlas size
+Billboard end
+Billboard start
+Bounce on me!
+Branch Anchor Helpers
+Branch One
+Branch Part
+Branch Spread
+Branch Two
+Broken
+Broken Bark
+Broken Branches
+Broken Details
+BrokenBark
+Bud
+Bumps
+Bushiness
+Canopy
+Canopy density
+Cause of death
+Cavity
+Clear me to start fresh
+Clearance
+Clearance spread
+Compute AO on load
+Compute Flags
+Compute weights from spines
+Constant sink
+Contribution
+Converted to Trunk
+Core
+Crowded
+Cull siblings
+Cull tolerance
+Curve Capture
+Curve fit
+Curve fit scalar
+Custom map amount
+Custom resolution
+Dark base
+Dead Branch
+Dead Branches
+Dead tree
+Decal
+Decorations
+Decorator
+Deformation
+Descendant offset
+Detail
+Detail frequency
+Details
+Direction Adherence
+Direction adherence
+Direction response time
+Directional tint
+Dirt
+Disable
+Distance scale
+Drooping Fill Branches
+Drooping Twigs
+Dry
+Early growth
+Ends
+Fallen
+Fallen Branches
+Fallen Leaves
+Fast growing
+Fill
+Filter
+Filters
+Fine branches
+First Pass
+Flat
+Flesh
+Flower
+Flowers
+Fluffy
+Forest floor
+Fork
+Forked
+Fresh
+Fruit
+Fuzzy
+Grass
+Green
+Ground cover
+Grower
+Hand
+Hard ground
+Heavy
+High detail
+Hill
+Hillside
+Hollow
+In place
+Ivory
+Jagged
+Large
+Last Pass
+Lean
+Leaf clusters
+Light
+Lichen
+Lily
+Limb
+Long
+Lush
+Main
+Mangrove
+Medium
+Moss
+Mossy
+Mud
+Narrow
+Needle
+Needles
+North
+Offshoot
+Old
+Overhang
+Palm
+Patch
+Peat
+Petals
+Pine
+Plains
+Pod
+Prairie
+Prune
+Railing
+Ribbon
+Ridge
+River
+Rock
+Root
+Rough
+Round
+Rounded
+Ruin
+Rust
+Sand
+Sapling
+Sapling branches
+Saturated
+Seasonal
+Seedling
+Short
+Shrub
+Shrubby
+Sparse
+Spear
+Spike
+Spine
+Split
+Sprout
+Stalk
+Stone
+Stout
+Strand
+Stream
+Stub
+Stumpy
+Swamp
+Sweet
+Tall
+Tendril
+Thin
+Thorn
+Thorns
+Timber
+Tip
+Tuff
+Twigs
+Vine
+Water
+Wet
+Willow
+Wispy
+Wood
+Woody
+Young
+Acorn
+Air
+Algae
+Amber
+Ash
+Aspen
+Bamboo
+Beach
+Birch
+Bluebell
+Cactus
+Cedar
+Chestnut
+Clover
+Coconut
+Cypress
+Dandelion
+Ebony
+Elm
+Fir
+Grove
+Hazel
+Heather
+Holly
+Ivy
+Juniper
+Kelp
+Laurel
+Lavender
+Lemon
+Lotus
+Maple
+Meadow
+Mint
+Mushroom
+Nettle
+Oak
+Olive
+Orchid
+Pinecone
+Plum
+Poppy
+Reed
+Rose
+Sage
+Seagrass
+Spruce
+Sunflower
+Sycamore
+Thistle
+Tulip
+Walnut
+Yew
+Tiny
+Tubes
+RootsMain
+RootsExt
+Main Branches
+Max resolve steps
+Roots
+Undefined
+References
+Middle branch
+Small Branches
+Frond Shoots
+Restich lower LODs
+Projector Lichen
+Stalks
+Towards
+Slide
+Return
+Reference Leaf
+Moss Fluff
+Small Stem
+Spring Stem
+Medium Branch
+Small Base Twigs
+Single Vine
+Hand-drawn
+Mesh helper (end)
+Projector Spheres
+Fan
+FBX scale
+Independence
+Huge
+Stump
+Frond Stems
+Leeward dampening
+Locality
+Trunk Width
+Projector Roots
+Medium Stem
+Twig Detail
+Projector Vines
+General Direction
+Lichen Base
+Projector Moss
+Nearest whole v tile
+Additional
+Top Cap
+Initialize
+Small Vines
+Repulse
+Hand Drawn Vine
+GEOMETRY WRAP
+Throw
+NoLeafBranches
+Projector Flowers
+Lump
+Medium Branches
+Trunk Detail
+Medium Cluster
+Long Detail High
+LongDetail Low
+Little
+Flower Base
+Reference Flower
+Spines
+Rook
+Magnet
+SEASONS EXAMPLE LEAVES
+Larg Fill
+Failures
+MediumBranches
+Spheres
+Transparency
+Noisy bark
+Peduncle
+Self-collide
+Debug
+FBX filename
+UV patch
+Little Branches
+Mesh Converter
+Many Vines
+Seal
+Root Twigs
+Small
+TEXTURE BAND
+Flexibility
+Horizon
+End Leaves
+MossCard
+Mapping
+Needle Cluster (tip)
+About SpeedTree Modeler...
+Arbitrary scene scale...
+Atlas creator...
+Bake all texture adjustments...
+Bake texture adjustments
+Bake Animation
+Bake Animation Layers
+Bake Frame End No Reset
+Bake Frame Start No Reset
+Bake Frame Step No Reset
+Beauty render
+Brush select
+Building content model
+Add Texture
+Add collision object
+Add force
+Add geometry force to the scene
+Add it to the scene
+Add mesh helper
+Add projector
+Add to this generator
+Adds content to the scene.
+Adds noise to the result to make mask edges more organic.
+All LODs
+All changes to this tree will be lost if you revert.
+All normals
+All property edits apply to the selected generator(s). This mode affects all of the individual nodes
+All texture adjustments have been baked into new textures saved in
+Ambiant light
+Ambien light
+Ambient Light Color
+Ambient Occlusion
+Ambient Subsurface Scale
+Ambient light
+Ambient occlusion
+Amount of smoothing applied to the displacement map before it is applied to the geometry.
+Angle of the spot light, higher yields wider lighting
+Animate scrolling
+Animation Curve
+Animation Length
+Animation Take
+Animation Wind Strength
+Animation data not found
+Apply scale to handles
+Are you sure you wish to reset the season labels to default?
+Area Light
+Area Light Shape
+Art director gizmo
+Assign to material
+At least one leaf found no materials for the season
+At least one of the 3 channels should have one or more animation keys
+Atlas preview
+Background Texture
+Bad polygon size detected.
+Bake stitches cannot be added to this type of generator
+Batched Leaf generators do not work with the LOD system
+Batched leaf
+Be sure to save your tree to keep these changes.
+Branch capsules
+Branch nipped by geometry force
+BranchRate change
+Branches cannot be drawn directly off a mesh
+Brief description of about Games files. Games wind, dynamic lod...
+Clear ambient occlusion
+Create geometry force from selected generators
+Collision geometry
+Collision material
+Convert to mesh
+Current frame
+Debug XML file...
+Define the number of sides the trunk has
+Define the shape of the trunk as it climbs upward
+Define the width of the trunk at this point
+Delete this generator
+Displace along normals
+Display properties of the selected object.
+Distribute branches evenly around the trunk
+Drag and drop a material here
+Edit the profile of the trunk
+Foliage density
+Frond origin
+Frond shape
+Game resolution
+Generate 1 sided leaves
+Generate 2 sided leaves
+Generate strips of leaves along a curve
+Grow from branches
+Highest LOD mesh file.
+Hold Space and click on an object to manually place a child with ID
+Import a tree from a file
+Include children
+Inner trunk
+Light color
+LOD bias
+Lowest LOD mesh file.
+Make the normals point in the opposite direction.
+Manage account...
+Material slot
+Mesh instances
+Minimum branch length
+New tree
+Outer trunk
+Overall height
+Pick...
+Play the animation
+Polygon count
+Preview quality
+Randomize geometry
+Ratio of branches per unit
+Render resolution
+Reveal profile
+Round profile
+Save incremental
+Scale the model
+Season blend
+Select a material
+Select generator preset
+Shape the trunk
+Show axis
+Show generator
+Smooth normals
+Specify the export file name
+Spine angle
+Spline bend
+Spread the branches
+Step back one frame
+Step forward one frame
+Stretch the profile
+Target frame
+Trunk length
+Trunk radius
+Use UV areas
+Vertex colors
+Wind mode
+World position
+An FBX extension plug-in used during the import process is missing.
+An edge was specified that connected a vertex to itself.
+Application error
+Bad parameter passed to activation generator
+Beauty render disabled
+Brush tool
+Cannot create file
+Cannot open file
+Cannot save file
+Cutout only
+Deprecated feature
+Failed to compute
+File format not supported
+File not found
+Geometry force
+Invalid value
+Material not found
+Mesh not found
+Missing feature
+No selection
+Not enough memory
+Out of range
+Please select a target
+Quick render
+Selected object
+Spline preset
+Trunk preset
+Tree preset
+Unsupported file
+Update complete
+Updating
+Version
+Warning
+Error
+Loading
+Processing
+Saving
+Close this dialog
+Apply changes
+Discard changes
+Keep changes
+Use current selection
+Select all
+Invert selection
+Deselect all
+Sort ascending
+Sort descending
+Search...
+Filter...
+Group
+Ungroup
+Locked
+Unlocked
+Collapsed
+Rename...
+Duplicate...
+Delete...
+As:
+Control which geometry types are shown in the viewport.
+Draft
+Edit name...
+Ensure that the winding of each face matches the surface normals (ensures proper face culling in real-time rendering).
+Facebook...
+Flip the model around the specified axis.  Often used to convert coordinate systems and align the mesh for use as a frond or leaf.
+Handling
+Hold "Space" and click on an object to manually place a child with ID
+Make the models normals point in the opposite direction.
+Orient
+Post
+Purchase now…
+Redistribute
+Reload this file.
+Reload this mesh.
+Reorient the mesh, if necessary.  Often used to convert coordinate systems and align the mesh for use as a frond or leaf.
+Restrict growth based on the height of the parent mesh in the mesh's units.
+Select the filename for the image.
+Select the mask type (objects must pass all applied masks).
+Select which channel of the image to use.
+Select which tool is used for selected scene objects.
+Set options for the transform gizmo.
+Specify the mesh file and what processing should be applied to it.
+Specify the style in which the scene is rendered.
+SpeedTree.com...
+Step 1: Hold "Space" and click in the scene to start a new branch
+Support for UE4 integration issues...
+Two-sided
+Undo child material change
+V:16  F:24  A:8
+Video tutorials…
+Wizard...
+all frames
+to
+File
+Edit
+View
+Window
+Help
+Tree
+Tools
+Selection
+Viewport
+Render
+Model
+Actions
+More
+Settings
+Advanced
+Information
+Properties
+Output
+Generation
+Generator
+Geometry
+Materials
+Material Sets
+Meshes
+Mesh helpers
+Displacements
+Masks
+Timeline
+Animation
+Scene Objects
+Collision Objects
+Collision objects
+Collision
+UV Areas
+UV Mapping
+Projectors
+Projector
+Terrain
+Lighting
+Lightmap
+Physics
+Skeleton
+Growth
+Season
+Season Selector
+Fullscreen
+Full screen
+Full screen, no bars
+Default
+Enabled
+Disabled
+Off
+On
+Automatic
+Auto
+Manual
+Manual (full control)
+Manual (match u only)
+Manual (match)
+Legacy
+Standard
+Intermediate
+Exclusive
+Inclusive
+Cohesive
+All
+Any
+None
+Nothing
+Everything
+First
+Last
+Stop
+Stop it
+Ready
+High
+Low
+Very high
+Med
+Min
+Fewer
+Add
+Remove
+Clear
+Clear all
+Clear selected
+Clear edits on selection
+Delete this mesh
+Select verts
+Shrink
+Separate
+Detach Group
+Draw
+Paint
+Erase
+Trim
+Untrim
+Prune it
+Cut
+Copy
+Paste
+Undo
+Redo
+Undo selection
+Redo selection
+Undo last bend
+Nothing to undo
+Nothing to redo
+Nothing selected
+Import
+Close
+Save
+Save as
+Apply
+Apply License
+Cancel
+Reset to default
+Reset to defaults
+Revert to saved
+Forget
+Upgrade
+Share
+Rotate gizmo
+Gizmo
+Activate
+Move
+Restore
+Browse
+Browse...
+Edit Color
+Edit Season Labels
+Reset color
+Reset lightmap scalars
+Matching color
+Colors
+Red
+Blue
+Gray
+Greyscale
+Alpha
+Brightness
+Contrast
+Tiling
+Name
+Length
+Angle
+Angles
+Amount
+Randomize
+Randomize all
+Random Seeds
+Shape Control
+Fuzziness
+Curvature
+Falloff
+Flow
+Ripple
+Noise
+Gnarl
+Floral
+Spline
+Spine only
+Skin
+Skeleton setup for exported models
+Bend
+Fold
+Curl
+Roll
+Force
+Forces
+Force in
+Force out
+Geometry Force Crawling
+Enabled geometry forces
+Favor outliers
+Uniform (random)
+Gaussian (bell curve)
+S-Curve
+Sharp
+Smoothing
+Soft-selection
+Channel
+Image
+Absolute
+Absolute elevation
+Relative
+Relative (keep aspect ratio)
+Relative elevation
+Local
+Global
+Global properties
+Parent level
+Parent's radial segments
+Parent's start and end
+Parent X
+Parent Y
+Parent Z
+Surface X
+Surface Y
+Surface Z
+World X
+World Y
+World Z
+Alignment
+All descendants
+Behavior
+Binormal
+Preserve cross section
+Preset
+Show
+Hide
+Icon only
+Show menu
+Show range
+Show dropped leaves
+Visibility
+User data
+Login message
+Login with Unity ID
+License
+License type
+Use a license
+Force fresh login
+SpeedTree Licensing
+Recents
+Recent
+Recent files
+Filename
+Extensions
+Dynamic LOD
+Max resolution
+Update lower LODs
+Compute AO
+Compute Style
+Compute
+Process tree templates
+Remove unused assets
+Reload Maps
+Override season
+Rules
+No rules configured
+Large Cluster
+Branches only
+Fronds
+Polygons
+Vertices
+Segments
+No new segments
+Proxies
+Target
+Targets
+Not the primary
+Inherited
+Interior
+Exterior
+Embedded
+Keep all
+Keep hits
+Keep misses
+Knock out others only
+Ignore siblings
+Fit to geometry
+Make stationary
+Destroy it
+Reject mesh escapees
+Convert generator to hand drawn
+Convert to hand drawn
+Hand Draw
+Hand Drawn
+Hand drawn branch properties
+Click Place
+Freehand
+Fast Edit
+Shade
+Slope
+Screen area close
+Screen area far
+Error details
+Errors and warnings
+Errors only
+Errors, warnings, and notes
+Full message
+Mode Message
+Close Active Tab
+Close Tab
+List All Tabs
+Window properties
+Stay on Top
+Maximize
+Minimize
+Exit
+Create collection from selection
+Tree info
+Preferences
+Resources
+Reset layout
+Edit Tree Window properties
+Change ID
+Basic
+Delete
+Rename
+List
+About SpeedTree Modeler
+Arbitrary scene scale
+Scene unit conversion
+Generate collision objects
+Licensing info
+Purchase a license
+Shop for models
+User manual
+Documentation
+Forum
+Support
+Manage account
+Login
+Request license
+Growth wizard
+Wind wizard
+Atlas creator
+Video tutorials
+New
+Edit LOD Properties
+Edit Mesh
+Edit name
+Import material asset
+Import mesh asset
+Import tree parts
+Package tree
+Package tree for support
+Bake all texture adjustments
+Render ambient occlusion
+Make New Set
+Reload this file
+Reload this mesh
+Show recent files
+Select a displacement map to edit
+Select a mask to edit
+Select a material to edit
+Select a mesh to edit
+Select the filename for the image
+Select the mask type (objects must pass all applied masks)
+Select which channel of the image to use
+Select which tool is used for selected scene objects
+Specify the mesh file and what processing should be applied to it
+Specify the style in which the scene is rendered
+Set how UV coordinates are computed for texture mapping and light mapping
+Set options for the transform gizmo
+Set the polygonal resolution for this model
+Set the season of the current model. This is applicable to any models that makes use of the season properties
+Sets how many nodes are made and where they start on their parent
+Change how descendants are computed to achieve structured looks
+Change the algorithm by which the model is computed
+Apply materials and influence season transitions
+Control the polygon count
+Control wind and growth animations
+Control how much of the model is visible. Use these options to restrict
+Control whether this mask controls what passes or what fails
+Control which geometry types are shown in the viewport
+Computes a scale based on UV area
+Compute ambient occlusion on the model. Once computed, ambient occlusion settings can be edited
+Each instance of this mesh is scaled by this amount
+Influence how LOD transitions are computed
+Adds noise to the result to make mask edges more organic
+Amount of smoothing applied to the displacement map before it is applied to the geometry
+Access collision object functions. Collision objects are simple geometric primitives
+Access force functions. Forces are modeling tools that manipulate growth in world-space
+Access high level wind functions. Wind is controlled by a combination of properties in the
+Access light properties.
+All property edits apply to the selected generator(s). This mode affects all of the individuals nodes
+All property edits apply to the selected node(s). Property edits in this mode are offsets to the
+Browse for a material and add it to the list automatically.
+Browse for a mesh and add it to the list automatically...
+Browse to a file.
+Browse to an image and add it as a mask.
+Browse to image and add it as a displacement map.
+Choose which LOD mesh is displayed.
+Click here for a menu of generator operations.
+Click this button and then click any spot on the model to set the view
+Collapse or expand the toolbar.
+Displacement maps can be applied to branch geometry.
+Drag this displacement and drop it on the model or a generator to use it.
+Drag this mask and drop it on the model or a generator to use it.
+Drag this material and drop it on the model or a generator to use it
+Drag this mesh and drop it on the model or a generator to use it.
+Eliminate colliding leaf meshes. Meshes are removed in the background according to the quality setting
+Eliminate leaves hidden in the interior of the tree.
+Enable this option to speed up computation time during edits.
+Ensure that the winding of each face matches the surface normals (ensures proper face culling in real-time rendering)
+Face culling.
+Flip the model around the specified axis. Often used to convert coordinate systems and align the mesh
+For best results, use the Orientation and Flip options to orient
+Manage the displacement maps.
+Manage the masks.
+Manage the materials.
+Manage the meshes.
+Masks are applied in the Generation group to control where children can grow.
+Meshes are used as leaf, frond, and terrain geometry.
+Middle LOD mesh file.
+Randomize the currently selected generators. The entire model will be randomized if none are selected.
+Reorient the mesh, if necessary. Often used to convert coordinate systems and align the mesh for use as a frond or leaf.
+Replace old generators with their new, upgraded equivalents.
+Reports the number of vertices in the mesh.
+Restrict growth based on the U tex coord.
+Restrict growth based on the V tex coord.
+Restrict growth based on the height of the parent mesh in the mesh units.
+Restrict growth based on the slope.
+Scale the size of this material in unwrapped maps.
+Specifies the axis that will align with the wind direction.
+Specifies the vector along which rippling will occur.
+String associated with this material that can be retrieved via the SDK.
+These options provide data about this mesh to the wind system.
+Use forces to influence the center line of the branch
+Use noise, maps, or both to rough up the shape of the skin
+Use the freehand tools to shape and edit individual nodes manually.
+Switch to Substances where possible
+Switch to simple mesh
+Convert
+Stretch profile
+Preserve aspect
+Center
+Reset
+Unwrap
+Use UVs
+Unrestricted
+Sort
+Search
+Refresh
+Save As
+Tool
+Click here
+More info
+Hint
+Note

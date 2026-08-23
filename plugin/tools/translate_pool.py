@@ -543,6 +543,107 @@ GLOSSARY_EXTRA5 = {
 }
 GLOSSARY.update(GLOSSARY_EXTRA5)
 
+# grammar connectors that should be dropped in English->Chinese word order
+CONNECT = {
+    "the","a","an","and","or","of","to","for","in","on","at","by","with",
+    "this","that","these","those","which","it","its","is","are","be","been",
+    "being","was","were","has","have","had","do","does","did","can","could",
+    "will","would","should","may","might","must","shall","not","no","nor",
+    "but","so","as","per","from","into","about","than","then","if","each",
+    "any","all","both","more","most","some","one","two","only","also","same",
+    "every","due","via","upon","once","while","when","where","how","why",
+}
+
+GLOSSARY_EXTRA6 = {
+    "Oak": "橡树", "Summer": "夏季", "Fall": "秋季", "Winter": "冬季",
+    "Spring": "春季", "Bark": "树皮", "Needle": "针叶", "Moss": "苔藓",
+    "Dead": "枯", "FlowerBranch": "花枝", "Arm": "臂", "Leg": "腿",
+    "Games": "游戏", "Start": "开始", "Out": "外", "Insufficient": "不足",
+    "Unexpected": "意外", "Incorrect": "不正确", "Supported": "支持",
+    "Unsupported": "不支持", "Under": "下", "Over": "上", "Sample": "采样",
+    "Actor": "角色", "Clump": "丛", "Sets": "集合", "Fill": "填充",
+    "Chunk": "区块", "Entity": "实体", "Attribute": "属性", "Tag": "标签",
+    "Activation": "激活", "Disabled": "已禁用", "Enabled": "已启用",
+    "Bare": "裸", "Fern": "蕨", "Flower": "花", "Ground": "地面",
+    "BareBranch": "裸枝", "Dipped": "浸染", "Proj": "投影", "Path": "路径",
+    "Paths": "路径", "v": "V", "Set": "设置", "Edits": "编辑", "Adjustments": "调整",
+    "Coordinate": "坐标", "System": "系统", "Conversion": "转换",
+    "Wrapper": "包装器", "Uninitialized": "未初始化", "Drawn": "已绘制",
+    "Clipping": "裁剪", "Descendants": "后代", "Detected": "检测到",
+    "Computed": "已计算", "Applied": "已应用", "Required": "必需",
+    "Specified": "已指定", "Expected": "预期", "Based": "基于",
+    "Absolute": "绝对", "Relative": "相对", "General": "常规", "Custom": "自定义",
+    "Projector": "投影器", "VFX": "VFX", "Vfx": "VFX", "Mesh": "网格",
+    "Deadbark": "枯树皮", "Game": "游戏", "Feature": "特性", "Features": "特性",
+    "Coordinate": "坐标", "Located": "位于", "Acute": "锐角", "Arrow": "箭头",
+    "Delete": "删除", "Copy": "复制", "Paste": "粘贴", "Save": "保存",
+    "Open": "打开", "Select": "选择", "View": "视图", "Window": "窗口",
+    "Bold": "粗体", "Italic": "斜体", "Underline": "下划线", "Type": "类型",
+}
+GLOSSARY.update(GLOSSARY_EXTRA6)
+
+GLOSSARY_EXTRA7 = {
+    "Used": "使用", "Unable": "无法", "Enables": "启用", "Generators": "生成器",
+    "Stem": "茎", "Displacement": "置换", "Bake": "烘焙", "Baked": "已烘焙",
+    "Write": "写入", "Support": "支持", "Example": "示例", "Desktop": "桌面",
+    "Outer": "外", "Medium": "中", "Green": "绿色", "Click": "点击",
+    "Test": "测试", "Table": "表格", "Find": "查找", "Black": "黑色",
+    "Tab": "Tab", "Nothing": "无", "Meshes": "网格", "Manage": "管理",
+    "Browse": "浏览", "Long": "长", "Empty": "空", "Colors": "颜色",
+    "Two": "双", "Small": "小", "Hold": "按住", "Access": "访问",
+    "Spot": "位置", "Smoothing": "平滑", "Sequence": "序列", "Parameter": "参数",
+    "Now": "现在", "Match": "匹配", "Mapping": "映射", "Header": "头部",
+    "Functions": "功能", "Control": "控制", "Bias": "偏移", "Available": "可用",
+    "Already": "已经", "Variance": "方差", "Sync": "同步", "Restrict": "限制",
+    "Reload": "重新载入", "Radial": "径向", "Producer": "制片人", "Petal": "花瓣",
+    "Petals": "花瓣", "Needles": "针叶", "Lichen": "地衣", "Inner": "内",
+    "Capture": "采集", "Adjust": "调整", "Winding": "环绕", "Siblings": "同级",
+    "Planes": "平面", "Place": "放置", "Palette": "调色板", "Menu": "菜单",
+    "Keys": "键", "Exists": "存在", "Exceeded": "已超出", "Directory": "目录",
+    "Compression": "压缩", "Collisions": "碰撞", "Bounds": "边界", "Array": "数组",
+    "Visibility": "可见性", "Valid": "有效", "Twigs": "细枝", "Transition": "过渡",
+    "Specify": "指定", "Scales": "缩放", "Reflection": "反射", "Precision": "精度",
+    "Noise": "噪点", "Named": "命名", "Matches": "匹配", "Maple": "枫树",
+    "Licensing": "授权", "Directional": "定向", "Controls": "控件", "Band": "条带",
+    "Always": "始终", "Active": "活动", "Written": "已写入", "Wizard": "向导",
+    "Visible": "可见", "Unwrapped": "展开", "Types": "类型", "Text": "文本",
+    "Systems": "系统", "Supplied": "提供", "Strip": "条带", "Results": "结果",
+    "Requested": "请求", "Region": "区域", "Processing": "处理", "Process": "处理",
+    "Possible": "可能", "Pointer": "指针", "Pass": "传递", "Part": "部分",
+    "Nothing": "无", "Message": "消息", "Manually": "手动", "Lighting": "光照",
+    "Licenses": "许可证", "Library": "库", "Least": "最小", "Indicator": "指示器",
+    "Implemented": "已实现", "Ignored": "已忽略", "Handle": "句柄", "Graph": "图",
+    "Depth": "深度", "Sdf": "Sdf", "Package": "包", "PRIM": "基元",
+    "Acorn": "橡果", "Petal": "花瓣", "Sided": "面", "Models": "模型",
+    "Meshes": "网格", "Colors": "颜色", "Around": "周围", "Arguments": "参数",
+    "Doesn": "不", "What": "什么", "You": "你", "Me": "我", "Like": "类似",
+    "Much": "多", "Could": "可以", "During": "期间", "Preserving": "保留",
+    "Controlled": "受控", "Declaration": "声明", "Get": "获取", "Do": "执行",
+    "Stale": "陈旧", "Seed": "种子", "Bogus": "无效", "FallTransition": "秋季过渡",
+    "BrokenBark": "断裂树皮", "Batched": "批量", "EasternRedbud": "东部红芽",
+    "Undefined": "未定义", "Unknown": "未知", "Failed": "失败", "Mismatch": "不匹配",
+}
+GLOSSARY.update(GLOSSARY_EXTRA7)
+
+GLOSSARY_EXTRA8 = {
+    "Emissive": "自发光", "Summary": "摘要", "Span": "跨度", "Joint": "关节",
+    "Fixed": "固定", "Log": "日志", "Building": "建筑", "Opaque": "不透明",
+    "Arrays": "数组", "MinSize": "最小尺寸", "Compressed": "压缩",
+    "Constrained": "约束", "Crop": "裁剪", "Embedded": "嵌入", "Expiration": "过期",
+    "Detect": "检测", "Fg": "前景", "Overflow": "溢出", "Reconstruction": "重建",
+    "Flash": "闪光", "Charge": "电量", "Deformation": "变形", "outH": "外H",
+    "Foot": "脚", "Containers": "容器", "Optimization": "优化", "Elbow": "肘",
+    "Hip": "髋", "Knee": "膝", "Shoulder": "肩", "Character": "字符",
+    "Variances": "方差", "Feature": "特性", "Fax": "传真", "Film": "影片",
+    "Galaxy": "盖乐世", "Note": "Note", "Creation": "创建", "Frame": "帧",
+    "Position": "位置", "Radius": "半径", "Global": "全局", "Morph": "变形",
+    "Wireframe": "线框", "Transparency": "透明度", "Blending": "混合",
+    "Minify": "缩小", "Magnify": "放大", "Wrap": "包裹", "Clamp": "钳制",
+    "Mirror": "镜像", "Skew": "倾斜", "Twist": "扭曲", "Weld": "焊接",
+    "Inflate": "膨胀", "Puff": "鼓胀", "Trim": "修剪", "Extrude": "挤出",
+}
+GLOSSARY.update(GLOSSARY_EXTRA8)
+
 PHRASES_EXTRA5 = {
     "Quality": "质量", "Optimal": "最佳", "Sensitivity": "敏感度",
     "Optical": "光学", "Ray Tracing": "光线追踪",
@@ -568,6 +669,102 @@ PHRASES_EXTRA6 = {
     "Visibility Inheritance": "可见性继承",
 }
 PHRASES.update(PHRASES_EXTRA6)
+
+# hand-authored precise translations for real SpeedTree UI entries (exact match
+# beats composition).  Continuous per-entry review --> 精翻.
+PHRASES_OVERRIDE = {
+    "Actual Ambient": "实际环境光",
+    "Flip curve horizontally": "水平翻转曲线",
+    "Flip curve vertically": "垂直翻转曲线",
+    "Generate adaptive points": "生成自适应点",
+    "Geometric Rotation": "几何旋转",
+    "Global Axisof Gravity": "全局重力轴",
+    "Gnarl Force": "瘤节力",
+    "Grouping Hierarchy Level": "分组层级级别",
+    "Import tree parts...": "导入树木部件…",
+    "Include variations": "包含变化",
+    "Indirect Color": "间接颜色",
+    "Infinite Light": "无限光",
+    "Intersection Blending": "相交混合",
+    "Limb Length": "肢长",
+    "Local Resolve": "局部解析",
+    "Logical Height": "逻辑高度",
+    "Logical Width": "逻辑宽度",
+    "Magnet Force": "磁力",
+    "Map Dialog": "贴图对话框",
+    "Master Scale": "主缩放",
+    "Matrix Transformation": "矩阵变换",
+    "Height exponent": "高度指数",
+    "High Dynamic Range Image": "高动态范围图像",
+    "Growth friendly": "生长友好",
+    "Geometry force actions": "几何力操作",
+    "Grow things around it": "在其周围生长",
+    "Grow things off of it": "从其上生长",
+    "Growth not supported for shells": "壳不支持生长",
+    "Height localization": "高度定位",
+    "Hilite Color": "高光颜色",
+    "Emissive Color": "自发光颜色",
+    "Export Summary": "导出摘要",
+    "Generate Log Data": "生成日志数据",
+    "Fill Timeline Span": "填充时间轴跨度",
+    "Fixed Height": "固定高度",
+    "Fixed Width": "固定宽度",
+    "Fixed Ratio": "固定比例",
+    "First Joint": "第一关节",
+    "Force Mesh Containers": "力网格容器",
+    "Frond optimization": "叶状体优化",
+    "Clear variances": "清除方差",
+    "Character Count": "字符数",
+    "Compress Arrays": "压缩数组",
+    "Compress MinSize": "压缩最小尺寸",
+    "Compressed Image Size": "压缩图像尺寸",
+    "Constrained object (Child)": "受约束对象（子级）",
+    "Deleted Image Count": "已删除图像数",
+    "Enable externsions (new feature)": "启用扩展（新特性）",
+    "Expiration Time": "过期时间",
+    "Export World Building Data": "导出世界建筑数据",
+    "Export world building data...": "导出世界建筑数据…",
+    "Geo Pixel Scale": "地理像素缩放",
+    "Get Tick Count": "获取刻度数",
+    "Global Axisof Gravity": "全局重力轴",
+    "Gray Response Curve": "灰度响应曲线",
+    "Import SpeedTree Model File": "导入 SpeedTree 模型文件",
+    "Initialize Critical Section And Spin Count": "初始化临界区与自旋计数",
+    "Interpolated Color": "插值颜色",
+    "LZMA2 Compression Preset": "LZMA2 压缩预设",
+    "Length (sec)": "长度（秒）",
+    "Level ofI": "I 级别",
+    "Light Cross": "灯光十字",
+    "Linked Ambient": "关联环境光",
+    "Local roam file already exists": "本地漫游文件已存在",
+    "Low detail navigation": "低细节导航",
+    "Map Dialog": "贴图对话框",
+    "Height exponent": "高度指数",
+    "Leaf Left Fore Arm Roll": "叶片左前臂滚转",
+    "Leaf Right Fore Arm Roll": "叶片右前臂滚转",
+    "Left Fore Arm Roll": "左前臂滚转",
+    "Left break spot": "左断裂点",
+    "Key Attr Ref Count": "关键属性引用数",
+    "Get Active Processor Count": "获取活动处理器数",
+    "Get Active Processor Group Count": "获取活动处理器组数",
+    "Get Current Ref Count": "获取当前引用数",
+    "Get Sub Layer Offset": "获取子层偏移",
+    "Geometry Force has no behaviors, has no effect": "几何力没有行为，无效果",
+    "Geometry Force not ready": "几何力未就绪",
+    "Global Axisof Gravity": "全局重力轴",
+    "Bk Color": "背景颜色",
+    "CSti Color": "CSti 颜色",
+    "Base GenI": "基础 GenI",
+    "Builder Two Level": "双级别构建器",
+    "BVHNBuilder Two Level": "双级别 BVH 构建器",
+    "HMD Global": "HMD 全局",
+    "ICC Profile": "ICC 配置",
+    "ISO Speed": "ISO 感光度",
+    "Length (sec)": "长度（秒）",
+    "Leaf AFi": "叶片 AFi",
+    "Focal Units per mm": "每毫米焦点单位",
+}
+PHRASES.update(PHRASES_OVERRIDE)
 
 
 def tr_word(w):
@@ -611,11 +808,11 @@ def translate(text):
         # U/V/W/X/Y/Z are axis labels; keep them verbatim
         if w in ("U", "V", "W", "X", "Y", "Z", "UV", "XYZ", "LOD", "IK", "SDK"):
             out_words.append(w)
+        elif w in CONNECT:
+            continue
         else:
             out_words.append(GLOSSARY.get(w, tr_word(w) or w))
-    # join: mostly space-joined; avoid duplicating spaces
-    joined = " ".join(out_words)
-    joined = joined.replace("  ", " ")
+    joined = "".join(out_words)
     return mnemonic + joined + paren + ellip
 
 
