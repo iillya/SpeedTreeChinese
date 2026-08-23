@@ -29,8 +29,6 @@ def payload_files():
         name = os.path.basename(path)
         if name == "static_zh.json":       # placeholder pool, don't ship
             continue
-        if os.path.getsize(path) > 64 * 1024:
-            continue
         files.append(os.path.join("translations", name))
     return files
 
