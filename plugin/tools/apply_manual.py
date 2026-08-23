@@ -4,6 +4,7 @@ replacing machine-composed values for those keys.  Keeps everything else.
 """
 
 import json
+import glob
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -19,6 +20,13 @@ def main():
     for k, v in manual_zh.MANUAL.items():
         d[k] = v
         n += 1
+    # merge per-batch hand-authored JSON files (manual_batch_*.json)
+    for p in sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                           "manual_batch_*.json"))):
+        b = json.load(open(p, encoding="utf-8"))
+        for k, v in b.items():
+            d[k] = v
+            n += 1
     payload = {"$schema":"sp-translation-v1","id":"speedtree-merged","language":"zh-CN",
                "description":"SpeedTree 中文汉化词库（人工精翻版）","translations": d}
     for p in (MAIN, NAT):
