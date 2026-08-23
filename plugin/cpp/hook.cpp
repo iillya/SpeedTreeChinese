@@ -58,6 +58,7 @@
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QTabBar>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QHBoxLayout>
@@ -365,14 +366,80 @@ static void applyTranslations(QApplication* app) {
         applyWidget(w);
 }
 
+// ---------------------------------------------------------------------------
+// CElidingLabel (Qt Advanced Docking) full-text access.
+//
+// ads::CElidingLabel shadows QLabel::text() with CElidingLabel::text(), which
+// returns the FULL (un-elided) source string while QLabel::text() returns only
+// the elided fragment drawn (e.g. "Mater…" for "Material").  Because
+// QLabel::setText is NOT virtual, calling lbl->setText() through a QLabel*
+// only changes that visible fragment; SpeedTree then re-elides from the
+// untouched full source on the next resize, reverting the tab to English.
+// So detect the true CElidingLabel and drive its exported setText() (which
+// updates the stored full source, the tooltip and the sizeHint), reading the
+// full source back from the toolTip for dictionary lookup.
+// ---------------------------------------------------------------------------
+using CE_SetText = void(__fastcall*)(void*, const QString&);
+static CE_SetText g_ceSetText  = nullptr;
+static bool       g_ceResolved = false;
+
+static void resolveElidingLabel() {
+    if (g_ceResolved) return;
+    g_ceResolved = true;
+    HMODULE m = GetModuleHandleW(L"QtAdvancedDocking.dll");
+    if (!m) return;
+    g_ceSetText = (CE_SetText)GetProcAddress(m, "?setText@CElidingLabel@ads@@QEAAXAEBVQString@@@Z");
+    if (g_ceSetText)
+        Log("CElidingLabel setText() resolved");
+}
+
+static bool isElidingLabel(QWidget* w) {
+    return w && QString::fromLatin1(w->metaObject()->className()) ==
+                    QLatin1String("ads::CElidingLabel");
+}
+
+// Full source text for a label, masking Qt Advanced Docking eliding labels.
+static QString labelSource(QLabel* lbl) {
+    if (!lbl) return {};
+    QString t = lbl->text();
+    // ads::CElidingLabel keeps the FULL source in the toolTip (set by its own
+    // setText) while QLabel::text() holds only the elided fragment drawn
+    // (e.g. "Mater…" for "Material").  Reading the toolTip therefore recovers
+    // the complete string for dictionary lookup without a by-value call.
+    if (isElidingLabel(lbl)) {
+        QString tip = lbl->toolTip();
+        if (!tip.isEmpty()) return tip;
+        return t;
+    }
+    // Generic eliding-QLabel fallback: the full source lives in the toolTip.
+    if (t.isEmpty()) return t;
+    bool elided = t.endsWith(QChar(0x2026)) || t.endsWith(QLatin1String("..."));
+    QString tip = lbl->toolTip();
+    if (elided && !tip.isEmpty() && tip.size() > t.size()) {
+        int chop = t.endsWith(QChar(0x2026)) ? 1 : 3;
+        if (tip.startsWith(t.left(t.size() - chop)))
+            return tip;
+    }
+    return t;
+}
+
+static void setLabelSource(QLabel* lbl, const QString& text) {
+    if (!lbl) return;
+    resolveElidingLabel();
+    if (isElidingLabel(lbl) && g_ceSetText)
+        g_ceSetText(lbl, text);
+    else
+        lbl->setText(text);
+}
+
 // Translate standard widgets by setText so Qt's sizeHint / layout measure the
 // CHINESE text (width follows the translation, not the English original).
 static void applyWidgetText(QWidget* w) {
     if (auto* lbl = qobject_cast<QLabel*>(w)) {
-        QString t = lbl->text();
+        QString t = labelSource(lbl);
         if (!t.isEmpty() && !containsCjk(t)) {
             QString tr = translated(t);
-            if (!tr.isEmpty() && tr != t) lbl->setText(tr);
+            if (!tr.isEmpty() && tr != t) setLabelSource(lbl, tr);
         }
     } else if (auto* btn = qobject_cast<QAbstractButton*>(w)) {
         QString t = btn->text();
@@ -387,6 +454,15 @@ static void applyWidgetText(QWidget* w) {
             if (!t.isEmpty() && !containsCjk(t)) {
                 QString tr = translated(t);
                 if (!tr.isEmpty() && tr != t) a->setText(tr);
+            }
+        }
+    }
+    if (auto* tb = qobject_cast<QTabBar*>(w)) {
+        for (int i = 0; i < tb->count(); ++i) {
+            QString t = tb->tabText(i);
+            if (!t.isEmpty() && !containsCjk(t)) {
+                QString tr = translated(t);
+                if (!tr.isEmpty() && tr != t) tb->setTabText(i, tr);
             }
         }
     }
@@ -435,7 +511,7 @@ static void collectWidgetStrings(std::map<std::string, std::string>& pending) {
         pending.emplace(k, "");
     };
     for (QWidget* w : widgets) {
-        if (auto* lbl = qobject_cast<QLabel*>(w)) add(lbl->text());
+        if (auto* lbl = qobject_cast<QLabel*>(w)) add(labelSource(lbl));
         if (auto* btn = qobject_cast<QAbstractButton*>(w)) add(btn->text());
         if (auto* le = qobject_cast<QLineEdit*>(w)) add(le->text());
         if (auto* cb = qobject_cast<QComboBox*>(w)) {
@@ -444,6 +520,8 @@ static void collectWidgetStrings(std::map<std::string, std::string>& pending) {
         }
         if (auto* menu = qobject_cast<QMenu*>(w))
             for (QAction* a : menu->actions()) add(a->text());
+        if (auto* tb = qobject_cast<QTabBar*>(w))
+            for (int i = 0; i < tb->count(); ++i) add(tb->tabText(i));
         if (auto* view = qobject_cast<QAbstractItemView*>(w)) {
             if (view->model()) {
                 auto* model = view->model();
