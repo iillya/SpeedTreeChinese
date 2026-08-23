@@ -31,8 +31,10 @@
 #include <set>
 #include <chrono>
 #include <cctype>
+#include <cstdlib>
 #include <cstdio>
 #include <utility>
+#include <functional>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QMetaObject>
@@ -52,8 +54,10 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QKeySequence>
+#include <QtGui/QContextMenuEvent>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QAbstractItemView>
+#include <QtWidgets/QTreeView>
 #include <QtWidgets/QStyledItemDelegate>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QAbstractButton>
@@ -62,6 +66,7 @@
 #include <QtWidgets/QTabBar>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QToolBar>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QPushButton>
@@ -101,6 +106,8 @@ static QString normalizeForMatch(QString text);
 static bool containsCjk(const QString& text);
 static void installAuthorLink();
 static void repaintAll();
+static void runUiTour();
+static bool replaceImports(HMODULE module, void* original, void* replacement);
 
 // ---------------------------------------------------------------------------
 // Paths / logging
@@ -303,6 +310,33 @@ static bool containsCjk(const QString& text) {
             return true;
     }
     return false;
+}
+
+// JSON-string escape for a UTF-8 key/value (quotes, backslash, control chars).
+static std::string jsonEscape(const std::string& s) {
+    std::string out;
+    out.reserve(s.size() + 8);
+    for (unsigned char c : s) {
+        switch (c) {
+            case '"':  out += "\\\""; break;
+            case '\\': out += "\\\\"; break;
+            case '\b': out += "\\b";  break;
+            case '\f': out += "\\f";  break;
+            case '\n': out += "\\n";  break;
+            case '\r': out += "\\r";  break;
+            case '\t': out += "\\t";  break;
+            default:
+                if (c < 0x20) {
+                    const char* hex = "0123456789abcdef";
+                    out += "\\u00";
+                    out.push_back(hex[(c >> 4) & 0xF]);
+                    out.push_back(hex[c & 0xF]);
+                } else {
+                    out.push_back((char)c);
+                }
+        }
+    }
+    return out;
 }
 
 // "Parent||Self||objectName||text" control-ID strings use "||".
@@ -680,6 +714,263 @@ static void collectWidgetStrings(std::map<std::string, std::string>& pending) {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Automatic UI tour (ST_TOUR=1): open-ish pass over the whole live UI so every
+// visible / model-driven string is captured without relying on the manual 1.5 s
+// sniffer.  Walks all widgets, every menu + submenu + toolbar action, tabs,
+// combo items, line edits, tooltips, and every item-view model row/column
+// (this is where node parameters live), then also merges the drawText strings
+// seen since launch.  Writes the missing (untranslated) strings to
+// <plugin>\translations\tour_untranslated_zh.json.
+// ---------------------------------------------------------------------------
+static bool g_tourActive = false;
+
+// Open/expand the UI so lazy content is created, capturing after each step.
+// Runs on the GUI thread.  Safe: only expands views and cycles tabs/combos,
+// restoring the previous selection afterwards.  Context menus / modal dialogs
+// are NOT auto-triggered here (they can block); they are captured on Show.
+static void autoOpenPanels() {
+    // 1) Expand every tree view to materialize lazy node rows / parameters.
+    for (QWidget* w : QApplication::allWidgets())
+        if (auto* tv = qobject_cast<QTreeView*>(w)) tv->expandAll();
+    QApplication::processEvents();
+    runUiTour();
+
+    // 2) Cycle each standard tab bar (normal Qt tabs); dock tabs are handled by
+    //    switching the underlying CDockWidgetTab widgets below.
+    for (QWidget* w : QApplication::allWidgets()) {
+        auto* tb = qobject_cast<QTabBar*>(w);
+        if (!tb || tb->count() < 2) continue;
+        const int cur = tb->currentIndex();
+        for (int i = 0; i < tb->count(); ++i) {
+            tb->setCurrentIndex(i);
+            QApplication::processEvents();
+            runUiTour();
+        }
+        tb->setCurrentIndex(cur);
+        QApplication::processEvents();
+    }
+
+    // 3) Cycle every combo box to reveal dependent controls (restore after).
+    for (QWidget* w : QApplication::allWidgets()) {
+        auto* cb = qobject_cast<QComboBox*>(w);
+        if (!cb || cb->count() < 2) continue;
+        const int cur = cb->currentIndex();
+        for (int i = 0; i < cb->count(); ++i) {
+            cb->setCurrentIndex(i);
+            QApplication::processEvents();
+            runUiTour();
+        }
+        cb->setCurrentIndex(cur);
+        QApplication::processEvents();
+    }
+}
+
+// --- menu capture: any QMenu shown via exec/popup is recorded (untranslated),
+//     and while the auto-tour is active context menus are auto-closed so the
+//     synthetic right-click triggering below never blocks the GUI thread.
+typedef QAction* (__fastcall* QMenuExecP)(void*, const QPoint&, QAction*);
+typedef QAction* (__fastcall* QMenuExec0)(void*);
+typedef void     (__fastcall* QMenuPopup)(void*, const QPoint&, QAction*);
+static QMenuExecP  g_menuExecP  = nullptr;
+static QMenuExec0  g_menuExec0  = nullptr;
+static QMenuPopup  g_menuPopup  = nullptr;
+static bool        g_menuHooked = false;
+static long        g_menuCaptured = 0;
+
+static void captureMenu(QMenu* m) {
+    if (!m) return;
+    for (QAction* a : m->actions()) {
+        if (!a->text().isEmpty()) {
+            if (!isTranslatableString(a->text())) continue;
+            std::string k = a->text().trimmed().toUtf8().constData();
+            if (k.empty() || g_translations.count(k) || g_idTranslations.count(k)) continue;
+            if (g_paintSeen.size() < 200000) {
+                g_paintSeen.insert(k);
+                ++g_menuCaptured;
+            }
+        }
+        if (a->menu()) captureMenu(a->menu());
+    }
+}
+
+static void closeMenuSoon(QMenu* m) {
+    QTimer::singleShot(80, m, [m] { m->close(); });
+}
+
+static QAction* hookedQMenuExecP(void* _this, const QPoint& pos, QAction* act) {
+    auto* m = static_cast<QMenu*>(_this);
+    if (g_tourActive && m) { captureMenu(m); closeMenuSoon(m); }
+    return g_menuExecP ? g_menuExecP(m, pos, act) : nullptr;
+}
+static QAction* hookedQMenuExec0(void* _this) {
+    auto* m = static_cast<QMenu*>(_this);
+    if (g_tourActive && m) { captureMenu(m); closeMenuSoon(m); }
+    return g_menuExec0 ? g_menuExec0(m) : nullptr;
+}
+static void hookedQMenuPopup(void* _this, const QPoint& pos, QAction* act) {
+    auto* m = static_cast<QMenu*>(_this);
+    if (g_tourActive && m) { captureMenu(m); closeMenuSoon(m); }
+    if (g_menuPopup) g_menuPopup(m, pos, act);
+}
+
+static void installMenuHooks() {
+    if (g_menuHooked) return;
+    HMODULE w = GetModuleHandleW(L"Qt6Widgets.dll");
+    if (!w) return;
+    g_menuExecP = (QMenuExecP)GetProcAddress(w,
+        "?exec@QMenu@@QEAAPEAVQAction@@AEBVQPoint@@PEAV2@@Z");
+    g_menuExec0 = (QMenuExec0)GetProcAddress(w,
+        "?exec@QMenu@@QEAAPEAVQAction@@XZ");
+    g_menuPopup = (QMenuPopup)GetProcAddress(w,
+        "?popup@QMenu@@QEAAXAEBVQPoint@@PEAVQAction@@@Z");
+    struct MSym { void* orig; void* hook; };
+    MSym syms[] = {
+        {(void*)g_menuExecP, (void*)&hookedQMenuExecP},
+        {(void*)g_menuExec0, (void*)&hookedQMenuExec0},
+        {(void*)g_menuPopup, (void*)&hookedQMenuPopup},
+    };
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, GetCurrentProcessId());
+    if (snap != INVALID_HANDLE_VALUE) {
+        MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
+        if (Module32FirstW(snap, &mod)) {
+            do {
+                if (_wcsicmp(mod.szModule, L"SpeedTreeChineseHook.dll") == 0) continue;
+                HMODULE h = GetModuleHandleW(mod.szModule);
+                if (!h) continue;
+                for (auto& s : syms)
+                    if (s.orig) replaceImports(h, s.orig, s.hook);
+            } while (Module32NextW(snap, &mod));
+        }
+        CloseHandle(snap);
+    }
+    g_menuHooked = true;
+}
+
+// Synthetically right-click each tree view / large panel so its context menu is
+// created, captured by the exec/popup hook, then auto-closed.
+static void walkRows(QAbstractItemView* view, const QModelIndex& parent,
+                     int depth, int& budget) {
+    if (budget <= 0 || depth > 4 || !view->model()) return;
+    QAbstractItemModel* m = view->model();
+    int rows = m->rowCount(parent);
+    for (int r = 0; r < rows && budget > 0; ++r) {
+        QModelIndex idx = m->index(r, 0, parent);
+        if (!idx.isValid()) continue;
+        --budget;
+        view->setCurrentIndex(idx);
+        const QRect rect = view->visualRect(idx);
+        if (!rect.isEmpty()) {
+            QPoint pos = rect.center();
+            QContextMenuEvent ev(QContextMenuEvent::Mouse, pos,
+                                 view->mapToGlobal(pos),
+                                 QApplication::keyboardModifiers());
+            QApplication::sendEvent(view, &ev);
+            QApplication::processEvents();
+        }
+        walkRows(view, idx, depth + 1, budget);
+    }
+}
+
+static void triggerContextMenus() {
+    const auto widgets = QApplication::allWidgets();
+    int views = 0;
+    for (QWidget* w : widgets) {
+        if (!w || !w->isVisible()) continue;
+        // Item views (node/property trees, lists, tables) own the useful context
+        // menus; skip generic widgets to avoid opening unintended dialogs.
+        auto* view = qobject_cast<QAbstractItemView*>(w);
+        if (!view || !view->model()) continue;
+        ++views;
+        int budget = 60;
+        int before = (int)g_paintSeen.size();
+        walkRows(view, QModelIndex(), 0, budget);
+        int captured = (int)g_paintSeen.size() - before;
+        Log("tour view '" + std::string(view->metaObject()->className()) +
+            "' captured=" + std::to_string(captured));
+    }
+    Log("tour triggerContextMenus: views=" + std::to_string(views) +
+        " newMenuStrings=" + std::to_string(g_menuCaptured));
+}
+
+static void collectMenuActions(QMenu* menu, std::function<void(const QString&)> add) {
+    if (!menu) return;
+    for (QAction* a : menu->actions()) {
+        if (!a->text().isEmpty()) add(a->text());
+        if (a->menu()) collectMenuActions(a->menu(), add);
+    }
+}
+
+static void runUiTour() {
+    std::map<std::string, std::string> pending;
+    auto add = [&](const QString& s) {
+        if (!isTranslatableString(s)) return;
+        std::string k = s.trimmed().toUtf8().constData();
+        if (k.empty() || g_translations.count(k) || g_idTranslations.count(k)) return;
+        pending.emplace(k, "");
+    };
+    const auto widgets = QApplication::allWidgets();
+    for (QWidget* w : widgets) {
+        if (auto* lbl = qobject_cast<QLabel*>(w)) add(labelSource(lbl));
+        if (auto* btn = qobject_cast<QAbstractButton*>(w)) add(btn->text());
+        if (auto* le = qobject_cast<QLineEdit*>(w)) add(le->text());
+        if (auto* cb = qobject_cast<QComboBox*>(w)) {
+            add(cb->currentText());
+            for (int i = 0; i < cb->count(); ++i) add(cb->itemText(i));
+        }
+        if (auto* tb = qobject_cast<QTabBar*>(w))
+            for (int i = 0; i < tb->count(); ++i) add(tb->tabText(i));
+        if (!w->toolTip().isEmpty()) add(w->toolTip());
+        if (auto* menu = qobject_cast<QMenu*>(w))
+            collectMenuActions(menu, add);
+        if (auto* mb = qobject_cast<QMenuBar*>(w))
+            for (QAction* a : mb->actions()) {
+                add(a->text());
+                if (a->menu()) collectMenuActions(a->menu(), add);
+            }
+        if (auto* tb2 = qobject_cast<QToolBar*>(w))
+            for (QAction* a : tb2->actions()) add(a->text());
+        if (auto* view = qobject_cast<QAbstractItemView*>(w)) {
+            if (view->model()) {
+                auto* model = view->model();
+                int rows = model->rowCount(), cols = model->columnCount();
+                if (rows > 0 && rows < 100000 && cols > 0 && cols < 64) {
+                    for (int r = 0; r < rows; ++r)
+                        for (int c = 0; c < cols; ++c)
+                            add(model->data(model->index(r, c), Qt::DisplayRole).toString());
+                }
+            }
+        }
+    }
+    // drawText / custom-painted strings captured since launch.
+    for (const std::string& s : g_paintSeen)
+        if (!s.empty() && !g_translations.count(s))
+            pending.emplace(s, "");
+
+    std::string json = "{\n  \"$schema\": \"sp-translation-v1\",\n"
+                       "  \"id\": \"speedtree-tour\",\n"
+                       "  \"language\": \"zh-CN\",\n"
+                       "  \"description\": \"UI 巡检采集的未翻译词条（待填写）\",\n"
+                       "  \"translations\": {\n";
+    bool first = true;
+    for (const auto& kv : pending) {
+        if (!first) json += ",\n";
+        json += "    \"" + jsonEscape(kv.first) + "\": \"\""; first = false;
+    }
+    json += "\n  }\n}\n";
+    std::wstring dir = SelfDirW() + L"\\translations";
+    CreateDirectoryW(dir.c_str(), nullptr);
+    std::wstring path = dir + L"\\tour_untranslated_zh.json";
+    HANDLE h = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+                           FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h != INVALID_HANDLE_VALUE) {
+        DWORD wr = 0;
+        WriteFile(h, json.data(), (DWORD)json.size(), &wr, nullptr);
+        CloseHandle(h);
+    }
+    Log("UI tour wrote " + std::to_string(pending.size()) + " untranslated strings");
+}
+
 static void writeUntranslated(const std::map<std::string, std::string>& pending) {
     std::string json = "{\n  \"$schema\": \"sp-translation-v1\",\n"
                        "  \"id\": \"speedtree-sniffed\",\n"
@@ -762,6 +1053,18 @@ public:
             if (object && qobject_cast<QMenuBar*>(object) &&
                 event->type() == QEvent::Show)
                 installAuthorLink();
+            // Capture any menu that pops up (incl. right-click context menus):
+            // record its (untranslated) action texts so the UI tour picks them up.
+            if (event->type() == QEvent::Show) {
+                if (auto* menu = qobject_cast<QMenu*>(object))
+                    collectMenuActions(menu, [](const QString& s) {
+                        if (!isTranslatableString(s)) return;
+                        std::string k = s.trimmed().toUtf8().constData();
+                        if (k.empty() || g_translations.count(k) ||
+                            g_idTranslations.count(k)) return;
+                        if (g_paintSeen.size() < 200000) g_paintSeen.insert(k);
+                    });
+            }
         }
         return false;
     }
@@ -805,7 +1108,8 @@ static QString translatePaint(const QString& text) {
     QString tr = translated(text);
     if (!tr.isEmpty()) return tr;
     // Record untranslated paint strings (custom-drawn property labels, etc.).
-    if (g_sniffActive && g_paintSeen.size() < 20000 && isTranslatableString(text)) {
+    if ((g_sniffActive || g_tourActive) && g_paintSeen.size() < 100000 &&
+        isTranslatableString(text)) {
         std::string k = text.trimmed().toUtf8().constData();
         if (!k.empty()) g_paintSeen.insert(k);
     }
@@ -1177,6 +1481,23 @@ static void installAuthorLink() {
 }
 
 static void RunOnGuiThread(QApplication* app) {
+    // Automatic UI tour: ST_TOUR=1 collects every live UI string at two points
+    // after launch, so late-loading panels are captured too.
+    const char* tour = std::getenv("ST_TOUR");
+    if (tour && *tour == '1') {
+        g_tourActive = true;
+        installMenuHooks();
+        // Phase 1: expand trees (+ capture), then cycle tabs & combos (+ capture)
+        QTimer::singleShot(4000, app, [] { autoOpenPanels(); });
+        // Phase 2: synthetically right-click item views to open & capture their
+        // context menus (auto-closed by the exec/popup hook).
+        QTimer::singleShot(12000, app, [] { triggerContextMenus(); runUiTour(); });
+        auto* tourTimer = new QTimer(app);
+        tourTimer->setInterval(5000);
+        QObject::connect(tourTimer, &QTimer::timeout, [] { runUiTour(); });
+        tourTimer->start();
+        Log("UI tour enabled (ST_TOUR=1): auto-open + context-menu capture");
+    }
     LoadDictionaries();
     applyTranslations(app);
     installDrawTextHooks();
