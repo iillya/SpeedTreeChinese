@@ -28,6 +28,12 @@ PATHY = re.compile(r"[\\/]|\.[A-Za-z0-9]{1,5}\b")
 URLY = re.compile(r"http|www|\.com\b|\.org\b|@|github|speedtree\.com|\.dll\b|\.exe\b|\.db\b", re.I)
 CAMELL = re.compile(r"[a-z][A-Z]")
 ALL_CAPS_DIGIT = re.compile(r"^[A-Z0-9_\- ]{2,}$")
+ACRONYMS = {
+    "LOD", "UV", "XYZ", "IK", "SDK", "FPS", "FOV", "LUT", "HDR", "TGBA",
+    "TGA", "SIT", "SRT", "VSM", "AO", "GI", "FBM", "SSS", "GPG", "SLR",
+    "DDS", "MIP", "GPU", "CPU", "PVS", "CRC", "PNG", "JPG", "JPG", "TIF",
+    "BMP", "U", "V", "W", "X", "Y", "Z", "AI", "HD", "SD", "I/O", "ID",
+}
 # strings we never want (runtime logs, crypto, net, licensing, error walls)
 BAD = re.compile(
     r"\b(class|const|void|enum|struct|bool|int|char|string|std|pxr|this|nullptr|"
@@ -173,7 +179,7 @@ def is_label(s) -> bool:
     t = s.strip()
     if t != s:
         return False
-    if not (2 <= len(t) <= 64):
+    if not (2 <= len(t) <= 100):
         return False
     if CJK.search(t):
         return False
@@ -209,22 +215,28 @@ def is_label(s) -> bool:
         return False
     if SIG_PAREN.search(t):
         return False
-    # identifiers without spaces, e.g. BranchLength / AFAreaHeight
+    # identifiers without spaces, e.g. BranchLength / AFAreaHeight -> drop
     if " " not in t and CAMELL.search(t):
         return False
-    # single word that is a bare acronym / letter
-    if " " not in t and not (len(t) >= 3 and re.match(r"^[A-Z][a-z]+$", t)):
-        return False
-    # a word mixing letter+digit in a non label-like way (A9A, AFi5) -> reject,
-    # unless it is a plain phrase like "LOD 1" / "Level 2"
+    # single word: keep real labels / acronyms, drop bare letters (A, B)
+    if " " not in t:
+        if not re.match(r"^[A-Z][A-Za-z]{2,}$", t):
+            return False
+    # a word mixing letter+digit in a junk way (A9A, AFi5) -> reject
     for w in t.split():
         if re.search(r"[A-Za-z]\d[A-Za-z]", w):
             return False
         if re.search(r"^\d+[A-Za-z]+$", w):
             return False
-    # too many words = sentence-ish, not a label
-    if t.count(" ") >= 5 and re.search(r"\b(of|the|and|for|with|to|in|on|a|an)\b", t):
-        return False
+    # single-letter tokens that are not coordinate axes -> drop (U A, V B)
+    for w in t.split():
+        if len(w) == 1 and w not in ("U", "V", "W", "X", "Y", "Z"):
+            return False
+    # All-CAPS words (ACTOR, ADDR, ABCDEFG...) are binary/code tokens, not UI.
+    # Title-case words (Actor, Address, Alpha) are the real labels.
+    for w in t.split():
+        if len(w) >= 2 and w.isupper() and w not in ACRONYMS:
+            return False
     letters = sum(1 for c in t if c.isalpha() or c.isspace() or c in "(),-\u2019'")
     if letters / len(t) < 0.78:
         return False
@@ -315,7 +327,7 @@ def main():
         pool |= scan_file(f)
         print("scanned", os.path.basename(f), "-> candidates", len(pool))
     pool |= merge_scratch_pools()
-    pool = {x for x in pool if is_label(x) and is_domain_relevant(x)}
+    pool = {x for x in pool if is_label(x)}
     ordered = sorted(pool)
     with open(os.path.join(SCRATCH, "complete_pool.txt"), "w", encoding="utf-8") as fh:
         fh.write("\n".join(ordered))

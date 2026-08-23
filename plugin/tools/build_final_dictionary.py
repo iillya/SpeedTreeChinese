@@ -18,9 +18,13 @@ SRC_TRANS = os.path.join(PLUGIN, "translations")
 NAT_TRANS = os.path.join(PLUGIN, "native", "translations")
 
 
-def load_filled():
+def load_curated():
+    """Filled translations from the 8 curated dictionaries (minus the
+    auto-generated complete file, which is merged separately)."""
     filled = {}
     for p in glob.glob(os.path.join(SRC_TRANS, "*_zh.json")):
+        if os.path.basename(p) == "dictionary_complete_zh.json":
+            continue
         try:
             d = json.load(open(p, encoding="utf-8-sig"))
         except Exception:
@@ -32,14 +36,23 @@ def load_filled():
 
 
 def main():
-    existing = load_filled()
-    trans = json.load(open(os.path.join(HERE, "scratch", "translated.json"), encoding="utf-8"))
+    curated = load_curated()
+    complete_path = os.path.join(SRC_TRANS, "dictionary_complete_zh.json")
     complete = {}
+    if os.path.isfile(complete_path):
+        try:
+            d = json.load(open(complete_path, encoding="utf-8-sig"))
+            complete = {k: v for k, v in d.get("translations", {}).items()
+                        if v.strip() and v != "_skip_"}
+        except Exception:
+            pass
+
+    trans = json.load(open(os.path.join(HERE, "scratch", "translated.json"), encoding="utf-8"))
     for k, v in trans.items():
         v = v.strip()
         if not v or v == k:          # skip placeholders / untouched noise
             continue
-        if k in existing:            # curated translation already present -> skip
+        if k in curated or k in complete:
             continue
         complete[k] = v
 
@@ -58,8 +71,9 @@ def main():
             fh.write("\n")
         print("wrote", out, "entries", len(complete))
 
-    print("existing filled:", len(existing), " net-new added:", len(complete),
-          " new total:", len(existing) + len(complete))
+    total = len(curated) + len(complete)
+    print("curated:", len(curated), " complete:", len(complete),
+          " new total:", total)
 
 
 if __name__ == "__main__":

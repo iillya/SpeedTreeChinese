@@ -443,6 +443,132 @@ PHRASES_EXTRA3 = {
 }
 PHRASES.update(PHRASES_EXTRA3)
 
+GLOSSARY_EXTRA4 = {
+    "Tags": "标签", "Square": "方形", "Reverse": "反向", "Resource": "资源",
+    "Control": "控制", "Cull": "剔除", "End": "结束", "Fit": "适配",
+    "Feet": "英尺", "Inches": "英寸", "Kilometers": "公里", "Miles": "英里",
+    "Description": "描述", "Modeler": "模型器", "Plugin": "插件",
+    "Instruction": "指令", "State": "状态", "Version": "版本",
+    "Application": "应用", "Program": "程序", "Server": "服务器",
+    "Document": "文档", "Caption": "说明", "Panorama": "全景", "Media": "媒体",
+    "Lines": "行", "Second": "秒", "Hour": "小时", "Host": "主机",
+    "Function": "函数", "Ctor": "构造函数", "Scalar": "标量", "Scheme": "方案",
+    "CameraSettings": "相机设置", "Rendering": "渲染", "Interoperability": "互操作",
+    "LayerElement": "层元素", "Description": "描述", "Unlicensed": "未授权",
+    "Mismatch": "不匹配", "Subseconds": "亚秒", "Flash": "闪光灯",
+    "Hi": "高", "Li": "锂", "Favorite": "收藏", "Favor": "收藏",
+    "Uv": "UV", "Uvs": "UV", "UVs": "UV", "SpeedTree": "SpeedTree",
+    "Feet": "英尺", "Resource": "资源", "Address": "地址", "Size": "尺寸",
+    "Width": "宽度", "Height": "高度", "Version": "版本", "Id": "ID",
+    "FocalLength": "焦距", "ImageHeight": "图像高度", "ImageWidth": "图像宽度",
+    "FileLength": "文件长度", "Load": "加载", "Store": "存储", "Query": "查询",
+    "Optimize": "优化", "Budget": "预算", "Cap": "上限", "Floor": "下限",
+    "Ceil": "上限", "Round": "取整", "Truncate": "截断", "Clamp": "钳制",
+    "Spread": "铺散", "Range": "范围", "Leverage": "杠杆", "Profile": "配置",
+    "Sampleable": "可采样", "Stitched": "已拼接", "Scrambled": "打乱",
+    "Sheet": "片", "Nth": "第N", "Chord": "弦", "Sides": "边数",
+    "Radius": "半径", "Diameter": "直径", "Perimeter": "周长", "Circumference": "圆周",
+    "Arc": "弧", "Sector": "扇区", "Dome": "穹顶", "Hemisphere": "半球",
+    "Aperture": "光圈", "Shutter": "快门", "Iso": "ISO", "WhiteBalance": "白平衡",
+    "Corner": "角", "CornerRadius": "圆角", "Bevel": "倒角", "Chamfer": "切角",
+    "EdgeFalloff": "边缘衰减", "Loose": "松散", "Tax": "税", "Cost": "成本",
+    "Budget": "预算", "Credit": "积分", "Coins": "金币", "Energy": "能量",
+    "Potential": "势能", "Kinetic": "动能", "Viscosity": "黏度", "Turbulence": "湍流",
+    "Swirl": "漩涡", "Vortex": "涡流", "Shear": "剪切", "Stretch": "拉伸",
+    "Squash": "压扁", "Twirl": "旋转", "Spin": "自旋", "Orbit": "环绕",
+    "Lift": "抬升", "Drop": "下落", "Sink": "下沉", "Bob": "上下浮动",
+    "Hover": "悬浮", "Pulse": "脉冲", "Throb": "搏动", "Beat": "节拍",
+    "Drift": "漂移", "Float": "浮动", "Suspend": "悬浮", "Bounce": "回弹",
+}
+GLOSSARY.update(GLOSSARY_EXTRA4)
+
+# Camera-vendor / proper nouns -> Chinese transliteration (EXIF-tag noise but
+# transliterated so nothing is left as raw English).
+VENDOR = {
+    "Canon": "佳能", "Nikon": "尼康", "Olympus": "奥林巴斯", "Panasonic": "松下",
+    "Pentax": "宾得", "Hasselblad": "哈苏", "Sony": "索尼", "Apple": "苹果",
+    "Microsoft": "微软", "Google": "谷歌", "Adobe": "Adobe", "Autodesk": "欧特克",
+    "Fujifilm": "富士", "Fuji": "富士", "Leica": "徕卡", "Kodak": "柯达",
+    "Casio": "卡西欧", "Samsung": "三星", "Ricoh": "理光", "Sigma": "适马",
+    "Netscape": "网景", "Intel": "英特尔", "AMD": "AMD", "Sis": "矽统",
+    "Creative": "创新", "Realtek": "瑞昱", "Broadcom": "博通", "Dell": "戴尔",
+    "Epson": "爱普生", "HP": "惠普", "IBM": "IBM", "Cinema": "影院",
+}
+GLOSSARY.update(VENDOR)
+
+PHRASES_EXTRA4 = {
+    "SpeedTree Pipeline SDK": "SpeedTree Pipeline SDK",
+    "Camera Settings": "相机设置",
+    "SpeedTree Modeler": "SpeedTree 模型器",
+    "Focal Length": "焦距",
+    "Focal length": "焦距",
+    "Image Height": "图像高度",
+    "Image Width": "图像宽度",
+    "File Length": "文件长度",
+    "White Balance": "白平衡",
+    "Sensor Cans": "传感器外壳",
+}
+PHRASES.update(PHRASES_EXTRA4)
+
+GLOSSARY_EXTRA5 = {
+    "Bad": "错误", "Reference": "参考", "Scalars": "标量", "Subject": "主体",
+    "Action": "动作", "Actor": "角色", "Alias": "别名", "Definition": "定义",
+    "Altitude": "海拔", "Audio": "音频", "Request": "请求", "Pose": "姿势",
+    "Blank": "空白", "Here": "此处", "CPU": "CPU", "Categories": "类别",
+    "Computing": "计算", "Create": "创建", "Degradation": "退化", "Degrees": "度",
+    "Desc": "说明", "Digital": "数字", "Zoom": "缩放", "Direct": "直接",
+    "Draw": "绘制", "Embree": "Embree", "Ray": "光线", "Response": "响应",
+    "Zero": "零", "Extra": "额外", "FCurve": "F 曲线", "Resample": "重采样",
+    "Final": "最终", "Identifier": "标识符", "Ounces": "盎司", "Focus": "对焦",
+    "Fog": "雾", "Hand": "手", "Hard": "硬", "Hidden": "隐藏", "Hips": "髋",
+    "Icon": "图标", "Implementation": "实现", "Insert": "插入", "Interactive": "交互",
+    "Keep": "保留", "Layout": "布局", "Lens": "镜头", "Lip": "唇", "Markers": "标记",
+    "Quality": "质量", "Modified": "已修改", "Never": "从不", "Normals": "法线",
+    "Samples": "采样", "Operation": "操作", "Optical": "光学", "Original": "原始",
+    "Other": "其他", "Perceptual": "感知", "Portable": "便携", "Public": "公共",
+    "Read": "读取", "Recomposing": "重组", "Schemas": "模式", "Scope": "作用域",
+    "Screenshot": "截图", "Sky": "天空", "Sensitivity": "敏感度", "Software": "软件",
+    "Step": "步骤", "Stitch": "拼接", "Take": "拍摄", "Transmission": "透射",
+    "Ultra": "超级", "Uninitialized": "未初始化", "White": "白", "Windows": "窗口",
+    "Wrong": "错误", "Percent": "百分比", "Reference": "参考", "Strokes": "笔画",
+    "Serif": "衬线", "Sans": "无衬线", "Monospace": "等宽", "Bold": "粗体",
+    "Italic": "斜体", "Underline": "下划线", "Smallcaps": "小型大写",
+    "Baseline": "基线", "Kerning": "字距", "Tracking": "字距", "Leading": "行距",
+    "Justify": "两端对齐", "AlignCenter": "居中对齐", "AlignLeft": "左对齐",
+    "AlignRight": "右对齐", "Nowrap": "不换行", "Wraped": "换行", "Overflow": "溢出",
+    "Ellipsis": "省略号", "Clipped": "裁切", "Scroll": "滚动", "Scrollbars": "滚动条",
+    "Content": "内容", "Margins": "边距", "Border": "边框", "Outline": "描边",
+    "Radius": "圆角", "Shadow": "阴影", "Glow": "发光", "Blur": "模糊",
+    "Slant": "斜切", "Skew": "倾斜", "Shear": "剪切", "BlendMode": "混合模式",
+}
+GLOSSARY.update(GLOSSARY_EXTRA5)
+
+PHRASES_EXTRA5 = {
+    "Quality": "质量", "Optimal": "最佳", "Sensitivity": "敏感度",
+    "Optical": "光学", "Ray Tracing": "光线追踪",
+}
+PHRASES.update(PHRASES_EXTRA5)
+
+PHRASES_EXTRA6 = {
+    "Clip below ground": "裁剪到地面以下",
+    "Ground Effect": "地面效果",
+    "Hot keys": "快捷键",
+    "Late noise disabled": "低频噪点已禁用",
+    "Lighting adjust": "光照调整",
+    "Pine needles": "松针",
+    "Separate meshes": "分离网格",
+    "Slide brush": "滑动画笔",
+    "Spec changes": "规格变更",
+    "System Clock": "系统时钟",
+    "Working directory": "工作目录",
+    "Click placements": "点击放置",
+    "Enables lighting": "启用光照",
+    "Treat as": "视为",
+    "Maintain subdirectories": "保留子目录",
+    "Visibility Inheritance": "可见性继承",
+}
+PHRASES.update(PHRASES_EXTRA6)
+
 
 def tr_word(w):
     r = GLOSSARY.get(w)
