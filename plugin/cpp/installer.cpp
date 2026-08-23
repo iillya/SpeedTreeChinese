@@ -20,15 +20,11 @@
 #include <shlobj.h>
 #include <shellapi.h>
 #include <objbase.h>
-#include <bcrypt.h>
 #include <string>
 #include <vector>
-#include <cstdio>
 #include <cstdint>
-#include <io.h>
 
 #pragma comment(lib, "Comctl32.lib")
-#pragma comment(lib, "Bcrypt.lib")
 #pragma comment(lib, "shell32.lib")
 #pragma comment(lib, "ole32.lib")
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -53,7 +49,9 @@ struct InstallerState {
     std::wstring dir;
     std::vector<PayloadEntry> entries;
     HWND dirEdit;
-    HWND status;
+    HFONT uiFont = nullptr;
+    int operationId = 0;
+    HWND window = nullptr;
 };
 
 int ScaleDpi(int value, UINT dpi) { return MulDiv(value, (int)dpi, 96); }
@@ -93,7 +91,10 @@ bool CreateShortcut(const std::wstring& lnkPath, const std::wstring& target,
     CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
     IShellLinkW* link = nullptr;
     if (!SUCCEEDED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER,
-                                    IID_IShellLinkW, (void**)&link))) return false;
+                                    IID_IShellLinkW, (void**)&link))) {
+        CoUninitialize();
+        return false;
+    }
     IPersistFile* file = nullptr;
     bool ok = false;
     if (SUCCEEDED(link->QueryInterface(IID_IPersistFile, (void**)&file))) {
@@ -110,11 +111,10 @@ bool CreateShortcut(const std::wstring& lnkPath, const std::wstring& target,
 
 // Back up and register the .spm association (HKCU, so no machine-wide risk).
 bool SetSpmAssociation(const std::wstring& launcher) {
-    HKEY hk = nullptr;
     const wchar_t* progId = L"SpeedTreeChinese.spm";
     std::wstring openCmdStr = L"\"" + launcher + L"\" \"%1\"";
     const wchar_t* openCmd = openCmdStr.c_str();
-    // Back up the current default for .spm.
+    // Back up whether a user-level .spm default existed and what it was.
     HKEY bk = nullptr;
     if (RegCreateKeyExW(HKEY_CURRENT_USER,
                         L"Software\\SpeedTreeChineseLocalizer\\AssocBackup",
@@ -122,10 +122,17 @@ bool SetSpmAssociation(const std::wstring& launcher) {
         wchar_t cur[512] = {};
         DWORD cb = sizeof(cur);
         if (RegQueryValueExW(HKEY_CURRENT_USER, L"Software\\Classes\\.spm", nullptr,
-                             nullptr, (BYTE*)cur, &cb) == ERROR_SUCCESS)
+                             nullptr, (BYTE*)cur, &cb) == ERROR_SUCCESS) {
             RegSetValueExW(bk, L"spm_default", 0, REG_SZ, (const BYTE*)cur, (DWORD)(cb + 1));
+            DWORD one = 1;
+            RegSetValueExW(bk, L"spm_had_default", 0, REG_DWORD, (const BYTE*)&one, sizeof(one));
+        } else {
+            DWORD zero = 0;
+            RegSetValueExW(bk, L"spm_had_default", 0, REG_DWORD, (const BYTE*)&zero, sizeof(zero));
+        }
         RegCloseKey(bk);
     }
+    HKEY hk = nullptr;
     if (RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\Classes\\.spm", 0, nullptr,
                         0, KEY_WRITE, nullptr, &hk, nullptr) != ERROR_SUCCESS) return false;
     RegSetValueExW(hk, nullptr, 0, REG_SZ, (const BYTE*)progId, (DWORD)((wcslen(progId) + 1) * 2));
@@ -150,19 +157,43 @@ void RestoreSpmAssociation() {
     HKEY bk = nullptr;
     if (RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\SpeedTreeChineseLocalizer\\AssocBackup",
                       0, KEY_READ, &bk) == ERROR_SUCCESS) {
-        wchar_t cur[512] = {};
-        DWORD cb = sizeof(cur);
-        if (RegQueryValueExW(bk, L"spm_default", nullptr, nullptr, (BYTE*)cur, &cb) == ERROR_SUCCESS) {
+        DWORD hadDefault = 0; DWORD hsz = sizeof(hadDefault);
+        if (RegQueryValueExW(bk, L"spm_had_default", nullptr, nullptr,
+                             (BYTE*)&hadDefault, &hsz) == ERROR_SUCCESS && hadDefault != 0) {
+            // A user-level .spm default existed before we installed -> restore it.
+            wchar_t cur[512] = {};
+            DWORD cb = sizeof(cur);
+            if (RegQueryValueExW(bk, L"spm_default", nullptr, nullptr,
+                                 (BYTE*)cur, &cb) == ERROR_SUCCESS) {
+                HKEY hk = nullptr;
+                if (RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\Classes\\.spm", 0, nullptr,
+                                    0, KEY_WRITE, nullptr, &hk, nullptr) == ERROR_SUCCESS) {
+                    RegSetValueExW(hk, nullptr, 0, REG_SZ, (const BYTE*)cur, (DWORD)(cb + 1));
+                    RegCloseKey(hk);
+                }
+            }
+        } else {
+            // No user-level default before install: drop our override so Windows
+            // falls back to the original machine (HKLM) .spm association.
             HKEY hk = nullptr;
-            if (RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\Classes\\.spm", 0, nullptr,
-                                0, KEY_WRITE, nullptr, &hk, nullptr) == ERROR_SUCCESS) {
-                RegSetValueExW(hk, nullptr, 0, REG_SZ, (const BYTE*)cur, (DWORD)(cb + 1));
+            if (RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Classes\\.spm", 0,
+                              KEY_SET_VALUE, &hk) == ERROR_SUCCESS) {
+                RegDeleteValueW(hk, nullptr);
                 RegCloseKey(hk);
             }
         }
         RegCloseKey(bk);
     }
     RegDeleteTreeW(HKEY_CURRENT_USER, L"Software\\Classes\\SpeedTreeChinese.spm");
+    // Remove our OpenWithProgids entry for .spm.
+    HKEY ow = nullptr;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, L"Software\\Classes\\.spm\\OpenWithProgids", 0,
+                      KEY_SET_VALUE, &ow) == ERROR_SUCCESS) {
+        RegDeleteValueW(ow, L"SpeedTreeChinese.spm");
+        RegCloseKey(ow);
+    }
+    // Remove the launcher's "Applications" registration we created.
+    RegDeleteTreeW(HKEY_CURRENT_USER, L"Software\\Classes\\Applications\\SpeedTreeChineseLauncher.exe");
     SHChangeNotify(0x08000000, 0, nullptr, nullptr);
 }
 
@@ -184,11 +215,13 @@ bool LoadPayload(InstallerState& st) {
     if (!ReadWholeFile(ExePath(), bytes)) return false;
     if (bytes.size() < 16) return false;
     const size_t tail = bytes.size() - 16;
-    uint64_t magic = 0; memcpy(&magic, &bytes[tail], 8);
+    // Tail layout written by embed_files.py: [ manifestSize u32 ][ count u32 ][ magic u64 ]
+    uint32_t manifestSize = 0; memcpy(&manifestSize, &bytes[tail], 4);
+    uint32_t count = 0;        memcpy(&count,        &bytes[tail + 4], 4);
+    uint64_t magic = 0;        memcpy(&magic,        &bytes[tail + 8], 8);
     if (magic != kMagic) return false;
-    uint32_t count = 0; memcpy(&count, &bytes[tail + 8], 4);
-    uint32_t manifestSize = 0; memcpy(&manifestSize, &bytes[tail + 12], 4);
     if (count > 512 || (uint64_t)manifestSize > bytes.size()) return false;
+    if (manifestSize > tail) return false;      // guard against offset underflow
     const size_t manifest = tail - manifestSize;
     const char* p = (const char*)&bytes[manifest];
     for (uint32_t i = 0; i < count; ++i) {
@@ -219,24 +252,18 @@ bool WriteFileFromPayload(const std::wstring& dest, const PayloadEntry& e,
     return ok && wrote == e.size;
 }
 
-// --- helper: write a status line -------------------------------------------
-void SetStatus(InstallerState& st, const wchar_t* text) {
-    if (st.status) SetWindowTextW(st.status, text);
-}
-
 // --- install -----------------------------------------------------------------
 bool Install(InstallerState& st) {
     std::vector<BYTE> payload;
-    if (!ReadWholeFile(ExePath(), payload)) { SetStatus(st, L"读取安装包失败"); return false; }
+    if (!ReadWholeFile(ExePath(), payload)) return false;
     std::wstring dir = st.dir;
-    if (!HasSpeedTreeExe(dir)) { SetStatus(st, L"所选目录不是有效的 SpeedTree 安装目录"); return false; }
+    if (!HasSpeedTreeExe(dir)) return false;
 
-    SetStatus(st, L"正在安装…");
     for (const auto& e : st.entries) {
         std::wstring target = dir + L"\\" + e.name;
         std::wstring parent = ParentDir(target);
         if (!IsDir(parent)) CreateDirectoryW(parent.c_str(), nullptr);
-        if (!WriteFileFromPayload(target, e, payload)) { SetStatus(st, L"写入失败"); return false; }
+        if (!WriteFileFromPayload(target, e, payload)) return false;
     }
 
     // Create Desktop + Start Menu "SpeedTree 中文版" shortcuts.
@@ -254,7 +281,6 @@ bool Install(InstallerState& st) {
         }
     }
     SetSpmAssociation(launcher);
-    SetStatus(st, L"安装完成（请通过“SpeedTree 中文版”快捷键启动）");
     return true;
 }
 
@@ -278,74 +304,195 @@ bool Uninstall(InstallerState& st) {
         DeleteFileW((std::wstring(p) + L"\\" + name).c_str()); CoTaskMemFree(p);
     }
     RestoreSpmAssociation();
-    SetStatus(st, L"已卸载（请删除桌面/开始菜单的“SpeedTree 中文版”快捷键）");
     return true;
 }
 
-// --- dialog ------------------------------------------------------------------
-INT_PTR CALLBACK DialogProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-    static InstallerState* st = nullptr;
-    switch (msg) {
-        case WM_INITDIALOG: {
-            st = (InstallerState*)lParam;
-            SetWindowLongPtrW(hwnd, GWLP_USERDATA, (LONG_PTR)st);
-            SetWindowTextW(hwnd, kAppTitle);
-            st->dirEdit = GetDlgItem(hwnd, kDirEdit);
-            st->status = GetDlgItem(hwnd, 1005);
-            // Default: the known SpeedTree install path.
-            const wchar_t* def = L"C:\\Program Files\\SpeedTree\\SpeedTree Modeler v10.2.0\\win64";
-            if (IsDir(def)) { st->dir = def; SetWindowTextW(st->dirEdit, def); }
-            if (!LoadPayload(*st)) {
-                SetStatus(*st, L"安装包数据不完整（缺少内嵌载荷）");
-            }
-            return TRUE;
-        }
-        case WM_COMMAND: {
-            int id = LOWORD(wParam);
-            if (id == kBrowseBtn) {
-                wchar_t folder[MAX_PATH] = {};
-                BROWSEINFOW bi{};
-                bi.lpszTitle = L"请选择 SpeedTree 安装目录（含 SpeedTree_Modeler.exe 的 win64 文件夹）";
-                bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
-                PIDLIST_ABSOLUTE pid = SHBrowseForFolderW(&bi);
-                if (pid) {
-                    if (SHGetPathFromIDListW(pid, folder))
-                        SetWindowTextW(st->dirEdit, folder);
-                    CoTaskMemFree(pid);
-                }
-                return TRUE;
-            }
-            if (id == kInstallBtn || id == kUninstallBtn) {
-                wchar_t buf[MAX_PATH] = {};
-                GetWindowTextW(st->dirEdit, buf, MAX_PATH);
-                st->dir = buf;
-                if (id == kInstallBtn) Install(*st);
-                else Uninstall(*st);
-                return TRUE;
-            }
-            break;
-        }
-        case WM_CLOSE:
-            DestroyWindow(hwnd);
-            return TRUE;
-        case WM_DESTROY:
-            PostQuitMessage(0);
-            return TRUE;
+// --- installer window (Toolbag-style, DPI-aware Win32 UI) -------------------
+static std::wstring GetControlText(HWND h) {
+    std::vector<wchar_t> buf(1024);
+    while (buf.size() <= 32768) {
+        const int n = GetWindowTextW(h, buf.data(), (int)buf.size());
+        if (n < (int)buf.size() - 1) return std::wstring(buf.data(), n);
+        buf.resize(buf.size() * 2);
     }
-    return FALSE;
+    return L"";
+}
+
+static bool SelectSpeedTreeDirectory(std::wstring& dir) {
+    wchar_t folder[MAX_PATH] = {};
+    BROWSEINFOW bi{};
+    bi.lpszTitle = L"请选择 SpeedTree 安装目录（含 SpeedTree_Modeler.exe 的 win64 文件夹）";
+    bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+    PIDLIST_ABSOLUTE pid = SHBrowseForFolderW(&bi);
+    if (!pid) return false;
+    const bool ok = SHGetPathFromIDListW(pid, folder);
+    CoTaskMemFree(pid);
+    if (ok) dir = folder;
+    return ok;
+}
+
+LRESULT CALLBACK InstallerWindowProcedure(HWND window, UINT message,
+                                           WPARAM wParam, LPARAM lParam) {
+    auto* state = reinterpret_cast<InstallerState*>(
+        GetWindowLongPtrW(window, GWLP_USERDATA));
+    if (message == WM_NCCREATE) {
+        auto* create = reinterpret_cast<CREATESTRUCTW*>(lParam);
+        state = reinterpret_cast<InstallerState*>(create->lpCreateParams);
+        SetWindowLongPtrW(window, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(state));
+    }
+    switch (message) {
+    case WM_CREATE: {
+        const UINT dpi = GetDpiForWindow(window);
+        state->uiFont = CreateFontW(-MulDiv(10, (int)dpi, 72), 0, 0, 0,
+            FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+            CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Microsoft YaHei UI");
+        HWND label = CreateWindowExW(0, L"STATIC", L"SpeedTree 安装目录",
+            WS_CHILD | WS_VISIBLE, ScaleDpi(24, dpi), ScaleDpi(20, dpi),
+            ScaleDpi(180, dpi), ScaleDpi(22, dpi), window, nullptr, nullptr, nullptr);
+        state->dirEdit = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", state->dir.c_str(),
+            WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL,
+            ScaleDpi(24, dpi), ScaleDpi(45, dpi), ScaleDpi(455, dpi), ScaleDpi(31, dpi),
+            window, reinterpret_cast<HMENU>(static_cast<INT_PTR>(kDirEdit)),
+            nullptr, nullptr);
+        HWND browse = CreateWindowExW(0, L"BUTTON", L"浏览…",
+            WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
+            ScaleDpi(489, dpi), ScaleDpi(44, dpi), ScaleDpi(87, dpi), ScaleDpi(33, dpi),
+            window, reinterpret_cast<HMENU>(static_cast<INT_PTR>(kBrowseBtn)),
+            nullptr, nullptr);
+        HWND install = CreateWindowExW(0, L"BUTTON", L"安装汉化",
+            WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON,
+            ScaleDpi(300, dpi), ScaleDpi(98, dpi), ScaleDpi(130, dpi), ScaleDpi(36, dpi),
+            window, reinterpret_cast<HMENU>(static_cast<INT_PTR>(kInstallBtn)),
+            nullptr, nullptr);
+        HWND uninstall = CreateWindowExW(0, L"BUTTON", L"拆卸汉化",
+            WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
+            ScaleDpi(446, dpi), ScaleDpi(98, dpi), ScaleDpi(130, dpi), ScaleDpi(36, dpi),
+            window, reinterpret_cast<HMENU>(static_cast<INT_PTR>(kUninstallBtn)),
+            nullptr, nullptr);
+        for (HWND c : {label, state->dirEdit, browse, install, uninstall})
+            SendMessageW(c, WM_SETFONT, reinterpret_cast<WPARAM>(state->uiFont), TRUE);
+        return 0;
+    }
+    case WM_CTLCOLORSTATIC: {
+        HDC dc = reinterpret_cast<HDC>(wParam);
+        SetBkMode(dc, TRANSPARENT);
+        SetTextColor(dc, GetSysColor(COLOR_WINDOWTEXT));
+        return reinterpret_cast<LRESULT>(GetStockObject(WHITE_BRUSH));
+    }
+    case WM_COMMAND: {
+        if (!state) return 0;
+        const int id = LOWORD(wParam);
+        if (id == kBrowseBtn) {
+            std::wstring sel = GetControlText(state->dirEdit);
+            if (SelectSpeedTreeDirectory(sel))
+                SetWindowTextW(state->dirEdit, sel.c_str());
+            return 0;
+        }
+        if (id == kInstallBtn || id == kUninstallBtn) {
+            state->dir = GetControlText(state->dirEdit);
+            while (!state->dir.empty() &&
+                   (state->dir.back() == L' ' || state->dir.back() == L'\\'))
+                state->dir.pop_back();
+            if (state->dir.empty() || !HasSpeedTreeExe(state->dir)) {
+                MessageBoxW(window,
+                    L"所选目录不是有效的 SpeedTree 安装目录。\n\n"
+                    L"请选择包含 SpeedTree_Modeler.exe 的 win64 目录。",
+                    kAppTitle, MB_OK | MB_ICONERROR);
+                SetFocus(state->dirEdit);
+                return 0;
+            }
+            state->operationId = id;
+            DestroyWindow(window);
+            return 0;
+        }
+        return 0;
+    }
+    case WM_CLOSE:
+        DestroyWindow(window);
+        return 0;
+    case WM_DESTROY:
+        if (state && state->uiFont) DeleteObject(state->uiFont);
+        state->uiFont = nullptr;
+        PostQuitMessage(0);
+        return 0;
+    }
+    return DefWindowProcW(window, message, wParam, lParam);
+}
+
+// Scale helper exposed to the window proc (uses the installer's own window dpi).
+int ShowInstallerWindow(HINSTANCE instance, InstallerState& state) {
+    const wchar_t* cls = L"SpeedTreeChineseInstallerWindow";
+    WNDCLASSEXW wc{};
+    wc.cbSize = sizeof(wc);
+    wc.lpfnWndProc = InstallerWindowProcedure;
+    wc.hInstance = instance;
+    wc.hCursor = LoadCursorW(nullptr, MAKEINTRESOURCEW(32512));
+    wc.hIcon = LoadIconW(instance, MAKEINTRESOURCEW(101));
+    wc.hIconSm = wc.hIcon;
+    wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
+    wc.lpszClassName = cls;
+    if (!RegisterClassExW(&wc) && GetLastError() != ERROR_CLASS_ALREADY_EXISTS)
+        return 0;
+
+    const UINT dpi = GetDpiForSystem();
+    RECT frame = {0, 0, ScaleDpi(600, dpi), ScaleDpi(155, dpi)};
+    AdjustWindowRectExForDpi(&frame, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
+                             FALSE, WS_EX_DLGMODALFRAME, dpi);
+    const int width = frame.right - frame.left;
+    const int height = frame.bottom - frame.top;
+    const int x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
+    const int y = (GetSystemMetrics(SM_CYSCREEN) - height) / 2;
+    HWND window = CreateWindowExW(WS_EX_DLGMODALFRAME, cls, kAppTitle,
+        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU,
+        x, y, width, height, nullptr, nullptr, instance, &state);
+    if (!window) return 0;
+    state.window = window;
+    ShowWindow(window, SW_SHOW);
+    UpdateWindow(window);
+
+    MSG message = {};
+    while (GetMessageW(&message, nullptr, 0, 0) > 0) {
+        if (!IsDialogMessageW(window, &message)) {
+            TranslateMessage(&message);
+            DispatchMessageW(&message);
+        }
+    }
+    return state.operationId;
 }
 
 } // namespace
 
 int APIENTRY wWinMain(HINSTANCE hinst, HINSTANCE, PWSTR, int nCmdShow) {
-    // Elevation is requested via the manifest (requireAdministrator).
+    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
     INITCOMMONCONTROLSEX icc{}; icc.dwSize = sizeof(icc);
-    icc.dwICC = ICC_STANDARD_CLASSES | ICC_PROGRESS_CLASS;
+    icc.dwICC = ICC_STANDARD_CLASSES;
     InitCommonControlsEx(&icc);
     CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 
     InstallerState state{};
-    DialogBoxParamW(hinst, MAKEINTRESOURCEW(1), nullptr, DialogProc, (LPARAM)&state);
+    if (!LoadPayload(state)) {
+        MessageBoxW(nullptr, L"安装程序缺少必要数据，请重新下载完整版本。",
+                    kAppTitle, MB_OK | MB_ICONERROR);
+        CoUninitialize();
+        return 1;
+    }
+    const wchar_t* def = L"C:\\Program Files\\SpeedTree\\SpeedTree Modeler v10.2.0\\win64";
+    if (IsDir(def)) state.dir = def;
+
+    const int operationId = ShowInstallerWindow(hinst, state);
+    if (operationId == 0) { CoUninitialize(); return 0; }
+    const bool uninstall = operationId == kUninstallBtn;
+    const bool ok = uninstall ? Uninstall(state) : Install(state);
+    if (ok) {
+        MessageBoxW(nullptr,
+            uninstall ? L"汉化已拆卸。" :
+            L"汉化安装完成。\n\n请通过“SpeedTree 中文版”快捷方式启动，或双击 .spm 文件。",
+            kAppTitle, MB_OK | MB_ICONINFORMATION);
+    } else {
+        MessageBoxW(nullptr,
+            uninstall ? L"拆卸失败。" : L"安装失败。",
+            kAppTitle, MB_OK | MB_ICONERROR);
+    }
     CoUninitialize();
-    return 0;
+    return ok ? 0 : 2;
 }

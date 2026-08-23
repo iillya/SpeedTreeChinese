@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build an sp-translation-v1 skeleton dictionary from a captured text inventory.
 
-Reads a newline-delimited English-string file (e.g. probe\\out\\all_texts.txt),
+Reads a newline-delimited English-string inventory (e.g. tools/scratch/clean_full.txt),
 filters out non-translatable strings (numbers, URLs, HTML, already-Chinese), and
 merges against any existing *_zh.json so already-filled translations survive.
 
@@ -13,7 +13,6 @@ import argparse
 import json
 import os
 import re
-import sys
 
 PLUGIN = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TRANSLATIONS = os.path.join(PLUGIN, "translations")
@@ -65,7 +64,7 @@ def load_existing():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("input", nargs="?", default=os.path.join(
-        os.path.dirname(PLUGIN), "probe", "out", "all_texts.txt"))
+        PLUGIN, "tools", "scratch", "clean_full.txt"))
     ap.add_argument("-o", default=os.path.join(TRANSLATIONS, "dictionary_pending_zh.json"))
     args = ap.parse_args()
 

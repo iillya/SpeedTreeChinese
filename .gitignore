@@ -30,3 +30,15 @@
 *.exe
 *.out
 *.app
+
+# Build output / runtime artifacts
+plugin/native/
+dist/
+*.res
+*.exp
+*.ilk
+*.pdb
+*.log
+untranslated_zh.json
+drawtext_captured.txt
+*.tmp

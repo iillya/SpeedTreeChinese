@@ -19,6 +19,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <shellapi.h>
 #include <tlhelp32.h>
 #include <string>
 #include <vector>
@@ -38,7 +39,6 @@
 #include <QtCore/QVariant>
 #include <QtCore/QLocale>
 #include <QtCore/QTimer>
-#include <QtCore/QFileInfo>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QPointer>
@@ -60,12 +60,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QComboBox>
-#include <QtWidgets/QAbstractSpinBox>
-#include <QtWidgets/QCheckBox>
-#include <QtWidgets/QTabWidget>
-#include <QtWidgets/QTabBar>
 #include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QWidgetAction>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QVBoxLayout>
@@ -84,23 +79,24 @@ extern "C" __declspec(dllexport) const char* __cdecl st_localizer_version() {
 // Global state
 // ---------------------------------------------------------------------------
 static bool      g_enabled          = true;
-static int       g_toggleKey        = Qt::Key_F10;   // 中/英 toggle hotkey
+static int       g_toggleKey        = Qt::Key_F2;    // 中/英 toggle hotkey (default F2)
 static QString   g_plugInDir;
 static HMODULE   g_selfModule       = nullptr;
-static bool      g_uiInstalled      = false;
 static bool      g_hooksInstalled   = false;
 
 static std::unordered_map<std::string, std::string> g_translations;       // global
 static std::unordered_map<std::string, std::string> g_idTranslations;     // control-ID
 static std::unordered_map<std::string, std::string> g_foldedTranslations; // fuzzy index
-static std::vector<std::pair<void**, void*>>        g_hookSlots;          // IAT slots (slot, replacement)
+static std::unordered_map<std::string, std::string> g_normCache;          // text -> normalized
+static constexpr size_t kMaxNormCache = 100000;
+static int g_patchedSlots = 0;                     // drawText IAT slots replaced
 
-static std::atomic<long long> g_drawCalls{0};
-static std::atomic<long long> g_drawTranslated{0};
 static std::set<std::string> g_paintSeen;          // untranslated drawText strings
+static bool     g_sniffActive  = false;             // Shift+` 1.5s sniff window
+static QTimer*  g_sniffTimer   = nullptr;
 
 static QString normalizeForMatch(QString text);
-static bool ContainsCjk(const QString& text);
+static bool containsCjk(const QString& text);
 static void installAuthorLink();
 static void repaintAll();
 
@@ -232,6 +228,7 @@ static void LoadDictionaries() {
     g_translations.clear();
     g_idTranslations.clear();
     g_foldedTranslations.clear();
+    g_normCache.clear();
     QDir dir(g_plugInDir + "/translations");
     if (!dir.exists()) return;
     QStringList files = dir.entryList({"*_zh.json"}, QDir::Files, QDir::Name);
@@ -259,6 +256,13 @@ static void LoadDictionaries() {
 // i18n normalization + fuzzy lookup (mirrors the Substance localizer)
 // ---------------------------------------------------------------------------
 static QString normalizeForMatch(QString text) {
+    // Cached: the same English source is normalised only the first time it is
+    // seen, so repeated draws of untranslated text don't re-run this pipeline.
+    const std::string in = text.toUtf8().constData();
+    auto cached = g_normCache.find(in);
+    if (cached != g_normCache.end())
+        return QString::fromUtf8(cached->second.c_str());
+
     text.replace(QChar(0x00A0), QLatin1Char(' '));
     text.replace(QChar(0x3000), QLatin1Char(' '));
     text.replace(QLatin1Char('\r'), QLatin1Char('\n'));
@@ -284,10 +288,13 @@ static QString normalizeForMatch(QString text) {
         stripped.append(ch);
     }
     stripped.remove(QLatin1Char(' '));
-    return stripped.normalized(QString::NormalizationForm_C);
+    QString result = stripped.normalized(QString::NormalizationForm_C);
+    if (g_normCache.size() < kMaxNormCache)
+        g_normCache[in] = result.toUtf8().constData();
+    return result;
 }
 
-static bool ContainsCjk(const QString& text) {
+static bool containsCjk(const QString& text) {
     for (QChar ch : text) {
         const ushort u = ch.unicode();
         if ((u >= 0x3400 && u <= 0x9FFF) || (u >= 0xF900 && u <= 0xFAFF))
@@ -311,7 +318,7 @@ static QString translated(const QString& raw, const QString& controlId = QString
     auto exact = g_translations.find(key.toUtf8().constData());
     if (exact != g_translations.end())
         return QString::fromUtf8(exact->second.c_str());
-    if (ContainsCjk(key)) return {};
+    if (containsCjk(key)) return {};
 
     // mnemonic / state suffix handling
     QString stateSuffix;
@@ -336,7 +343,7 @@ public:
     using QStyledItemDelegate::QStyledItemDelegate;
     QString displayText(const QVariant& value, const QLocale& locale) const override {
         QString original = QStyledItemDelegate::displayText(value, locale);
-        if (original.isEmpty() || ContainsCjk(original)) return original;
+        if (original.isEmpty() || containsCjk(original)) return original;
         QString t = translated(original);
         return t.isEmpty() ? original : t;
     }
@@ -358,10 +365,38 @@ static void applyTranslations(QApplication* app) {
         applyWidget(w);
 }
 
-// Install the display-layer delegate on item views (list/tree/table). Called
-// from the event filter on Show / UpdateRequest / Paint as views appear.
+// Translate standard widgets by setText so Qt's sizeHint / layout measure the
+// CHINESE text (width follows the translation, not the English original).
+static void applyWidgetText(QWidget* w) {
+    if (auto* lbl = qobject_cast<QLabel*>(w)) {
+        QString t = lbl->text();
+        if (!t.isEmpty() && !containsCjk(t)) {
+            QString tr = translated(t);
+            if (!tr.isEmpty() && tr != t) lbl->setText(tr);
+        }
+    } else if (auto* btn = qobject_cast<QAbstractButton*>(w)) {
+        QString t = btn->text();
+        if (!t.isEmpty() && !containsCjk(t)) {
+            QString tr = translated(t);
+            if (!tr.isEmpty() && tr != t) btn->setText(tr);
+        }
+    }
+    if (auto* menu = qobject_cast<QMenu*>(w)) {
+        for (QAction* a : menu->actions()) {
+            QString t = a->text();
+            if (!t.isEmpty() && !containsCjk(t)) {
+                QString tr = translated(t);
+                if (!tr.isEmpty() && tr != t) a->setText(tr);
+            }
+        }
+    }
+}
+
+// Install the display-layer delegate on item views + setText standard widgets.
+// Called from the event filter on Show / UpdateRequest / Paint as controls appear.
 static void applyWidget(QWidget* w) {
     if (!w || !g_enabled) return;
+    applyWidgetText(w);
     if (auto* view = qobject_cast<QAbstractItemView*>(w)) {
         if (g_delegatedViews.count(view) == 0) {
             auto* d = new TranslateDelegate(view);
@@ -375,9 +410,9 @@ static void applyWidget(QWidget* w) {
 // ---------------------------------------------------------------------------
 // F10 toggle, F12 sniffer (one application event filter)
 // ---------------------------------------------------------------------------
-static bool IsTranslatableString(const QString& s) {
+static bool isTranslatableString(const QString& s) {
     QString t = s.trimmed();
-    if (t.isEmpty() || ContainsCjk(t)) return false;
+    if (t.isEmpty() || containsCjk(t)) return false;
     if (t.size() < 2) return false;
     if (t[0] == '<') return false;                 // HTML
     if (t.contains(QLatin1Char('?'))) return false; // URL-ish
@@ -390,16 +425,14 @@ static bool IsTranslatableString(const QString& s) {
     return !numeric;
 }
 
-static void SnifferWrite() {
-    std::map<std::string, std::string> pending;
+// ---- untranslated-word sniffer (Shift+` starts a 1.5 s window) --------------
+static void collectWidgetStrings(std::map<std::string, std::string>& pending) {
     const auto widgets = QApplication::allWidgets();
     auto add = [&](const QString& s) {
-        if (!IsTranslatableString(s)) return;
+        if (!isTranslatableString(s)) return;
         std::string k = s.trimmed().toUtf8().constData();
-        if (k.empty()) return;
-        if (g_translations.count(k) || g_idTranslations.count(k)) return;
-        if (pending.count(k)) return;
-        pending[k] = "";
+        if (k.empty() || g_translations.count(k) || g_idTranslations.count(k)) return;
+        pending.emplace(k, "");
     };
     for (QWidget* w : widgets) {
         if (auto* lbl = qobject_cast<QLabel*>(w)) add(lbl->text());
@@ -423,22 +456,25 @@ static void SnifferWrite() {
             }
         }
     }
+}
+
+static void writeUntranslated(const std::map<std::string, std::string>& pending) {
     std::string json = "{\n  \"$schema\": \"sp-translation-v1\",\n"
                        "  \"id\": \"speedtree-sniffed\",\n"
                        "  \"language\": \"zh-CN\",\n"
-                       "  \"description\": \"未翻译词条（F12 采集，待填写）\",\n"
+                       "  \"description\": \"未翻译词条（Shift+` 采集，待填写）\",\n"
                        "  \"translations\": {\n";
     bool first = true;
     for (const auto& kv : pending) {
         if (!first) json += ",\n";
-        std::string key = kv.first, val = "";
-        // minimal JSON escaping
-        std::string ekey; for (char c : key) { if (c == '"' || c == '\\') ekey += '\\'; ekey += c; }
-        json += "    \"" + ekey + "\": \"" + val + "\"";
-        first = false;
+        std::string ekey;
+        for (char c : kv.first) { if (c == '"' || c == '\\') ekey += '\\'; ekey += c; }
+        json += "    \"" + ekey + "\": \"\""; first = false;
     }
     json += "\n  }\n}\n";
-    std::wstring path = SelfDirW() + L"\\untranslated_zh.json";
+    std::wstring dir = SelfDirW() + L"\\translations";
+    CreateDirectoryW(dir.c_str(), nullptr);
+    std::wstring path = dir + L"\\untranslated_zh.json";
     HANDLE h = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
                            FILE_ATTRIBUTE_NORMAL, nullptr);
     if (h != INVALID_HANDLE_VALUE) {
@@ -446,21 +482,37 @@ static void SnifferWrite() {
         WriteFile(h, json.data(), (DWORD)json.size(), &wr, nullptr);
         CloseHandle(h);
     }
-    Log("F12 sniffer wrote " + std::to_string(pending.size()) + " entries");
 }
 
-static void WritePaintSeen() {
-    if (g_paintSeen.empty()) return;
-    std::wstring path = SelfDirW() + L"\\drawtext_captured.txt";
-    HANDLE h = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
-                           FILE_ATTRIBUTE_NORMAL, nullptr);
-    if (h != INVALID_HANDLE_VALUE) {
-        std::string body;
-        for (const std::string& s : g_paintSeen) { body += s; body += "\n"; }
-        DWORD wr = 0;
-        WriteFile(h, body.data(), (DWORD)body.size(), &wr, nullptr);
-        CloseHandle(h);
+static void openSnifferDir() {
+    std::wstring dir = SelfDirW() + L"\\translations";
+    CreateDirectoryW(dir.c_str(), nullptr);
+    ShellExecuteW(nullptr, L"open", dir.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+}
+
+static void finishSniffer() {
+    g_sniffActive = false;
+    std::map<std::string, std::string> pending;
+    collectWidgetStrings(pending);
+    for (const std::string& s : g_paintSeen)
+        if (!s.empty() && !g_translations.count(s)) pending.emplace(s, "");
+    writeUntranslated(pending);
+    g_paintSeen.clear();
+    Log("sniffer done, wrote " + std::to_string(pending.size()) + " entries");
+    openSnifferDir();
+}
+
+static void startSniffer() {
+    if (g_sniffActive) return;
+    g_sniffActive = true;
+    g_paintSeen.clear();
+    if (!g_sniffTimer) {
+        g_sniffTimer = new QTimer(QCoreApplication::instance());
+        g_sniffTimer->setSingleShot(true);
+        QObject::connect(g_sniffTimer, &QTimer::timeout, [] { finishSniffer(); });
     }
+    g_sniffTimer->start(1500);
+    Log("sniffer ON (1.5s)");
 }
 
 class TranslatorFilter : public QObject {
@@ -478,8 +530,9 @@ public:
                 Log("F10 toggle enabled=" + std::to_string(g_enabled ? 1 : 0));
                 return true;
             }
-            if (ke->key() == Qt::Key_F12) {
-                SnifferWrite();
+            if ((ke->key() == Qt::Key_QuoteLeft || ke->key() == Qt::Key_AsciiTilde) &&
+                (ke->modifiers() & Qt::ShiftModifier)) {
+                startSniffer();
                 return true;
             }
             return false;
@@ -518,12 +571,23 @@ static DrawXYWH      g_drawXYWH      = nullptr;
 static DrawPointF2   g_drawPointF2   = nullptr;
 
 static QString translatePaint(const QString& text) {
-    ++g_drawCalls;
-    if (text.isEmpty() || ContainsCjk(text)) return {};
+    if (text.isEmpty() || containsCjk(text)) return {};
+    // Cheap reject for values that can never be UI text (numbers, tiny tokens),
+    // so the expensive fuzzy-normalization path is not hit on every draw.
+    if (text.size() <= 1) return {};
+    bool allValue = true;
+    for (QChar c : text) {
+        if (c.isDigit() || c == QLatin1Char('.') || c == QLatin1Char(',') ||
+            c == QLatin1Char('%') || c == QLatin1Char('-') || c == QLatin1Char('+') ||
+            c == QLatin1Char('e') || c == QLatin1Char('E') || c == QLatin1Char(' '))
+            continue;
+        allValue = false; break;
+    }
+    if (allValue) return {};
     QString tr = translated(text);
-    if (!tr.isEmpty()) { ++g_drawTranslated; return tr; }
+    if (!tr.isEmpty()) return tr;
     // Record untranslated paint strings (custom-drawn property labels, etc.).
-    if (g_paintSeen.size() < 20000 && IsTranslatableString(text)) {
+    if (g_sniffActive && g_paintSeen.size() < 20000 && isTranslatableString(text)) {
         std::string k = text.trimmed().toUtf8().constData();
         if (!k.empty()) g_paintSeen.insert(k);
     }
@@ -587,7 +651,7 @@ static bool replaceImports(HMODULE module, void* original, void* replacement) {
             DWORD ign = 0;
             VirtualProtect(slot, sizeof(void*), old, &ign);
             FlushInstructionCache(GetCurrentProcess(), slot, sizeof(void*));
-            g_hookSlots.push_back({slot, original});
+            ++g_patchedSlots;
             replaced = true;
         }
     }
@@ -650,30 +714,14 @@ static void installDrawTextHooks() {
         CloseHandle(snap);
     }
     g_hooksInstalled = true;
-    Log("drawText IAT hooks installed; slots=" + std::to_string(g_hookSlots.size()));
-}
-
-static void restoreDrawTextHooks() {
-    for (const auto& kv : g_hookSlots) {
-        void** slot = kv.first;
-        void* original = kv.second;
-        DWORD old = 0;
-        if (VirtualProtect(slot, sizeof(void*), PAGE_READWRITE, &old)) {
-            *slot = original;
-            DWORD ign = 0;
-            VirtualProtect(slot, sizeof(void*), old, &ign);
-            FlushInstructionCache(GetCurrentProcess(), slot, sizeof(void*));
-        }
-    }
-    g_hookSlots.clear();
-    g_hooksInstalled = false;
+    Log("drawText IAT hooks installed; patchedSlots=" + std::to_string(g_patchedSlots));
 }
 
 // ---------------------------------------------------------------------------
 // GUI-thread worker: waits for QApplication, then installs the engine.
 // ---------------------------------------------------------------------------
 static const QString kAuthorUrl = QStringLiteral("https://space.bilibili.com/281243426?spm_id_from=333.1007.0.0");
-static const QString kGitHubUrl = QStringLiteral("");   // fill repo URL here
+static const QString kGitHubUrl = QStringLiteral("https://github.com/iillya/SpeedTreeChinese");
 
 static QString keyName(int key) {
     if (key >= Qt::Key_F1 && key <= Qt::Key_F12)
@@ -701,10 +749,35 @@ public:
             QStringLiteral("点击下方按钮后按下新快捷键（Esc 取消）："), this));
         capBtn_ = new QPushButton(QStringLiteral("当前：") + keyName(g_toggleKey), this);
         auto* ok = new QPushButton(QStringLiteral("确定"), this);
+        auto* reset = new QPushButton(QStringLiteral("重置"), this);
         lay->addWidget(capBtn_);
-        lay->addWidget(ok);
+        auto* row = new QHBoxLayout();
+        row->addWidget(ok);
+        row->addWidget(reset);
+        lay->addLayout(row);
+        // Tidy button highlight state:
+        //   - OK is the default button (Enter accepts) -> gets the default ring.
+        //   - Reset / capture are NOT default buttons, so they are not auto-highlighted.
+        //   - Initial focus goes to OK so Reset never appears focused on open.
+        ok->setDefault(true);
+        ok->setAutoDefault(true);
+        reset->setAutoDefault(false);
+        capBtn_->setAutoDefault(false);
+        row->setSpacing(8);
+        setFocusProxy(ok);
+        setStyleSheet(QStringLiteral(
+            "QPushButton { background:#3f3f3f; color:#e6e6e6; border:1px solid #565656;"
+            " border-radius:4px; padding:6px 16px; }"
+            "QPushButton:hover { background:#4c4c4c; }"
+            "QPushButton:pressed { background:#333333; }"
+            "QPushButton:default { border:1px solid #66aaff; }"));
         QObject::connect(capBtn_, &QPushButton::clicked, this, [this] { startListen(); });
         QObject::connect(ok, &QPushButton::clicked, this, [this] { stopListen(); accept(); });
+        QObject::connect(reset, &QPushButton::clicked, this, [this] {
+            g_toggleKey = Qt::Key_F2;
+            stopListen();
+            capBtn_->setText(QStringLiteral("当前：") + keyName(g_toggleKey));
+        });
     }
 private:
     QPushButton* capBtn_;
@@ -744,9 +817,13 @@ static void layoutAuthorLinkBox() {
     if (!g_authorLinkBox || !g_authorLinkBar || !g_authorHelpAction) return;
     const QRect hr = g_authorLinkBar->actionGeometry(g_authorHelpAction);
     if (hr.isEmpty()) return;
-    const int x = hr.right() + 12;
+    const int w = g_authorLinkBox->sizeHint().width();
     const int h = g_authorLinkBar->height();
-    g_authorLinkBox->setGeometry(x, 2, g_authorLinkBox->sizeHint().width(), h - 4);
+    // Vertically fill the menu bar row so the two links sit on the same
+    // vertical middle as the menu items. Horizontal stays just after 中/英.
+    const int x = hr.right() + 12;
+    g_authorLinkBox->setGeometry(x, 0, w, h);
+    g_authorLinkBox->setFixedHeight(h);
     g_authorLinkBox->raise();
     g_authorLinkBox->show();
 }
@@ -769,32 +846,56 @@ static void doToggleLanguage() {
 }
 
 static void openHotkeyDialog() {
+    static QPointer<ToggleHotkeyDialog> g_hotkeyDlg;
+    if (g_hotkeyDlg && g_hotkeyDlg->isVisible()) {    // already open -> just focus it
+        g_hotkeyDlg->raise();
+        g_hotkeyDlg->activateWindow();
+        return;
+    }
     QWidget* parent = g_authorLinkBar ? g_authorLinkBar->window() : nullptr;
     auto* dlg = new ToggleHotkeyDialog(parent);
+    g_hotkeyDlg = dlg;
+    QObject::connect(dlg, &QObject::destroyed, [] { g_hotkeyDlg = nullptr; });
     dlg->show(); dlg->raise();
 }
 
 class LangMouseFilter : public QObject {
 public:
-    using QObject::QObject;
+    LangMouseFilter(QObject* p) : QObject(p) {}
     bool eventFilter(QObject* obj, QEvent* ev) override {
         if (obj && ev->type() == QEvent::MouseButtonPress && g_langAction) {
+            if (!ev->spontaneous()) return false;           // ignore synthetic events
             auto* me = static_cast<QMouseEvent*>(ev);
-            if (me->button() == Qt::RightButton) {
-                auto* mb = qobject_cast<QMenuBar*>(obj);
-                if (mb && mb->actionGeometry(g_langAction).contains(me->pos())) {
+            auto* mb = qobject_cast<QMenuBar*>(obj);
+            if (mb && mb->actionGeometry(g_langAction).contains(me->pos())) {
+                if (me->button() == Qt::RightButton) {
                     openHotkeyDialog();
                     return true;                       // consume right-click on 中/英
                 }
+                if (me->button() == Qt::LeftButton) {
+                    pressed_ = true;
+                    return true;                       // consume left-click on 中/英
+                }
+            }
+        } else if (obj && ev->type() == QEvent::MouseButtonRelease && g_langAction && pressed_) {
+            if (!ev->spontaneous()) return false;           // ignore synthetic events
+            auto* me = static_cast<QMouseEvent*>(ev);
+            auto* mb = qobject_cast<QMenuBar*>(obj);
+            if (me->button() == Qt::LeftButton) {
+                pressed_ = false;
+                if (mb && mb->actionGeometry(g_langAction).contains(me->pos()))
+                    doToggleLanguage();                 // fire on release over 中/英
+                return true;
             }
         }
         return false;
     }
+private:
+    bool pressed_ = false;
 };
 
 static void installAuthorLink() {
-    static QPointer<QMenuBar> seenBar;
-    if (g_authorLinkBox && seenBar) return;
+    if (g_authorLinkBar && g_authorLinkBox) return;   // already installed on this bar
     QMenuBar* mb = nullptr;
     for (QWidget* w : QApplication::allWidgets()) {
         if (auto* menu = qobject_cast<QMenuBar*>(w)) {
@@ -817,7 +918,6 @@ static void installAuthorLink() {
     QAction* langAct = new QAction(QStringLiteral("中/英"), mb);
     langAct->setObjectName(QStringLiteral("speedtree_lang"));
     g_langAction = langAct;
-    QObject::connect(langAct, &QAction::triggered, [] { doToggleLanguage(); });
     mb->installEventFilter(new LangMouseFilter(mb));   // right-click -> hotkey dialog
     const auto acts = mb->actions();
     int idx = helpAction ? acts.indexOf(helpAction) : -1;
@@ -848,8 +948,8 @@ static void installAuthorLink() {
                      [](const QString& u) { if (!u.isEmpty()) QDesktopServices::openUrl(QUrl(u)); });
     QObject::connect(github, &QLabel::linkActivated,
                      [](const QString& u) { if (!u.isEmpty()) QDesktopServices::openUrl(QUrl(u)); });
-    lay->addWidget(author);
-    lay->addWidget(github);
+    lay->addWidget(author, 0, Qt::AlignVCenter);
+    lay->addWidget(github, 0, Qt::AlignVCenter);
 
     g_authorLinkBox = box;
     g_authorLinkBar = mb;
@@ -857,7 +957,6 @@ static void installAuthorLink() {
     mb->installEventFilter(new AuthorLinkResizeFilter(mb));
     QTimer::singleShot(0, mb, [] { layoutAuthorLinkBox(); });
     layoutAuthorLinkBox();
-    seenBar = mb;
     Log("中/英 menu action inserted after Help; author links after it");
 }
 
@@ -868,6 +967,7 @@ static void RunOnGuiThread(QApplication* app) {
     app->installEventFilter(new TranslatorFilter(app));
     installAuthorLink();
     Log("ui installed; enabled=" + std::to_string(g_enabled ? 1 : 0));
+
 }
 
 static DWORD WINAPI Worker(LPVOID) {

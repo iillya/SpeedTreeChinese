@@ -9,8 +9,8 @@ is [ nameLen u32 ][ name utf-8 ][ offset u64 ][ size u64 ][ sha256 32 ].
 import hashlib
 import os
 import struct
-import sys
 import glob
+import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NATIVE = os.path.join(ROOT, "native")
@@ -83,8 +83,21 @@ def main():
     tail = struct.pack("<IIQ", len(manifest), len(entries), MAGIC)
     out = base + payload + bytes(manifest) + tail
     dest = os.path.join(DIST, "SpeedTreeChineseInstaller.exe")
-    with open(dest, "wb") as fh:
+    tmp = dest + ".tmp"
+    with open(tmp, "wb") as fh:
         fh.write(out)
+    # Replace atomically; tolerate the destination being momentarily locked
+    # (e.g. by an antivirus scan of a previous build).
+    try:
+        os.replace(tmp, dest)
+    except PermissionError:
+        # Destination held by another process; retry shortly, else keep tmp.
+        time.sleep(1.0)
+        try:
+            os.replace(tmp, dest)
+        except Exception:
+            print(f"[warn] could not overwrite {dest}; left {tmp}")
+            tmp = dest  # report the actual file path
     print(f"embedded {len(entries)} payload files -> {dest}")
     print(f"  total size {len(out)/(1024*1024):.2f} MB")
 
