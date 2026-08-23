@@ -1,0 +1,735 @@
+
+<a href="www.speedtree.com/versioninfo" style="color: #93B479">Click here</a> for more information.
+ 
+     Brightness
+   High
+   Season
+  Clear  
+ - None
+
+
+ - unknown
+ All 
+ Relative elevation
+ X
+ Y
+&1 C:/Program Files/SpeedTree/Spe...mples/Games/Bush/Bush_Desktop.spm
+&2 C:/Program Files/SpeedTree/Spee...rning/Rules/Oak_Complex_Rules.spm
+&About SpeedTree Modeler...
+&Arbitrary scene scale...
+&Close
+&Edit
+&Export mesh...
+&File
+&Generate collision objects...
+&Help 
+&Licensing info...
+&Move
+&New...
+&Open...
+&Preferences...
+&Purchase a license...
+&Recent files
+&Render ambient occlusion
+&Reset layout...
+&Restore
+&Save
+&Scene unit conversion...
+&Shop for models...
+&Size
+&Tools
+&Tree info...
+&User manual...
+&Window
++X
++Y
++Z
+----Import new material----
+-0.01
+-0.11
+-1
+-X
+-X -Y -Z
+-X -Y Z
+-X Y -Z
+-X Y Z
+-Y
+-Z
+...
+.05
+.10
+.15
+.25
+0
+0-1 patches (choose one assigned material)
+0-1 patches (use all assigned materials)
+0.001
+0.006
+0.00600004
+0.025
+0.05
+0.1
+0.15
+0.25
+0.269
+0.359
+0.366
+0.5
+0.568
+0.75
+0.8
+1
+1.0
+1.5
+10
+1024
+120
+15
+15000
+2
+2.09634e+09
+2.11584e+09
+2.85
+20
+2048
+24
+25
+256
+3
+30
+300
+4
+4.72833e+07
+4096
+48
+5
+50
+512
+6
+60
+7
+8
+9
+<
+<html><body><p>SpeedTree&reg; Modeler <br/>Version 10.2.0 (Build Apr 30 2026)</p></body></html>
+<html><head/><body><p>Control how fast the tree grows globally with this value.  Each generator/node has a property to scale this value locally within the model.</p></body></html>
+<html><head/><body><p>Current frame</p></body></html>
+<html><head/><body><p>Do not select vertices with normals pointing away from the camera</p></body></html>
+<html><head/><body><p>Hold space to brush select:<br/>LMB = set selection<br/>Ctrl+LMB or Shift+LMB = add to selection<br/>Alt+LMB or RMB = remove from selection<br/><br/></p></body></html>
+<html><head/><body><p>Only select vertices near the previous selection (resets on next swipe)</p></body></html>
+<html><head/><body><p>Play</p></body></html>
+<html><head/><body><p>Some modeling features do not work or may behave erratically during growth animations.  Use this feature to see a list of the values and automatically set them to values suitable for growth.</p><p><br/></p><p><span style=" font-weight:600;">Note:</span> It is a good practice to edit the model with growth enabled when you know you will need to export a growth sequence.</p></body></html>
+<html><head/><body><p>Stop</p></body></html>
+<html><head/><body><p>The last frame of the animation</p></body></html>
+<html><head/><body><p>Timeline</p></body></html>
+<html><head/><body><p>Use this curve to control the overall timing of the growth animation</p></body></html>
+>
+AO
+Absolute
+Absolute elevation
+Access collision object functions.  Collision objects are simple geometric primitives
+that can be accessed via the SDK to assist with collision at run-time.
+
+Hot key: 7 (toggles collision objects in the viewport)
+Access force functions.  Forces are modeling tools that manipulate growth in world-space.  Examples
+of their use include gravity (downward direction forces) and growing geometry around 3d
+geometry (geometry forces)
+
+Hot key: 6 (toggles forces in the viewport)
+Access high level wind functions.  Wind is controlled by a combination of properties in the
+model (typically in the 'Wind' group) and properties of the fan object.
+
+Hot key: 8 (toggles wind)
+Access light properties.
+Actions
+Add
+Add geometry to the model based on a set of predefined templates.  Once a template has been added,
+select any of the new generators to edit the model.
+Adds noise to the result to make mask edges more organic.
+Adjust (+/-)
+Advanced
+Alignment
+All
+All descendants
+All property edits apply to the selected generator(s).  This mode affects all of the individuals nodes
+created by the generator(s) and allows parent curve editing.
+
+Hot key: Tab
+All property edits apply to the selected node(s).  Property edits in this mode are offsets to the
+the value computed by the generator and should be used for fine tuning only.
+
+Hot key: Tab
+Alpha
+Amount
+Amount of smoothing applied to the displacement map before it is applied to the geometry.
+Animation
+Any
+Apply License
+Apply materials and influence season transitions
+As:
+Atlas creator...
+Auto
+Automatic
+B
+Bake all texture adjustments...
+Bark_2
+Behavior
+Bend
+Binormal
+Blue
+Branches	3
+Branches only
+Browse for a material and add it to the list automatically.
+Browse for a mesh and add it to the list automatically...
+Browse samples...
+Browse to a file.
+Browse to an image and add it as a mask.
+Browse to image and add it as a displacement map.
+Browse...
+Bush_Desktop.spm
+Bush_Desktop.spm[*]
+C&lear ambient occlusion
+Cameras
+Change ID
+Change how descendants are computed to achieve structured looks
+Change the algorithm by which the model is computed.
+
+Channel
+Channel   
+Choose which LOD mesh is displayed.
+Clear
+Clear all
+Clear edits on selection
+Clear selected
+Clear selected + descendants
+Click Place
+Click here for a menu of generator operations.
+Click this button and then click any spot on the model to set the view's
+pivot point on that part of the model.  The camera will zoom to and pivot around
+the selected point.
+
+Hot key: N
+('double-clicking' anywhere on the model is a shortcut for this action)
+Close Active Tab
+Close Tab
+Cohesive
+Collapse or expand the toolbar.
+Collision
+Collision Objects
+Collision objects
+Colors
+Compute
+Compute AO
+Compute Style
+Compute ambient occlusion on the model. Once computed, ambient occlusion settings can be edited
+by selecting the light.  Recomputing the tree will clear AO values.
+
+
+Hot key: O
+Computes a scale based on UV area
+Constant
+Contrast
+Control how much of the model is visible.  Use these options to
+temporarily reduce computing and rendering complexity.
+Control the polygon count
+Control the shape of the "center line" of the branch
+Control whether this mask controls what passes or what fails.
+Control which geometry types are shown in the viewport.
+Control wind and growth animations
+Convert generator to hand drawn
+Convert to hand drawn
+Copy/Paste menu.
+Copy/Paste menu...
+Cr&eate collection from selection
+Create geometry force from selected generators
+Curvature
+Cut
+Cutouts/Meshes
+Debug XML file...
+Deep
+Default
+Delete this mesh
+Destroy it
+Detach Group
+Disabled
+Displacement
+Displacements
+Displacem…
+Distribution
+DockOverlay
+DockOverlayCross
+Documentation...
+Draft
+Drag this displacement and drop it on the model or a generator to use it.
+Drag this mask and drop it on the model or a generator to use it.
+Drag this material and drop it on the model or a generator to use it
+Drag this mesh and drop it on the model or a generator to use it.
+Draw
+Dynamic LOD
+E&xit
+Each instance of this mesh is scaled by this amount
+Edit
+Edit Color
+Edit LOD Properties...
+Edit Mesh...
+Edit Season Labels
+Edit Tree Window properties...
+Edit name...
+Edit...
+Eliminate colliding leaf meshes. Meshes are removed in the background according to the quality setting:
+
+High	 : leaf-leaf and leaf-branch collisions are eliminated, as many leaves as possible remain (slowest)
+Medium	 : leaf-leaf and leaf-branch collisions are eliminated, more leaves are removed in favor of faster execution
+Low	 : most leaf-leaf collision are eliminated, leaf-branch collisions are ignored
+None	 : collisions are ignored
+Eliminate leaves hidden in the interior of the tree.
+Embedded
+Enable this option to speed up computation time during edits.
+Enabled
+Enabled geometry forces
+End
+Ensure that the winding of each face matches the surface normals (ensures proper face culling in real-time rendering).
+Erase
+Error details
+Errors and warnings
+Errors only
+Errors, warnings, and notes
+Everything
+Ex&port selected as mesh...
+Exclusive
+Expand
+Export
+Export image sequence...
+Export image...
+Export material...
+Export the model as a mesh (including animation, unwrapped textures, hierarchy, and other features if desired).
+Export this mesh...
+Export world building data...
+Export...
+Extensions
+Exterior
+FPS
+Face culling.
+Facebook...
+Falloff
+Fast Edit
+Fast forward to end
+Favor outliers
+Features
+Fewer
+Filename
+Fill
+First
+Fit to geometry
+Fix winding
+Flip
+Flip normals
+Flip the model around the specified axis.  Often used to convert coordinate systems and align the mesh for use as a frond or leaf.
+Flow
+Follow us on Twitter...
+For best results, use the "Orientation" and "Flip" options to orient
+the mesh based on its intended use as indicated by the figure.
+Force fresh login
+Force in
+Force out
+Forces
+Forget
+Form
+Forum...
+Freehand
+Fronds	2
+Full message
+Full screen
+Full screen, no bars
+Fullscreen
+Fuzziness
+G
+Gaussian (bell curve)
+Gen
+Generation
+Generator
+Geometry
+Geometry Force Crawling
+Gizmo
+Global
+Global properties
+Gnarl
+Go to mesh
+Gray
+Green
+Greyscale
+Growth
+Growth wizard...
+H
+Hand Draw
+Hand Drawn
+Hand drawn branch properties
+Handling
+Help
+High
+Highest LOD mesh file.
+Hold "Space" and click on an object to manually place a child with ID
+Icon only
+Ignore backfaces
+Ignore siblings
+Image
+Import camera from FBX...
+Import material asset...
+Import mesh asset...
+Import tree parts...
+Import...
+In place
+Inclusive
+Influence how LOD transitions are computed
+Information
+Inherited
+Interior
+Intermediate
+Keep all
+Keep hits
+Keep it
+Keep misses
+Knock out others only
+LOD
+Large Cluster
+Leaf_Cluster_1 Cutout
+Leaf_Cluster_1 Cutout 2
+Leaf_Cluster_1 Cutout 3
+Leaf_Cluster_1_Bare
+Leaf_Cluster_1_Fall
+Leaf_Cluster_1_Fall_Transition
+Leaf_Cluster_1_Spring
+Leaf_Cluster_1_Summer
+Leaf_Cluster_1_Winter
+Leaf_Cluster_2 Cutout
+Leaf_Cluster_2 Set
+Leaf_Cluster_2_Fall
+Leaf_Cluster_2_Fall_Transition
+Leaf_Cluster_2_Spring
+Leaf_Cluster_2_Summer
+Leaf_Cluster_2_Winter
+Leaves	1
+Legacy
+License
+License type
+Light
+Lighting
+Lightmap
+Linear
+List All Tabs
+Local
+Login message
+Login with Unity ID
+Login...
+Loop the animation
+Low
+Lowest LOD mesh file.
+MDI
+Ma&ximize
+Make New Set...
+Make stationary
+Make the models normals point in the opposite direction.
+Manage account...
+Manage scene objects (Forces, Collision Objects, Scene Cameras, and Projectors)
+Manage the displacement maps.
+Manage the masks.
+Manage the materials.
+Manage the meshes.
+Manual
+Manual (full control)
+Manual (match u only)
+Manual (match)
+Masks
+Matching color
+Material
+Material Sets
+Materials
+Mate…
+Max
+Max resolution
+Med
+Medium
+Mesh helpers
+Meshes
+Messages for: 
+Messages for: Large Cluster
+Messages for: Spline
+Mes…
+Mi&nimize
+Middle LOD mesh file.
+Min
+Mode Message
+More
+Name
+New...
+No displacements
+No masks
+No new segments
+No rules configured
+Node
+Noise
+None
+Normal
+Normalize
+Not the primary
+Nothing
+Nothing selected
+Nothing to redo
+Nothing to undo
+Off
+Offset
+Open (compute disabled)...
+Open...
+Optimal
+Orient
+Origin
+Original
+Output
+Override season
+Package tree for support...
+Package tree...
+Paint
+Parent
+Parent X
+Parent Y
+Parent Z
+Parent level
+Parent's radial segments
+Parent's start and end
+Physics
+Pick...
+Pin Active Tab (Press Ctrl to Pin Group)
+Places geometry around the "center line".
+Planar
+Polygons
+Post
+Preserve cross section
+Preset
+Primary
+Process tree templates
+Projectors
+Properties
+Proxies	9
+Prune
+Prune it
+Purchase now...
+R
+R&edo selection
+RGB
+Radius
+Random
+Random Seeds
+Randomize
+Randomize all
+Randomize the currently selected generators. The entire model will be randomized if none are selected.
+Ready
+Recents
+Red
+Redistribute
+Redo
+Reject mesh escapees
+Relative
+Relative (keep aspect ratio)
+Reload Maps
+Reload this file.
+Reload this mesh.
+Remove
+Remove unused assets
+Render
+Render photo...
+Reorient the mesh, if necessary.  Often used to convert coordinate systems and align the mesh for use as a frond or leaf.
+Repel
+Replace old generators with their new, upgraded equivalents.
+Reports the number of vertices in the mesh.
+Request license...
+Reset color
+Reset lightmap scalars
+Reset to default
+Reset to defaults
+Resolution / LOD
+Restrict growth based on relative elevation (0.0 = bottom, 1.0 = top).
+Restrict growth based on the U tex coord.
+Restrict growth based on the V tex coord.
+Restrict growth based on the height of the parent mesh in the mesh's units.
+Restrict growth based on the slope.
+Reveal profile
+Revert to saved
+Rewind to beginning
+Ripple
+Rotate gizmo
+Round
+Rules
+S
+S&ave as...
+S-Curve
+Sa&ve incremental
+Scale
+Scale the size of this material in unwrapped maps.
+Scene Objects
+Scene cameras
+Screen area close
+Screen area far
+Season
+Season Selector
+Segments
+Select
+Select a displacement map to edit.
+Displacement maps can be applied to branch geometry.
+Select a mask to edit.
+Masks are applied in the 'Generation' group to control where children can grow.
+Select a material to edit.
+Materials are applied to geometry by dragging/dropping
+or selecting them from material properties.
+Select a mesh to edit.
+Meshes are used as leaf, frond, and terrain geometry.  They can also be used
+with force meshes to shape tree geometry or become part of the model.
+Select the filename for the image.
+Select the mask type (objects must pass all applied masks).
+Select verts
+Select which channel of the image to use.
+Select which tool is used for selected scene objects.
+Separate
+Set how UV coordinates are computed for texture mapping and light mapping
+Set options for the transform gizmo.
+
+Set the polygonal resolution for this model.
+
+Hot keys: D - decrease resolution, Ctrl+D increase resolution
+Set the season of the current model.  This is applicable to any models that makes use of the season
+properties on generators and the season curves on materials.
+
+Hot key: Alt+S
+Sets how many nodes are made and where they start on their parent
+Settings
+Shade
+Shape
+Shape Control
+Share
+Sharp
+Shop for models...
+Show
+Show dropped leaves
+Show me:
+Show menu
+Show range
+Show recent files...
+Shrink
+Size
+Skeleton setup for exported models
+Skin
+Slope
+Smooth
+Smoothing
+Soft-selection
+Spacing
+Specifies the axis that will align with the wind direction.
+Specifies the vector along which rippling will occur.
+Specify the mesh file and what processing should be applied to it.
+Specify the style in which the scene is rendered.
+Speed
+SpeedTree  Modeler 10.2.0
+SpeedTree Licensing
+SpeedTree.com...
+Sphere
+Spine
+Spine only
+Spline
+Standard
+Start
+Stay on &Top
+Step 1: Hold "Space" and click in the scene to start a new branch
+Step 2: Hold "Space" then click+drag the diamond at the end to trace out the branch's shape.
+Step back one frame
+Step forward one frame
+Stop
+Stop it
+Strength
+Stretch profile
+String associated with this material that can be retrieved via the SDK.
+SubD surface (arbitrary attachments)
+SubD surface (rectangular attachments)
+Support for UE4 integration issues...
+Support for modeling issues...
+Surface X
+Surface Y
+Surface Z
+Switch to Substances where possible
+Switch to simple mesh
+Tangent
+Target
+Targets	5
+Terrain
+Texcoord
+These options provide data about this mesh to the wind system.
+Tiling
+Timeline
+Tool
+Trim
+Two-sided
+Type
+U
+U and V locked [0, 1]
+U locked [0, 1], V unrestricted
+U&ndo selection
+UV
+UV Areas
+UV Mapping
+Undo last bend
+Uniform (random)
+Unrestricted
+Unsupported feature(s) selected:
+
+Untrim
+Unwrap
+Update lower LODs
+Upgrade
+Use UVs
+Use a license
+Use forces to influence the "center line" of the branch
+Use noise, maps, or both to rough up the shape of the skin
+Use the freehand tools to shape and edit individual nodes manually.
+
+Hot key: Tab
+User data
+V
+V 
+V:16  F:24  A:8
+Value
+Variance
+Very high
+Video tutorials...
+Visibility
+Weight
+Wind
+Wind wizard...
+Window
+Window properties
+Wizard...
+World X
+World Y
+World Z
+X
+X -Y -Z
+X -Y Z
+X Y -Z
+X Y Z
+XYZ
+XZY
+Y
+Y-Up LH
+Y-Up RH
+YXZ
+YZX
+YouTube channel...
+Z
+Z-Up LH
+Z-Up RH
+ZXY
+ZYX
+Zones / Meshes (no wind)	4
+Zoom
+Zoom the camera view to show the selection.  If nothing is selected, zoom out far enough to show the whole model.
+
+Hot key: Z
+all frames
+to

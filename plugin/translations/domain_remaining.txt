@@ -1,0 +1,919 @@
+A non-manifold edge incident to more than two faces was found.
+AFImage Height
+ASF Scene Owned
+Access collision object functions.  Collision objects are simple geometric primitives
+Access force functions.  Forces are modeling tools that manipulate growth in world-space.  Examples
+Access high level wind functions.  Wind is controlled by a combination of properties in the
+Add Geometry
+Add geometry
+Add geometry to selected
+Add geometry to the model based on a set of predefined templates.  Once a template has been added,
+All property edits apply to the selected generator(s).  This mode affects all of the individuals nodes
+Anim Curve
+As Optical Segments
+As Shot ICCProfile
+Aspect Height
+AttValue length too long
+Auth product length bad
+Auth ver length bad
+Auto Axis Conversion
+Axis Conversion
+Axis X
+Axis Y
+Axis Z
+Axis indicator
+Bad Polygon Size
+Bad segment count
+Bake stitches must be the child of a "Mesh" generator.
+Band geometry creation failed
+Billboard Top Down Height
+Bogus marker length
+Bone has no length
+BoneLengthAxis Y
+Box length is inconsistent.
+CBatchedLeafNode Template
+CBranchMeshNode Template
+CBranchNode Template
+CFrondNode Template
+CLeafMeshNode Template
+CLeafNode Template
+CMeshDetailNode Template
+CSpineNode Template
+CURL error sending request
+Camera Elevation Angle
+Camera Focal Length converted to Field Of View
+Camera Index
+Camera Interest
+Camera Switcher
+Camera facing
+Camera owner name
+Camera type will be set to Perspective.
+Can not change "ImageLength" when using separate planes
+Can't read bone length
+Can't read data frame rate
+Can't read frame count
+Can't read frame name
+Can't read frame number
+Can't read frame rotation
+Can't read frame scaling
+Can't read frame translation
+Can't read segment base rotation
+Can't read segment base translation
+Can't read segment count
+Can't read segment length
+Can't read segment name
+Canon CameraInfo Tags
+Canon CameraSettings Tags
+Canon File Length
+Canon Focal Length
+Canon FocalLength Tags
+Canon Image Height
+Cap lip height curve invalid
+Capture cameras
+Casts Shadows
+Cell Length
+Center window splitter
+Centered surface
+Change texture format
+Change the algorithm by which the model is computed.
+Channel count doesn't match. Profile is corrupted
+Child Material Season Curve
+Chroma Blur Radius
+Clamp texture size
+Clear freehand edits
+Click this button and then click any spot on the model to set the view's
+Cluster plane overlap prevention
+Collision Offset
+Collision Scale
+Collision disabled for growth
+Common render states
+Compiling Tree
+Computing LOD data...
+Computing collision solution
+Cone Angle
+Cone angle
+Constraints animation
+Consult lightList cache
+Contrast Curve
+Control how much of the model is visible.  Use these options to
+Control the shape of the "center line" of the branch
+Control whether this mask controls what passes or what fails.
+Control which geometry types are shown in the viewport.
+Controls the projection's field of view
+Controls which render states are reset per frame
+Convert to 'Leaf Mesh'
+Copy camera
+Copy curve
+Copy curve for script
+Corrupted animation data.
+Corrupted built-in profile.
+Could not export node
+Could not export texture
+Could not find a material to export the texture
+Could not find common profile in library effect
+Could not find geometry library
+Could not find texture
+Could not get camera for node
+Could not get light for node
+Could not get mesh for node
+Could not make curve cyclical
+Couldn't link the profiles
+Couldn't read profile from NULL pointer
+Create a new tree
+Create fronds
+Ctrl Enforce Gravity
+Curl Force
+Current ICCProfile
+Current wind mode unsupported
+Currently, only Mesh generators can be converted or stitched.
+Curve Editor
+Curve Filters
+Curve count is too high. No support above 20 curves
+Curve is clamped
+CurveNode does not have 3 childs
+Custom Height
+Daylight Savings
+Default generator
+Deformed Models
+Demo camera
+Detected an entity reference loop
+Determines when 3D icons are rendered
+Digital Camera
+Direction Force
+Directional light
+Disable growth to use freehand editing
+Disable two sided rendering
+Displacement Color
+Display scaling preview
+Do you wish to continue rendering the tiles?
+Do you wish to open the exported SPM now?
+Do you wish to open the packaged tree now?
+Do you wish to revert the tree to the last saved state?
+Draw ground
+Draw into selected
+Drawn Curve
+Drop a camera here
+Drop new orthographic camera here
+Drop new perspective camera here
+Dropped XY plane camera
+Dropped XZ plane camera
+Dropped YZ plane camera
+Dropped perspective camera
+EOF in run length encoding
+Edit LOD Properties...
+Edit Mesh -
+Edit Mesh...
+Edit Tree Window properties...
+Edit UV Area
+Edit Vertex Color
+Edit light properties...
+Edit selected object's wind properties
+Edit wind properties...
+Edit window properties...
+Editing this mesh will convert it to embedded.
+Eliminate colliding leaf meshes. Meshes are removed in the background according to the quality setting:
+Embedded Profile
+Empty mesh assigned
+Empty spine detected
+Enable vertex colors on the 'Tree' generator
+Enables lighting
+Enables rendering optimizations based on polygon visibility
+Enables texture mapping
+Enables the rendering of grid lines
+EndFrame change
+Ensure that the winding of each face matches the surface normals (ensures proper face culling in real-time rendering).
+Epson Image Height
+Error in Mask Info
+Error writing texture file "
+Exif Camera Info
+Exit the SpeedTree Modeler application
+Exp growth
+Exp length bad
+Expired layer handle
+Export Image Sequence
+Export Material
+Export Mesh
+Export Summary
+Export Tree Image
+Export UV Areas
+Export Unwrapped Mesh
+Export World Building Data
+Export image sequence...
+Export image...
+Export material...
+Export mesh...
+Export selected as mesh...
+Export the model as a mesh (including animation, unwrapped textures, hierarchy, and other features if desired).
+Export this mesh...
+Export type
+Export world building data...
+Exporting animation
+Exporting geometry
+Exporting materials
+Exporting mesh
+Extract Folder
+FBX COLLADA exporter
+FBX camera
+FCurve Key Synchronizer
+FCurve Matrix Converter
+FCurve Resample
+Face Detect Frame Size
+Face normal
+Failed to import JPEG2000 image
+Fax Profile
+Fbx Anim Curve
+Fbx Anim Curve KFCurve
+Fbx Nurbs Curve
+Feature vertices are currently unsupported on branches that split.
+Files for other LODs were detected.
+Fill Timeline
+Fill Timeline Span
+Film Height
+Fit to mesh
+Fix winding
+Fixed Height
+Flip curve horizontally
+Flip curve vertically
+Flip normals
+Flip the model around the specified axis.  Often used to convert coordinate systems and align the mesh for use as a frond or leaf.
+Float or RGBE images must be encoded with YUV 444!
+Focal Length
+Focal length in 35 mm film
+Focus Angle
+Foreground Texture
+Frame Color
+Frame Count
+Frame Rate
+Frame Sampling Count
+Frame Start
+Frame buffer slice name cannot be an empty string.
+Frame display time
+Frame disposal method
+Frame left
+Frame not displayable.
+Frame range
+Frame rate used
+Frame setup failed
+Frame top
+From Camera...
+From curve average
+From curve max
+From curve middle
+From curve min
+From selected generators
+Frond mesh has zero width
+Fronds must be the child of a 'Branch' generator
+Full Height
+Full Texture
+Full frame image
+Full height
+Galaxy Note 9 Rear Camera
+Game Mode Parent Left Elbow Roll
+Game Mode Parent Left Hip Roll
+Game Mode Parent Left Knee Roll
+Game Mode Parent Left Shoulder Roll
+Game Mode Parent Right Elbow Roll
+Game Mode Parent Right Hip Roll
+Game Mode Parent Right Knee Roll
+Game Mode Parent Right Shoulder Roll
+Generate Collision Objects
+Generate collision objects...
+Generated using SpeedTree tools
+Generating lightmap UVs
+Generator name
+Generator pass too late for Projector
+Generic nodes animation
+Geometric Rotation
+Geometry Force has no behaviors, has no effect
+Geometry Force is using a descendant
+Geometry Force not ready
+Geometry cannot be grown off of a shell generator.
+Geometry force actions
+Geometry type
+Global Axisof Gravity
+Global Height
+GlobalAxisofGravity Y
+Gnarl Force
+Go to mesh
+Go to window settings...
+Gray Response Curve
+Grow things around it
+Grow things off of it
+Growing input buffer
+Growth Curve
+Growth Wizard
+Growth disabled due to generator based geometry forces
+Growth friendly
+Growth is being exported, but one or more trees is not set up for growth.
+Growth not supported for shells
+Growth wizard...
+Hand Contact Size
+Hand Drawing
+Hand drawing
+Hand drawn extension
+Handle zooming by
+Heartbeat handler already installed
+Height based
+Height indicator
+High	 : leaf-leaf and leaf-branch collisions are eliminated, as many leaves as possible remain (slowest)
+Hot key: 6 (toggles forces in the viewport)
+Hot key: 7 (toggles collision objects in the viewport)
+Hot key: 8 (toggles wind)
+ICC Profile
+ICC profile data
+ICC profile tag outside profile
+ICC profile tag start not a multiple of 4
+ICC profile too short
+IMF profile forbid POC markers.
+IMF profile forbid mode switch in code block style.
+IMF profile require code block size to be 32x32.
+IMF profile require progression order to be CPRL.
+IMF profiles require at most 3 components.
+IMF profiles require image origin to be at 0,0.
+IMF profiles require tile origin to be at 0,0.
+Ignore lightList cache
+Image Full Length
+Image Length
+Image Render Size
+Image height
+Image height exceeds user limit in IHDR
+Image height is zero in IHDR
+Image input equipment model
+Image resolution in height direction
+Import Camera from fbx
+Import SpeedTree Model File
+Import UV Areas
+Import camera from FBX...
+Import cameras from FBX
+Import material asset...
+Import mesh asset...
+Import tree parts...
+Importing file
+In a displacement asset
+In the material's height channel
+Inappropriate message buffer length
+Include wind
+Incomplete Animation data.
+Incorrect keyframe parameters.
+Index out of allocated segment slots
+Individual control  LOD
+Infinite Light
+Initialization of rendering framebuffers failed.
+Inner Angle
+InputFile cannot handle parts of type
+Insufficient memory to process iCCP profile
+Inter Color Profile
+Internal subdivision surface error
+Invalid Base generator parent
+Invalid SnapOnFrameMode value
+Invalid Time Span. No key were changed by filter
+Invalid curve created
+Invalid data window in image header.
+Invalid dimensions in Preview Image Attribute
+Invalid display window in image header.
+Invalid document handle
+Invalid height
+Invalid image height in IHDR
+Invalid layer handle
+Invalid palette length
+Invalid parameter while reading layered texture Alphas
+Invalid sCAL height
+Invalid sRGB rendering intent specified
+Invalid screen window width in image header.
+Invalid tile height
+It cannot be opened in this version of the Modeler.
+JPEG 2000 Broadcast profiles not yet supported
+JPEG 2000 Long Term Storage profile not yet supported
+JPEG 2000 Part-2 profile defined
+JPEG 2000 Scalable Digital Cinema profiles not yet supported
+JPEG compressed data indicates unexpected height
+JPEGInterchange Format Length
+Jpeg Interchange Format Length
+Keep file frame
+LOD enabled
+LOD generation failed
+LOD group
+LODs + billboard
+Layer Element Vertex Color
+LayerElement Binormal
+LayerElement Normal
+LayerElement Polygon Groups
+LayerElement Smoothing Groups
+LayerElement Vertex Color
+Layout generators
+Leaf AFi
+Leaf Collision
+Leaf Left Arm Roll
+Leaf Left Fore Arm Roll
+Leaf Left Leg Roll
+Leaf Left Up Leg Roll
+Leaf Mesh
+Leaf Right Arm Roll
+Leaf Right Fore Arm Roll
+Leaf Right Leg Roll
+Leaf Right Up Leg Roll
+Leaf generators
+Leaf mesh
+Leaf removed because it was 'blown away'
+Leaf style
+Leaf_Cluster_1 Cutout
+Leaf_Cluster_1 Cutout 2
+Leaf_Cluster_1 Cutout 3
+Leaf_Cluster_2 Cutout
+Leaf_Cluster_2 Set
+Left Arm Max Extension Angle
+Left Arm Roll
+Left Fore Arm Roll
+Left Leg Max Extension Angle
+Left Leg Roll
+Left Up Leg Roll
+Length only
+Length relative
+Lens focal length
+Lens model
+Lic product length bad
+Lic ver length bad
+License Generator not found at this URL
+Light Cross
+Light Map
+Light object
+Light source
+Lightmap settings
+Limb Length
+Line length mismatch
+Linear gradient
+Linear growth
+Lip height
+Lock camera
+Logical Height
+Logical height
+Low	 : most leaf-leaf collision are eliminated, leaf-branch collisions are ignored
+Magnet Force
+Make UV area
+Make all generator names unique
+Make geometry force from selected
+Make straighten curve linear
+Make the models normals point in the opposite direction.
+Malformed HT codeblock. Invalid codeblock length values.
+Malformed scene
+Malformed scene graph
+Manual atlas adjustments were made on this tree previously.
+Marker handler function failed to read the marker segment
+Marker size inconsistent with stream length
+Masks are applied in the 'Generation' group to control where children can grow.
+Match trunk
+Material Set
+Material load other maps
+Material name
+Material sets
+Material with back is two-sided
+Materials animation
+Materials marked 'First' shifted due to welding
+Max Branch Length
+Max Focal Length
+Max texture resolution
+Meaningless to get rotation angle from non-rotation op.
+Meaningless to get rotation axis from non-rotation op.
+Meaningless to set rotation angle on non-rotation op.
+Meaningless to set rotation axis on non-rotation or fixed angle rotation op.
+Medium	 : leaf-leaf and leaf-branch collisions are eliminated, more leaves are removed in favor of faster execution
+Mesh Offset
+Mesh Wizard
+Mesh alignment
+Mesh asset
+Mesh asset filename
+Mesh asset name
+Mesh converter
+Mesh crawling error likely
+Mesh crawling error possible
+Mesh detail
+Mesh forces
+Mesh helper
+Mesh load other LODs
+Mesh options
+Mesh output
+Mesh weld failed
+Meshes are used as leaf, frond, and terrain geometry.  They can also be used
+Messages for: Large Cluster
+Messages for: Spline
+Microsoft Loopback Adapter
+Min Focal Length
+Missing closing curly brace
+Missing mesh
+Model Count
+Model categories
+Model name "root" is only allowed for the ASF root node
+Models animation
+More points may be needed to represent straightened texture
+Motion Analysis TRC File Exporter
+Motion Analysis TRC File Importer
+Motion Frame Count
+Moving the camera
+Multi Burst Image Height
+Multisegment or Inverted parametric curves cannot be written
+My Scene
+NULL input profiles on transform
+Need 3 KFCurve to apply a gimble killer filter
+New SpeedTree
+New SpeedTree[*]
+New Texture Packer
+New branches
+New generator
+New texture packer "
+Nikon ICCProfile
+No Communications Handle
+No SpeedTree Modeler entitlement found
+No camera specified
+No displacements
+No frame buffer specified as pixel data destination.
+No frame buffer specified as pixel data source.
+No frame buffer was specified as the pixel data destination for image file "
+No frame buffer was specified as the pixel data source for image file "
+No frames saved, stack traces probably not supported on this architecture.
+No generators currently use this wind level.
+No handle supplied to call
+No leaf parent to lock to
+No masks
+No material passed the season test
+No material sets
+No materials
+No mesh assigned to the assigned material
+No meshes
+No part of the frond mesh has positive y coordinate
+No profile for iCCP chunk
+No render states
+No specified mesh
+No subtree deps
+No support for converting user data format to LogLuv
+No valid spine on parent
+No vertex selected
+No vertices defined in mesh
+No wind
+No wind levels available for ribs
+None	 : collisions are ignored
+Not a key frame.
+Not able to export all links for mesh
+Not all channels are animated
+Not enough animation curves
+Not enough animation curves found
+Not enough curves provided
+Not enough memory to create Tag-tree
+Not enough memory to create Tag-tree nodes
+Not enough memory to handle band precints
+Not enough memory to handle ftyp data
+Not enough memory to handle jpeg2000 box
+Not enough memory to handle jpeg2000 file header
+Not enough memory to reinitialize the tag tree
+Not recognizing known sRGB profile that has been edited
+Number of animation curves is not 3
+Nurbs Curve
+Object Preview File Format
+Object Preview File Version
+Olympus CameraSettings Tags
+Olympus Image Height
+One Click Merge for Texture only
+Only support SGILOG compressed LogLuv data
+Open Displacement
+Open Mask
+Open Mesh
+Open SpeedTree Model File
+Open SpeedTree Raw File
+Open a new SpeedTree file
+Operation not allowed on disconnected handle
+Original JPEGHeight
+Ornamental, cultivated tree
+Orthographic camera
+Outer Angle
+Output Textures
+Overlapping UVs present, may not work with lightmaps
+POLYGONS - MODEL
+POLYGONS - SELECTED
+Package tree for support...
+Package tree...
+PackedJointAnimation schema object is invalid.
+Packing textures
+Paint displacement
+Paint feature vertices
+Paint mesh section
+Paint polygon mask
+Paint vertex color
+Paint vertex colors
+Palm tree
+Panasonic Image Height
+Parent Curve
+Parent curve count mismatch
+Parent curve reference
+Parent generator must have exactly one node
+Parent geometry cannot be stitched
+Parent has insufficient length segments for front placement
+Parent must be a Mesh
+Parent's length segments
+Paste camera
+Paste curve
+Pentax CameraInfo Tags
+Pentax CameraSettings Tags
+Pentax PentaxModelID Values
+Perspective Camera
+Perspective camera
+Pick a branch node to assign wind values
+Pick a branch node to reveal associated vertices
+Pine needles
+Places geometry around the "center line".
+Planar Force
+Please load or create a tree
+Plug In UIHeight
+Plugin UI Height
+Point Light
+Point light
+Preview Image Length
+Preview Image Size
+Prints the scene graph to the console each frame
+Problematic stitch loop detected
+Profile Curve
+Profile set to NONE.
+Projection type
+Projector ray
+RAW camera image
+Radial gradient
+Receive Shadows
+Reference generator's pass too early
+Reference generators currently do not work with the animated growth system.
+Reference generators do not support growth
+Related Image Length
+Reload this mesh.
+Render Images
+Render Photo
+Render Sequence
+Render mode
+Render photo...
+Rendering image...
+Rendering images...
+Rendering photo
+Rendering unwrapped textures
+Reorient the mesh, if necessary.  Often used to convert coordinate systems and align the mesh for use as a frond or leaf.
+Rescaling light
+Reset Render Preferences
+Reset Tree Window Preferences
+Reset camera
+Restore camera
+Restoring leaf positions
+Restrict growth based on the height of the parent mesh in the mesh's units.
+Return Force
+Rewind to beginning
+Right Arm Max Extension Angle
+Right Arm Roll
+Right Fore Arm Roll
+Right Leg Max Extension Angle
+Right Leg Roll
+Right Up Leg Roll
+Roam data length mismatch
+Roam data length too long
+Rot Angle
+SGILog compression cannot handle non-contiguous data
+Save Mesh
+Save SpeedTree Model File
+Save SpeedTree Package
+Save camera
+Scale curve
+Scales rotation of the camera
+Scaling UV
+Scene Scale
+Scene Unit Conversion
+Scene Unit Scale
+Scene capture type
+Scene must have a single root node
+Scene type
+Scene unit
+Scene unit conversion...
+Scene units converted to
+Season - autumn
+Season - blossom
+Season - dead
+Season - spring
+Season - summer
+Season - transition to autumn
+Season Curve
+Season Light Force
+Season light
+Season wind
+Section Name Max Length
+Select a displacement map to edit.
+Select a mask to edit.
+Select a material to edit.
+Select a mesh to edit.
+Select a single vertex to see its values.
+Select a stitch in node editing mode to preview the texture blend
+Select force
+Select the mask type (objects must pass all applied masks).
+Select which tool is used for selected scene objects.
+Sensor Height
+Separate meshes
+Sequence render
+Server does not know this handle
+Set automatic wind weights
+Set options for the transform gizmo.
+Set the polygonal resolution for this model.
+Set the season of the current model.  This is applicable to any models that makes use of the season
+Set to usdRi when models can interchange UsdShade prims.
+SetThreadAffinityMask failed
+Sets the coordinate system used for mouse-controlled manipulation
+Sets the outer limit of the grid in 3D projections
+Sets the type of mouse-controlled manipulation currently in use
+Shadow Color
+Shadow Map
+Shadow Planes Section
+Shadow Scale
+Shadow anti-aliasing samples
+Shadow sharpness
+Shop for models...
+Show all meshes
+Show height
+Show the extents of the influence of this light when attenuated
+Show unique uvs
+Show vertex colors
+Simple leaf
+Sink may have caused a collision
+Slide brush
+Slot Add Force
+Slot Add Generator Mesh Force
+Slot Add Mesh Force
+Slot Add To Force
+Slot Arbitrary Scene Scale
+Slot Create Geometry Force
+Slot Growth Curve
+Slot Remove From Force
+Slot Replace In Force
+Slot Season Curve
+Slot Select Force
+Slot Wind Curve
+Smooth Speed
+Smoothing not supported with nonstandard sampling ratios
+Some geometry hidden by view menu options
+Some normals
+Something went wrong when exporting
+Sorry, can not handle image
+Sorry, can not handle images with IEEE floating-point samples
+Specify the mesh file and what processing should be applied to it.
+Specify the style in which the scene is rendered.
+SpeedTree  Modeler 10.2.0
+SpeedTree Modeler
+SpeedTree Modeler by IDV, Inc.
+SpeedTree Raw XML
+SpeedTree Texture Packer
+SpeedTree UV Areas
+Spine assignment
+Spine generators
+Spot Light
+Spot light
+Start angle
+Stately shade tree
+Step 1: Hold "Space" and click in the scene to start a new branch
+Step 2: Hold "Space" then click+drag the diamond at the end to trace out the branch's shape.
+Stitch loop detection failed
+Strong forces influencing the branch
+SubD branches
+Subdivision surface models are only compatible with the VFX wind mode.
+Subsurface Amount
+Subsurface Color
+Superfluo MCD File Exporter
+Superfluo MCD File Importer
+Support for modeling issues...
+Tall pine tree
+Terminate parsing due to Handler error.
+Texture Id Count
+Texture Packing Setup
+Texture Rotation
+Texture UV by Polygon
+Texture alpha
+Textures animation
+There are materials marked as 'First' that may have shifted due to welding.
+There is a limit of 16 textures during texture packing
+There was an error compressing the tree package
+This error results from trying to weld a mesh which has been too deformed.
+This filter only works on 2 curves
+This is a trial version of the SpeedTree Modeler.
+This model most closely resembles a
+This tree has been modified.
+Tile Length
+Tile length is zero
+Tile part length size inconsistent with stream length
+Toggle hand drawn
+Toggle highlighting
+Tone Curve
+Translation UV
+Tree Generator
+Tree Import Options
+Tree Info
+Tree Model
+Tree Window
+Tree Window Display
+Tree info...
+Tree library
+Tree name
+Tried to read scan line outside the image file's data window.
+Tried to read scan line sample counts outside the image file's data window.
+Tried to write more scan lines than specified by the data window.
+Trim Mode
+Twist Force
+UV Area
+UV warnings
+UVId Count
+Unable to find specified camera
+Unable to fit curve to bottom blend region
+Unable to fit curve to fixed region
+Unable to fit curve to tiling region
+Unable to fit curve to top blend region
+Unable to import file
+Unable to load material library
+Unable to locate texture file "
+Unable to read material "
+Unexpected data block length.
+Unexpected tile block length.
+Unhandled compression scheme case
+Unhandled range type
+Unhandled type conversion.
+Universal Scene Description
+Unknown axis of gravity
+Unknown bone length axis
+Unknown texture
+Unroll Filter
+Unsupported parametric curve
+Unwrap Scale
+Unwrapping geometry
+Up Axis Used in File
+Update Wind Strength
+Update animation
+Update cutouts
+Upgrade generator
+Use Frame Color
+Use forces to influence the "center line" of the branch
+Use material
+Use scene name
+Use timeline
+User Profile
+User controlled far clipping plane value
+User controlled near clipping plane value
+Using timeline
+Valid image height
+Vector Displacement Color
+Vertex Color
+Vertex Edit
+Vertex Select By Color
+Vertex alpha
+Vertex alpha, interior strips
+Vertex color - blue
+Vertex color - green
+Vertex color - red
+Vertex editing is not available for the selected node
+Vertex edits lost
+Vertex move
+Vertex normal
+Vertex select
+Vertex selection
+Vicon C3D File Exporter
+Vicon C3D File Importer
+Vicon C3D only support frame range [0, 65536]
+Viewport Height
+Virtual Curve
+Virtual array controller messed up
+Volume Light
+Weld failed, mesh kept
+Weld failed, mesh removed
+What do you want to do with this mesh?
+When Light is selected
+When linked, the camera will 'look' at this object
+When wind is on
+Wide-Angle Adapter
+Wind Curve
+Wind Rigging
+Wind Ripple Weight
+Wind Strength
+Wind Wizard
+Wind direction
+Wind level offset causing mid-level skip
+Wind mode not supported
+Wind strength
+Wind wizard...
+Winder CW
+Window Size
+Works only on rotation CurveNodes
+World Building Export
+Writing zero-length unknown chunk
+XYZ, Luv
+You are currently using a TRIAL License. Exporting is limited.
+Zoom the camera view to show the selection.  If nothing is selected, zoom out far enough to show the whole model.
+Zsoft Paintbrush
+all frames
+by selecting the light.  Recomputing the tree will clear AO values.
+created by the generator(s) and allows parent curve editing.
+geometry (geometry forces)
+model (typically in the 'Wind' group) and properties of the fan object.
+of their use include gravity (downward direction forces) and growing geometry around 3d
+or selecting them from material properties.
+pivot point on that part of the model.  The camera will zoom to and pivot around
+properties on generators and the season curves on materials.
+select any of the new generators to edit the model.
+temporarily reduce computing and rendering complexity.
+the mesh based on its intended use as indicated by the figure.
+the value computed by the generator and should be used for fine tuning only.
+with force meshes to shape tree geometry or become part of the model.

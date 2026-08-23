@@ -1,0 +1,1720 @@
+TopLevelWidgets=63
+[W] QMenu name="menuEdit" text="" visible=0 108x30
+    [M] Nothing to undo
+    [M] Nothing to redo
+    [M] 
+    [M] U&ndo selection
+    [M] R&edo selection
+    [M] 
+    [M] &Tree info...
+    [M] &Preferences...
+[W] QMenu name="" text="" visible=0 108x30
+[W] QMenu name="menuWindow" text="" visible=0 108x30
+    [M] Edit Tree Window properties...
+    [M] 
+    [M] Fullscreen
+    [M] 
+    [M] Output
+    [M] Generation
+    [M] Properties
+    [M] Materials
+    [M] Material Sets
+    [M] Meshes
+    [M] Masks
+    [M] Displacements
+    [M] Timeline
+    [M] Rules
+    [M] 
+    [M] &Reset layout...
+  [W] QMenu name="menuFullscreen" text="" visible=0 108x30
+      [M] Normal
+      [M] Full screen
+      [M] Full screen, no bars
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QMenu name="" text="" visible=0 108x30
+[W] CMiniColorDialog name="MiniColorSelector" text="" visible=0 300x175
+  [W] QGroupBox name="groupBox" text="" visible=0 100x30
+    [W] QSlider name="m_pwBrightHue" text="" visible=0 100x30
+    [W] CColorButton name="m_pwLast" text="" visible=0 100x30
+    [W] QSlider name="m_pwGray" text="" visible=0 100x30
+    [W] CColorButton name="m_pColorSpace" text="" visible=0 100x30
+    [W] QSlider name="m_pwRed" text="" visible=0 100x30
+    [W] QLabel name="label_4" text="R" visible=0 100x30
+    [W] QLabel name="label_5" text="G" visible=0 100x30
+    [W] QSlider name="m_pwValue" text="" visible=0 100x30
+    [W] QLabel name="label_3" text="V" visible=0 100x30
+    [W] QSlider name="m_pwGreen" text="" visible=0 100x30
+    [W] QLabel name="label_6" text="B" visible=0 100x30
+    [W] QSlider name="m_pwSaturation" text="" visible=0 100x30
+    [W] QLabel name="label_2" text="S" visible=0 100x30
+    [W] QSlider name="m_pwHue" text="" visible=0 100x30
+    [W] QLabel name="label" text="H" visible=0 100x30
+    [W] QSlider name="m_pwBlue" text="" visible=0 100x30
+    [W] QLineEdit name="m_pwHueEdit" text="0" visible=0 100x30
+    [W] QLineEdit name="m_pwSaturationEdit" text="0" visible=0 100x30
+    [W] QLineEdit name="m_pwValueEdit" text="0" visible=0 100x30
+    [W] QLineEdit name="m_pwRedEdit" text="0" visible=0 100x30
+    [W] QLineEdit name="m_pwGreenEdit" text="0" visible=0 100x30
+    [W] QLineEdit name="m_pwBlueEdit" text="0" visible=0 100x30
+[W] QMenu name="" text="" visible=0 108x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] CSplineEditorDialog name="SplineEditorDialog" text="" visible=0 597x356
+  [W] QGroupBox name="groupBox" text="" visible=0 100x30
+    [W] QPushButton name="parenticon" text="" visible=0 18x18
+    [W] QComboBox name="m_pwParent" text="" visible=0 100x23
+      [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+        [W] QComboBoxListView name="" text="" visible=0 640x480
+          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QPushButton name="m_pPreset" text="Preset" visible=0 68x22
+    [W] QPushButton name="m_pDraw" text="Draw" visible=0 68x22
+    [W] QComboBox name="m_pwStyle" text="" visible=0 100x23
+      [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+        [W] QComboBoxListView name="" text="" visible=0 640x480
+          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QLabel name="label_3" text=" X" visible=0 100x30
+    [W] CDoubleSpinBox name="m_pwX" text="0" visible=0 70x23
+      [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 44x20
+    [W] QLabel name="label_4" text=" Y" visible=0 100x30
+    [W] CDoubleSpinBox name="m_pwY" text="0" visible=0 70x23
+      [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 44x20
+    [W] QOpenGLWidget name="m_pwEditor" text="" visible=0 100x100
+[W] QMenu name="" text="" visible=0 108x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] ads::CDockOverlay name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QMenu name="menuFullscreen" text="" visible=0 108x30
+    [M] Normal
+    [M] Full screen
+    [M] Full screen, no bars
+[W] CLicensingDialog name="CLicensingDialog" text="" visible=0 520x628
+  [W] QWidget name="m_pLicenseImageBackground" text="" visible=0 100x45
+    [W] QPushButton name="m_pLogo" text="" visible=0 181x45
+    [W] QLabel name="m_pVersion" text="<html><body><p>SpeedTree&reg; Modeler <br/>Version 10.2.0 (Build Apr 30 2026)</p></body></html>" visible=0 100x30
+  [W] QGroupBox name="m_pMainGroup" text="" visible=0 100x30
+    [W] QLabel name="LicenseTypeLabel" text="License type" visible=0 100x30
+    [W] QWidget name="Ribbon" text="" visible=0 100x30
+      [W] QPushButton name="LeftRibbon" text="Login with Unity ID" visible=0 100x34
+      [W] QPushButton name="RightRibbon" text="Use a license" visible=0 100x34
+      [W] QPushButton name="m_pHelp" text="Help" visible=0 100x30
+    [W] QStackedWidget name="m_pStack" text="" visible=0 100x30
+      [W] QWidget name="m_pwUnityID" text="" visible=0 640x480
+        [W] QPushButton name="m_pwLoginUnityID" text="Login..." visible=0 521x22
+        [W] QCheckBox name="m_pwUnityIdForceFreshLogin" text="Force fresh login" visible=0 115x20
+        [W] QLabel name="m_pwUnityIdMessage" text="Login message" visible=0 640x14
+        [W] QLabel name="m_pwUnityIdLicensingErrorDetails" text="Error details" visible=0 640x14
+        [W] QPushButton name="m_pwUnityIDPurchaseNow" text="Purchase now..." visible=0 103x22
+        [W] QPushButton name="m_pwUnityIDManageAccount" text="Manage account..." visible=0 117x22
+      [W] QWidget name="m_pLicense" text="" visible=0 640x480
+        [W] QLabel name="InformationLabel" text="Information" visible=0 640x27
+        [W] QTextEdit name="m_pLicenseInfo" text="" visible=0 640x240
+          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 638x238
+          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+        [W] QLabel name="LicenseLabel" text="License" visible=0 640x27
+        [W] QTextEdit name="m_pLicenseKey" text="" visible=0 640x144
+          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 638x142
+          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+        [W] QPushButton name="m_pLicenseRequest" text="Request license..." visible=0 112x22
+        [W] QPushButton name="m_pLicensePurchase" text="Purchase now..." visible=0 103x22
+        [W] QPushButton name="m_pLicenseApply" text="Apply License" visible=0 94x22
+  [W] QPushButton name="m_pClose" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] ads::CDockOverlay name="" text="" visible=0 100x30
+[W] QMenu name="menuFile" text="" visible=0 108x30
+    [M] &New...
+    [M] &Open...
+    [M] Recents
+    [M] &Close
+    [M] Revert to saved
+    [M] 
+    [M] &Save
+    [M] Sa&ve incremental
+    [M] S&ave as...
+    [M] 
+    [M] Import tree parts...
+    [M] Import material asset...
+    [M] Import mesh asset...
+    [M] Import camera from FBX...
+    [M] 
+    [M] &Export mesh...
+    [M] Ex&port selected as mesh...
+    [M] Export world building data...
+    [M] Bake all texture adjustments...
+    [M] 
+    [M] Render photo...
+    [M] Export image...
+    [M] Export material...
+    [M] Export image sequence...
+    [M] 
+    [M] Package tree...
+    [M] Package tree for support...
+    [M] 
+    [M] Advanced
+    [M] 
+    [M] E&xit
+    [M] Debug XML file...
+  [W] QMenu name="menuAdvanced" text="" visible=0 108x30
+      [M] Open (compute disabled)...
+  [W] QMenu name="menuRecents" text="" visible=0 108x30
+      [M] Show recent files...
+      [M] 
+      [M] &1 C:/Program Files/SpeedTree/Spee...rning/Rules/Oak_Complex_Rules.spm
+      [M] &Recent files
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QMenu name="menuTools" text="" visible=0 108x30
+    [M] &Generate collision objects...
+    [M] 
+    [M] &Render ambient occlusion
+    [M] C&lear ambient occlusion
+    [M] 
+    [M] Create geometry force from selected generators
+    [M] Cr&eate collection from selection
+    [M] 
+    [M] &Scene unit conversion...
+    [M] &Arbitrary scene scale...
+    [M] 
+    [M] Wind wizard...
+    [M] Growth wizard...
+    [M] 
+    [M] Remove unused assets
+    [M] 
+    [M] Reset lightmap scalars
+    [M] 
+    [M] Atlas creator...
+    [M] Switch to Substances where possible
+[W] ads::CDockWidget name="MaskDockWidget" text="" visible=0 100x30
+  [W] CAssetMaskPane name="Mask" text="" visible=0 275x250
+    [W] QPushButton name="m_pwDrag" text="" visible=0 28x28
+    [W] QComboBox name="m_pwNameCombo" text="" visible=0 100x27
+      [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+        [W] QComboBoxListView name="" text="" visible=0 640x480
+          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QPushButton name="m_pwAddRemove" text="" visible=0 100x26
+    [W] QPushButton name="m_pwAddSpecial" text="" visible=0 100x26
+    [W] QToolButton name="m_pwCopyPaste" text="" visible=0 100x26
+    [W] QGroupBox name="groupBox" text="" visible=0 100x30
+      [W] QLabel name="label_6" text="Behavior" visible=0 100x30
+      [W] QComboBox name="m_pwBehavior" text="" visible=0 100x23
+        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+          [W] QComboBoxListView name="" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+      [W] QLabel name="label_5" text="Type" visible=0 100x30
+      [W] QComboBox name="m_pwType" text="" visible=0 100x23
+        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+          [W] QComboBoxListView name="" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+      [W] QLabel name="label_7" text="Fuzziness" visible=0 100x30
+      [W] CDoubleSpinBox name="m_pwFuzziness" text="0" visible=0 100x23
+        [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 90x20
+      [W] QStackedWidget name="m_pwStack" text="" visible=0 100x30
+        [W] QWidget name="page_3" text="" visible=0 640x480
+          [W] CDoubleSpinBox name="m_pwMinU" text="0" visible=0 100x23
+            [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 90x20
+          [W] CDoubleSpinBox name="m_pwMaxU" text="0" visible=0 100x23
+            [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 90x20
+          [W] QLabel name="label_11" text="Min" visible=0 100x30
+          [W] QLabel name="m_pwLabel2_2" text="V " visible=0 112x20
+          [W] QLabel name="label_10" text="Max" visible=0 100x30
+          [W] QLabel name="m_pwLabel1_2" text="U" visible=0 110x20
+          [W] CDoubleSpinBox name="m_pwMinV" text="0" visible=0 100x23
+            [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 90x20
+          [W] CDoubleSpinBox name="m_pwMaxV" text="0" visible=0 100x23
+            [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 90x20
+        [W] QWidget name="page" text="" visible=0 640x480
+          [W] QLabel name="label_8" text="Filename" visible=0 20x14
+          [W] QLabel name="label_9" text="Channel   " visible=0 20x14
+          [W] QComboBox name="m_pwChannel" text="" visible=0 616x23
+            [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+              [W] QComboBoxListView name="" text="" visible=0 640x480
+                [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+                [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                  [W] QScrollBar name="" text="" visible=0 100x30
+                [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                  [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QLineEdit name="m_pwFilename" text="" visible=0 558x23
+          [W] QPushButton name="m_pwBrowse" text="..." visible=0 28x26
+          [W] QPushButton name="m_pwReload" text="" visible=0 28x26
+          [W] COpenGLPreview name="m_pwPreview" text="" visible=0 640x428
+        [W] QWidget name="page_2" text="" visible=0 640x480
+          [W] CDoubleSpinBox name="m_pwMin1" text="0" visible=0 210x23
+            [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 200x20
+          [W] CDoubleSpinBox name="m_pwAbsMax" text="0" visible=0 211x23
+            [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 201x20
+          [W] CDoubleSpinBox name="m_pwMin2" text="0" visible=0 210x23
+            [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 200x20
+          [W] QRadioButton name="m_pwAbsolute" text="Absolute elevation" visible=0 211x23
+          [W] CDoubleSpinBox name="m_pwMax1" text="0" visible=0 211x23
+            [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 201x20
+          [W] QLabel name="m_pwLabel1" text="Slope" visible=0 211x23
+          [W] CDoubleSpinBox name="m_pwMax2" text="0" visible=0 211x23
+            [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 201x20
+          [W] CDoubleSpinBox name="m_pwAbsMin" text="0" visible=0 210x23
+            [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 200x20
+          [W] QLabel name="label_3" text="Min" visible=0 210x14
+          [W] QRadioButton name="m_pwRelative" text=" Relative elevation" visible=0 211x23
+          [W] QLabel name="label_4" text="Max" visible=0 211x14
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] ads::CDockWidget name="MeshDockWidget" text="" visible=0 100x30
+  [W] CAssetMeshPane name="Mesh" text="" visible=0 325x600
+    [W] QPushButton name="m_pwDrag" text="" visible=0 28x28
+    [W] QComboBox name="m_pwNameCombo" text="" visible=0 100x27
+      [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+        [W] QComboBoxListView name="" text="" visible=0 640x480
+          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QPushButton name="m_pwAddRemove" text="" visible=0 100x26
+    [W] QPushButton name="m_pwAddSpecial" text="" visible=0 100x26
+    [W] QToolButton name="m_pwCopyPaste" text="" visible=0 100x26
+    [W] QGroupBox name="m_pwGeometryGroupBox" text="" visible=0 100x30
+      [W] QPushButton name="m_pwReload" text="" visible=0 28x26
+      [W] QPushButton name="m_pwBrowse" text="" visible=0 28x26
+      [W] QPushButton name="m_pwExportLevel1" text="" visible=0 28x26
+      [W] QPushButton name="m_pwExportLevel2" text="" visible=0 28x26
+      [W] QPushButton name="m_pwReloadLevel1" text="" visible=0 28x26
+      [W] QComboBox name="m_pMoreLods" text="" visible=0 100x23
+        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+          [W] QComboBoxListView name="" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+      [W] QLabel name="m_pMoreLodsLabel" text="More" visible=0 100x30
+      [W] QLabel name="m_pwLOD2Label" text="Low" visible=0 100x30
+      [W] QPushButton name="m_pwBrowseLevel2" text="" visible=0 28x26
+      [W] QPushButton name="m_pwBrowseLevel1" text="" visible=0 28x26
+      [W] QPushButton name="m_pwExport" text="" visible=0 28x26
+      [W] QLabel name="m_pwLOD1Label" text="Med" visible=0 100x30
+      [W] CMyLineEdit name="" text="" visible=0 100x23
+      [W] CMyLineEdit name="" text="" visible=0 100x23
+      [W] CMyLineEdit name="" text="" visible=0 100x23
+      [W] QLabel name="m_pDraftLabel" text="Draft" visible=0 100x30
+      [W] QLabel name="m_pwMainLabel" text="   High" visible=0 100x30
+      [W] QPushButton name="m_pMakeCutout" text="Edit Mesh..." visible=0 100x18
+      [W] QPushButton name="m_pwReloadLevel2" text="" visible=0 28x26
+      [W] QWidget name="m_pDraft" text="" visible=0 100x30
+        [W] QCheckBox name="m_pSimpleAtDraft" text="Switch to simple mesh" visible=0 100x30
+    [W] COpenGLPreview name="m_pwPreview" text="" visible=0 100x30
+    [W] QLabel name="label_8" text="Show" visible=0 100x30
+    [W] QComboBox name="m_pwLodCombo" text="" visible=0 100x23
+      [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+        [W] QComboBoxListView name="" text="" visible=0 640x480
+          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QCheckBox name="m_pwShowAlignmentHelp" text="Alignment" visible=0 100x30
+    [W] QLabel name="m_pwStats" text="V:0 F:0" visible=0 100x30
+    [W] QGroupBox name="groupBox_2" text="" visible=0 100x30
+      [W] QLabel name="label_3" text="Orient" visible=0 100x30
+      [W] QComboBox name="m_pwOrient" text="" visible=0 100x23
+        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+          [W] QComboBoxListView name="" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+      [W] QLabel name="label_7" text="Flip" visible=0 100x30
+      [W] QComboBox name="m_pwFlip" text="" visible=0 100x23
+        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+          [W] QComboBoxListView name="" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+      [W] QLabel name="label_6" text="Flip normals" visible=0 100x30
+      [W] QCheckBox name="m_pwFlipNormals" text="" visible=0 100x30
+      [W] QLabel name="label_4" text="Fix winding" visible=0 100x30
+      [W] QCheckBox name="m_pwFixWinding" text="" visible=0 100x30
+    [W] QGroupBox name="m_pwWindGroupBox" text="" visible=0 100x30
+      [W] QLabel name="label_11" text="Growth" visible=0 100x30
+      [W] QComboBox name="m_pwWind" text="" visible=0 100x23
+        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+          [W] QComboBoxListView name="" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+      [W] QLabel name="label_12" text="Ripple" visible=0 100x30
+      [W] QComboBox name="m_pwRipple" text="" visible=0 100x23
+        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+          [W] QComboBoxListView name="" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QGroupBox name="groupBox" text="" visible=0 100x30
+      [W] QLabel name="label" text="Value" visible=0 100x30
+      [W] CDoubleSpinBox name="m_pwScale" text="0" visible=0 100x23
+        [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 90x20
+      [W] QPushButton name="m_pwComputeScale" text="Compute" visible=0 100x18
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QMenu name="" text="" visible=0 100x30
+    [M] &File
+    [M] &Edit
+    [M] &Tools
+    [M] &Window
+    [M] &Help 
+[W] QMenu name="" text="" visible=0 108x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QMenu name="" text="" visible=0 108x30
+[W] QMenu name="menuHelp" text="" visible=0 108x30
+    [M] &User manual...
+    [M] Video tutorials...
+    [M] &About SpeedTree Modeler...
+    [M] 
+    [M] &Shop for models...
+    [M] 
+    [M] Support for UE4 integration issues...
+    [M] Support for modeling issues...
+    [M] 
+    [M] &Purchase a license...
+    [M] &Licensing info...
+    [M] 
+    [M] Follow us on Twitter...
+    [M] YouTube channel...
+    [M] Facebook...
+    [M] SpeedTree.com...
+    [M] Process tree templates
+[W] QMenu name="" text="" visible=0 108x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] ads::CDockWidget name="RulesDockWidget" text="" visible=0 636x0
+  [W] CScriptPane name="Rules" text="" visible=0 275x300
+    [W] QWidget name="Ribbon" text="" visible=0 100x30
+      [W] QPushButton name="LeftRibbon" text="Enabled" visible=0 100x34
+      [W] QPushButton name="RightRibbon" text="Disabled" visible=0 100x34
+      [W] QPushButton name="m_pReset" text="Reset to defaults" visible=0 100x30
+      [W] QPushButton name="m_pHelp" text="Help" visible=0 100x30
+    [W] QLabel name="m_pErrors" text="" visible=0 100x30
+    [W] QSplitter name="m_pSplitter" text="" visible=0 100x30
+      [W] CScrollableToolbox name="m_pToolbox" text="" visible=0 100x12
+        [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 88x10
+        [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+          [W] QScrollBar name="" text="" visible=0 100x30
+        [W] QWidget name="PropertyGroupShadow" text="" visible=0 100x30
+        [W] QWidget name="PropertyGroupShadow" text="" visible=0 100x30
+        [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 6x10
+          [W] QScrollBar name="" text="" visible=0 6x10
+      [W] CCodeEdit name="m_pScript" text="" visible=0 100x12
+        [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 80x10
+        [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+          [W] QScrollBar name="" text="" visible=0 100x30
+        [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+          [W] QScrollBar name="" text="" visible=0 100x30
+        [W] QWidget name="" text="" visible=0 100x30
+      [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 100x30
+      [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 100x5
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] ads::CDockOverlayCross name="" text="" visible=0 100x30
+  [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+  [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+  [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+  [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+  [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] MainWindow name="MainWindow" text="" visible=1 928x910
+  [W] QWidget name="centralWidget" text="" visible=0 100x30
+  [W] QMenuBar name="menuBar" text="" visible=1 928x20
+    [W] QToolButton name="qt_menubar_ext_button" text="" visible=0 12x19
+    [W] QMenu name="menuFile" text="" visible=0 108x30
+        [M] &New...
+        [M] &Open...
+        [M] Recents
+        [M] &Close
+        [M] Revert to saved
+        [M] 
+        [M] &Save
+        [M] Sa&ve incremental
+        [M] S&ave as...
+        [M] 
+        [M] Import tree parts...
+        [M] Import material asset...
+        [M] Import mesh asset...
+        [M] Import camera from FBX...
+        [M] 
+        [M] &Export mesh...
+        [M] Ex&port selected as mesh...
+        [M] Export world building data...
+        [M] Bake all texture adjustments...
+        [M] 
+        [M] Render photo...
+        [M] Export image...
+        [M] Export material...
+        [M] Export image sequence...
+        [M] 
+        [M] Package tree...
+        [M] Package tree for support...
+        [M] 
+        [M] Advanced
+        [M] 
+        [M] E&xit
+        [M] Debug XML file...
+      [W] QMenu name="menuAdvanced" text="" visible=0 108x30
+          [M] Open (compute disabled)...
+      [W] QMenu name="menuRecents" text="" visible=0 108x30
+          [M] Show recent files...
+          [M] 
+          [M] &1 C:/Program Files/SpeedTree/Spee...rning/Rules/Oak_Complex_Rules.spm
+          [M] &Recent files
+    [W] QMenu name="menuEdit" text="" visible=0 108x30
+        [M] Nothing to undo
+        [M] Nothing to redo
+        [M] 
+        [M] U&ndo selection
+        [M] R&edo selection
+        [M] 
+        [M] &Tree info...
+        [M] &Preferences...
+    [W] QMenu name="menuTools" text="" visible=0 108x30
+        [M] &Generate collision objects...
+        [M] 
+        [M] &Render ambient occlusion
+        [M] C&lear ambient occlusion
+        [M] 
+        [M] Create geometry force from selected generators
+        [M] Cr&eate collection from selection
+        [M] 
+        [M] &Scene unit conversion...
+        [M] &Arbitrary scene scale...
+        [M] 
+        [M] Wind wizard...
+        [M] Growth wizard...
+        [M] 
+        [M] Remove unused assets
+        [M] 
+        [M] Reset lightmap scalars
+        [M] 
+        [M] Atlas creator...
+        [M] Switch to Substances where possible
+    [W] QMenu name="menuWindow" text="" visible=0 108x30
+        [M] Edit Tree Window properties...
+        [M] 
+        [M] Fullscreen
+        [M] 
+        [M] Output
+        [M] Generation
+        [M] Properties
+        [M] Materials
+        [M] Material Sets
+        [M] Meshes
+        [M] Masks
+        [M] Displacements
+        [M] Timeline
+        [M] Rules
+        [M] 
+        [M] &Reset layout...
+      [W] QMenu name="menuFullscreen" text="" visible=0 108x30
+          [M] Normal
+          [M] Full screen
+          [M] Full screen, no bars
+    [W] QMenu name="menuHelp" text="" visible=0 108x30
+        [M] &User manual...
+        [M] Video tutorials...
+        [M] &About SpeedTree Modeler...
+        [M] 
+        [M] &Shop for models...
+        [M] 
+        [M] Support for UE4 integration issues...
+        [M] Support for modeling issues...
+        [M] 
+        [M] &Purchase a license...
+        [M] &Licensing info...
+        [M] 
+        [M] Follow us on Twitter...
+        [M] YouTube channel...
+        [M] Facebook...
+        [M] SpeedTree.com...
+        [M] Process tree templates
+    [W] QMenu name="" text="" visible=0 100x30
+        [M] &File
+        [M] &Edit
+        [M] &Tools
+        [M] &Window
+        [M] &Help 
+  [W] ads::CDockManager name="" text="" visible=1 928x890
+    [W] ads::CDockSplitter name="" text="" visible=1 928x886
+      [W] ads::CDockSplitter name="" text="" visible=1 172x884
+        [W] ads::CDockAreaWidget name="" text="" visible=0 170x0
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=0 100x30
+            [W] ads::CDockAreaTabBar name="" text="" visible=0 10x30
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 10x30
+                [W] QWidget name="tabsContainerWidget" text="" visible=0 10x30
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="Timeline" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=0 0x30
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 22x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 23x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 22x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=0 23x26
+        [W] ads::CDockAreaWidget name="MDIArea" text="" visible=1 170x882
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=0 100x30
+            [W] ads::CDockAreaTabBar name="" text="" visible=0 10x30
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 10x30
+                [W] QWidget name="tabsContainerWidget" text="" visible=0 10x30
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="MDI" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=0 0x30
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 22x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 23x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 22x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=0 23x26
+        [W] QSplitterHandle name="qt_splithandle_MDIArea" text="" visible=0 100x30
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 4x4
+      [W] ads::CDockSplitter name="" text="" visible=1 369x884
+        [W] ads::CDockAreaWidget name="" text="" visible=1 367x222
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=1 363x21
+            [W] ads::CDockAreaTabBar name="" text="" visible=1 10x21
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=1 10x21
+                [W] QWidget name="tabsContainerWidget" text="" visible=1 10x21
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="Output" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=1 326x21
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 27x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 29x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 22x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=1 27x21
+        [W] ads::CDockAreaWidget name="" text="" visible=1 367x658
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=1 363x21
+            [W] ads::CDockAreaTabBar name="" text="" visible=1 10x21
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=1 10x21
+                [W] QWidget name="tabsContainerWidget" text="" visible=1 10x21
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="Rules" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=1 326x21
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 27x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 29x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 22x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=1 27x21
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 100x30
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=1 367x4
+      [W] ads::CDockSplitter name="" text="" visible=1 381x884
+        [W] ads::CDockAreaWidget name="" text="" visible=1 379x521
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=1 375x21
+            [W] ads::CDockAreaTabBar name="" text="" visible=1 10x21
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=1 10x21
+                [W] QWidget name="tabsContainerWidget" text="" visible=1 10x21
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="Properties" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=1 338x21
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 27x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 29x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 22x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=1 27x21
+        [W] ads::CDockAreaWidget name="" text="" visible=1 379x359
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=1 375x22
+            [W] ads::CDockAreaTabBar name="" text="" visible=1 10x22
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=1 10x22
+                [W] QWidget name="tabsContainerWidget" text="" visible=1 10x22
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="Generation" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=1 338x22
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 27x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 29x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 22x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=1 27x22
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 100x30
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=1 379x4
+      [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 100x30
+      [W] QSplitterHandle name="qt_splithandle_" text="" visible=1 4x884
+      [W] QSplitterHandle name="qt_splithandle_" text="" visible=1 4x884
+    [W] QMenu name="" text="" visible=0 108x30
+    [W] ads::CDockOverlay name="" text="" visible=0 100x30
+    [W] ads::CDockOverlayCross name="" text="" visible=0 100x30
+      [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+      [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+      [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+      [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+      [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+    [W] ads::CDockOverlay name="" text="" visible=0 100x30
+    [W] ads::CDockOverlayCross name="" text="" visible=0 100x30
+      [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+      [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+      [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+      [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+      [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+    [W] ads::CDockSplitter name="" text="" visible=1 928x886
+      [W] ads::CDockSplitter name="" text="" visible=1 325x884
+        [W] ads::CDockAreaWidget name="" text="" visible=1 323x221
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=1 319x31
+            [W] ads::CDockAreaTabBar name="" text="" visible=1 66x31
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=1 66x31
+                [W] QWidget name="tabsContainerWidget" text="" visible=1 66x31
+                  [W] ads::CDockWidgetTab name="" text="" visible=1 66x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="Output" visible=1 49x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 28x24
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="Output" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=1 226x31
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 22x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 23x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 22x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=1 27x26
+          [W] ads::CDockWidget name="ConsoleDockWidget" text="" visible=1 319x186
+            [W] CConsoleView name="Console" text="" visible=1 317x185
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=1 301x169
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=1 309x6
+                [W] QScrollBar name="" text="" visible=1 309x6
+        [W] ads::CDockAreaWidget name="" text="" visible=1 323x659
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=1 319x31
+            [W] ads::CDockAreaTabBar name="" text="" visible=1 292x31
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=1 292x31
+                [W] QWidget name="tabsContainerWidget" text="" visible=1 292x31
+                  [W] ads::CDockWidgetTab name="" text="" visible=1 61x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="Mater…" visible=1 44x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 28x24
+                  [W] ads::CDockWidgetTab name="" text="" visible=1 84x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="Material S…" visible=1 67x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 28x24
+                  [W] ads::CDockWidgetTab name="" text="" visible=1 54x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="Mes…" visible=1 37x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 28x24
+                  [W] ads::CDockWidgetTab name="" text="" visible=0 640x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="Masks" visible=0 623x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 28x24
+                  [W] ads::CDockWidgetTab name="" text="" visible=1 93x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="Displaceme…" visible=1 76x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 28x24
+                  [W] ads::CDockWidgetTab name="" text="" visible=0 640x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="Rules" visible=0 623x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 28x24
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="Rules" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=1 0x31
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 27x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 29x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 29x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=1 27x26
+          [W] ads::CDockWidget name="MaterialDockWidget" text="" visible=1 319x624
+            [W] CAssetMaterialPane name="Material" text="" visible=1 317x623
+              [W] QPushButton name="m_pwDrag" text="" visible=1 28x28
+              [W] QComboBox name="m_pwNameCombo" text="" visible=1 176x27
+                [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+                  [W] QComboBoxListView name="" text="" visible=0 640x480
+                    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+                    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                      [W] QScrollBar name="" text="" visible=0 100x30
+                    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                      [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QPushButton name="m_pwAddRemove" text="" visible=1 30x26
+              [W] QPushButton name="m_pwAddSpecial" text="" visible=1 30x26
+              [W] QToolButton name="m_pwCopyPaste" text="" visible=1 29x26
+              [W] COpenGLPreview name="m_pwPreview" text="" visible=1 309x82
+              [W] QTabWidget name="m_pSettingsTabs" text="" visible=1 309x287
+                [W] QStackedWidget name="qt_tabwidget_stackedwidget" text="" visible=1 309x254
+                  [W] QWidget name="UVs" text="" visible=0 640x480
+                    [W] QPushButton name="m_pAddUVButton" text="Add" visible=0 100x24
+                    [W] QPushButton name="m_pLoadUVs" text="Import..." visible=0 100x24
+                    [W] QPushButton name="m_pSaveUVs" text="Export..." visible=0 100x24
+                    [W] QScrollArea name="m_pUVScroll" text="" visible=0 100x30
+                      [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 98x28
+                        [W] QWidget name="m_pUVScrollContents" text="" visible=0 98x28
+                      [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                        [W] QScrollBar name="" text="" visible=0 100x30
+                      [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                        [W] QScrollBar name="" text="" visible=0 100x30
+                  [W] QWidget name="Meshes" text="" visible=0 640x480
+                    [W] QPushButton name="m_pAddMeshButton" text="Add" visible=0 100x24
+                    [W] QLabel name="label_2" text="Unwrap" visible=0 100x30
+                    [W] QComboBox name="m_pUnwrapAction" text="" visible=0 100x23
+                      [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+                        [W] QComboBoxListView name="" text="" visible=0 640x480
+                          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+                          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                            [W] QScrollBar name="" text="" visible=0 100x30
+                          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                            [W] QScrollBar name="" text="" visible=0 100x30
+                    [W] QScrollArea name="m_pMeshScroll" text="" visible=0 100x30
+                      [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 98x28
+                        [W] QWidget name="m_pMeshScrollContents" text="" visible=0 98x28
+                      [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                        [W] QScrollBar name="" text="" visible=0 100x30
+                      [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                        [W] QScrollBar name="" text="" visible=0 100x30
+                  [W] QWidget name="Settings" text="" visible=1 309x254
+                    [W] QGroupBox name="groupBox" text="" visible=1 146x81
+                      [W] QLabel name="label" text="Two-sided" visible=1 56x20
+                      [W] QCheckBox name="m_pwTwoSided" text="" visible=1 68x20
+                      [W] QLabel name="label_4" text="Season" visible=1 39x20
+                      [W] CSplineButton name="CurveButton" text="" visible=1 32x20
+                    [W] QGroupBox name="groupBox_4" text="" visible=1 146x79
+                      [W] CColorButton name="m_pVariation1" text="" visible=1 40x19
+                      [W] CColorButton name="m_pVariation2" text="" visible=1 40x19
+                      [W] CColorButton name="m_pVariation3" text="" visible=1 40x19
+                      [W] QLabel name="label_13" text="Amount" visible=1 41x19
+                      [W] QSlider name="m_pVariationAmount" text="" visible=1 83x19
+                    [W] QGroupBox name="m_pBackGroup" text="" visible=1 146x84
+                      [W] QLabel name="m_pBackColorLabel" text="Material" visible=1 42x21
+                      [W] QLabel name="m_pBackGlossLabel" text="Spacing" visible=1 43x22
+                      [W] CDoubleSpinBox name="m_pBackSpacing" text="1" visible=1 81x23
+                        [W] QLineEdit name="qt_spinbox_lineedit" text="1" visible=1 71x20
+                      [W] QComboBox name="m_pBackMaterial" text="" visible=1 81x23
+                        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+                          [W] QComboBoxListView name="" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                    [W] QGroupBox name="groupBox_5" text="" visible=1 151x117
+                      [W] QLabel name="label_7" text="Scale" visible=1 29x23
+                      [W] CDoubleSpinBox name="m_pwUnwrapScale" text="0" visible=1 82x23
+                        [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=1 72x20
+                      [W] QLabel name="m_pAtlasLabel" text="Handling" visible=1 47x23
+                      [W] QComboBox name="m_pAtlas" text="" visible=1 82x23
+                        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+                          [W] QComboBoxListView name="" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                      [W] QLabel name="label_3" text="Name" visible=1 31x23
+                      [W] QLineEdit name="m_pAtlasName" text="" visible=1 82x23
+                    [W] QGroupBox name="groupBox_2" text="" visible=1 151x131
+                      [W] QLabel name="label_12" text="Max resolution" visible=1 51x23
+                      [W] QComboBox name="m_pwResolutionCombo" text="" visible=1 78x23
+                        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+                          [W] QComboBoxListView name="" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                      [W] QLabel name="m_pwUserDataLabel" text="User data" visible=1 51x23
+                      [W] QLineEdit name="m_pwUserData" text="" visible=1 78x23
+                      [W] QPushButton name="m_pMakeNewGroup" text="Make New Set..." visible=1 133x18
+                      [W] QPushButton name="m_pReloadMaps" text="Reload Maps" visible=1 133x18
+                [W] QTabBar name="qt_tabwidget_tabbar" text="" visible=1 214x26
+                  [W] QToolButton name="ScrollLeftButton" text="" visible=0 16x26
+                  [W] QToolButton name="ScrollRightButton" text="" visible=0 16x26
+              [W] QScrollArea name="m_pMapsScroll" text="" visible=1 309x206
+                [W] QWidget name="qt_scrollarea_viewport" text="" visible=1 295x198
+                  [W] QWidget name="scrollAreaWidgetContents" text="" visible=1 295x231
+                    [W] QWidget name="m_pMaps" text="" visible=1 295x231
+                      [W] QGroupBox name="MapGroup" text="" visible=1 57x73
+                        [W] CColorButton name="MapColor" text="" visible=1 47x19
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 47x26
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 55x73
+                        [W] CDoubleSpinBox name="MapNumber" text="0" visible=1 45x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=1 35x20
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 45x22
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 55x73
+                        [W] CDoubleSpinBox name="MapNumber" text="0" visible=1 45x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=1 35x20
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 45x22
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 55x73
+                        [W] CDoubleSpinBox name="MapNumber" text="0" visible=1 45x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=1 35x20
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 45x22
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 57x73
+                        [W] CColorButton name="MapColor" text="" visible=1 47x19
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 47x26
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 57x73
+                        [W] CDoubleSpinBox name="MapNumber" text="0" visible=1 47x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=1 37x20
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 47x22
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 55x73
+                        [W] CColorButton name="MapColor" text="" visible=1 45x19
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 45x26
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 55x73
+                        [W] CDoubleSpinBox name="MapNumber" text="0" visible=1 45x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=1 35x20
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 45x22
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 55x73
+                        [W] CDoubleSpinBox name="MapNumber" text="0" visible=1 45x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=1 35x20
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 45x22
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 57x73
+                        [W] CDoubleSpinBox name="MapNumber" text="0" visible=1 47x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=1 37x20
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 47x22
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 57x73
+                        [W] CColorButton name="MapColor" text="" visible=1 47x19
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 47x26
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                      [W] QGroupBox name="MapGroup" text="" visible=1 55x73
+                        [W] CColorButton name="MapColor" text="" visible=1 45x19
+                        [W] COpenGLPushButton name="MapTexture" text="" visible=1 45x26
+                          [W] COpenGLPreview name="" text="" visible=0 100x30
+                        [W] QToolButton name="MapEnabled" text="" visible=1 20x20
+                [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                  [W] QScrollBar name="" text="" visible=0 100x30
+                [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=1 6x198
+                  [W] QScrollBar name="" text="" visible=1 6x198
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 100x30
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=1 323x4
+      [W] ads::CDockSplitter name="" text="" visible=1 60x884
+        [W] ads::CDockAreaWidget name="" text="" visible=0 58x0
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=0 100x30
+            [W] ads::CDockAreaTabBar name="" text="" visible=0 10x30
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 10x30
+                [W] QWidget name="tabsContainerWidget" text="" visible=0 10x30
+                  [W] ads::CDockWidgetTab name="" text="" visible=0 640x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="Timeline" visible=0 623x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 28x24
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="Timeline" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=0 0x30
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 22x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 23x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 22x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=0 23x26
+          [W] ads::CDockWidget name="TimelineDockWidget" text="" visible=0 100x30
+            [W] CTimelineDockWidget name="Timeline" text="" visible=0 1238x100
+              [W] QPushButton name="m_pwStop" text="" visible=0 100x26
+              [W] QPushButton name="m_pwPlay" text="" visible=0 100x26
+              [W] QSlider name="m_pwTimeSlider" text="" visible=0 100x19
+              [W] QLabel name="m_pwEndLabel" text="End" visible=0 100x30
+              [W] CDoubleSpinBox name="m_pwEndFrame" text="0" visible=0 60x23
+                [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 50x20
+              [W] QPushButton name="m_pwLoop" text="" visible=0 100x26
+              [W] QGroupBox name="groupBox_2" text="" visible=0 100x30
+                [W] QPushButton name="m_pwRewind" text="" visible=0 100x26
+                [W] QPushButton name="m_pwStepBack" text="" visible=0 100x26
+                [W] QLineEdit name="m_pwFrameBox" text="" visible=0 60x23
+                [W] QPushButton name="m_pwStepForward" text="" visible=0 100x26
+                [W] QPushButton name="m_pwFastForward" text="" visible=0 100x26
+              [W] QGroupBox name="groupBox" text="" visible=0 100x30
+                [W] QLabel name="label_3" text="FPS" visible=0 100x30
+                [W] QComboBox name="m_pPlaybackFPS" text="" visible=0 89x23
+                  [W] QLineEdit name="" text="all frames" visible=0 59x20
+                  [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+                    [W] QComboBoxListView name="" text="" visible=0 640x480
+                      [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+                      [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                        [W] QScrollBar name="" text="" visible=0 100x30
+                      [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                        [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QGroupBox name="m_pwWind" text="" visible=0 100x30
+                [W] QLabel name="label_2" text="Strength" visible=0 100x30
+                [W] CSplineButton name="m_pwWindCurve" text="" visible=0 32x20
+              [W] QGroupBox name="m_pwGrowth" text="" visible=0 100x30
+                [W] QLabel name="m_pwBranchRateLabel" text="Speed" visible=0 100x30
+                [W] CDoubleSpinBox name="m_pwBranchRate" text="0" visible=0 60x23
+                  [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 34x20
+                [W] CSplineButton name="m_pwGrowthCurve" text="" visible=0 32x20
+                [W] QPushButton name="m_pwGrowthWizard" text="Wizard..." visible=0 100x28
+              [W] QGroupBox name="m_pwAnimateForces" text="" visible=0 100x30
+                [W] QLabel name="label" text="Smoothing" visible=0 100x30
+                [W] QComboBox name="m_pwForceSmoothing" text="" visible=0 100x23
+                  [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+                    [W] QComboBoxListView name="" text="" visible=0 640x480
+                      [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+                      [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                        [W] QScrollBar name="" text="" visible=0 100x30
+                      [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                        [W] QScrollBar name="" text="" visible=0 100x30
+        [W] ads::CDockAreaWidget name="" text="" visible=1 58x882
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=0 100x30
+            [W] ads::CDockAreaTabBar name="" text="" visible=0 10x30
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 10x30
+                [W] QWidget name="tabsContainerWidget" text="" visible=0 56x31
+                  [W] ads::CDockWidgetTab name="" text="" visible=0 640x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="MDI" visible=0 623x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 640x26
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="MDI" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=0 0x30
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 22x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 23x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 22x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=0 23x26
+          [W] ads::CDockWidget name="MDI" text="" visible=1 54x878
+            [W] QMdiArea name="mdiArea" text="" visible=1 54x878
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="" text="" visible=1 54x878
+              [W] QTabBar name="" text="" visible=1 1281x0
+                [W] QToolButton name="ScrollLeftButton" text="" visible=0 100x26
+                [W] QToolButton name="ScrollRightButton" text="" visible=0 100x26
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 100x30
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 100x30
+      [W] ads::CDockSplitter name="" text="" visible=1 537x884
+        [W] ads::CDockAreaWidget name="" text="" visible=1 535x531
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=1 531x31
+            [W] ads::CDockAreaTabBar name="" text="" visible=1 75x31
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=1 75x31
+                [W] QWidget name="tabsContainerWidget" text="" visible=1 75x31
+                  [W] ads::CDockWidgetTab name="" text="" visible=1 75x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="Properties" visible=1 58x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 28x24
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="Properties" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=1 429x31
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 27x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 29x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 29x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=1 27x26
+          [W] ads::CDockWidget name="PropertiesDockWidget" text="" visible=1 531x496
+            [W] CPropertyBar name="Properties" text="" visible=1 529x500
+              [W] QWidget name="Ribbon" text="" visible=1 513x51
+                [W] QLabel name="m_pName" text="Nothing selected" visible=1 115x43
+                [W] QPushButton name="" text="" visible=0 18x18
+                [W] QToolButton name="LeftRibbon" text="Generator" visible=1 102x34
+                [W] QToolButton name="MiddleRibbon" text="Node" visible=1 78x34
+                [W] QToolButton name="RightRibbon" text="Freehand" visible=1 100x34
+              [W] QWidget name="m_pFilterBar" text="" visible=0 100x30
+                [W] QLineEdit name="m_pFilterString" text="" visible=0 100x23
+                  [W] QLineEditIconButton name="" text="" visible=0 22x18
+                  [W] QLineEditIconButton name="" text="" visible=0 22x18
+                  [W] QLabel name="FilterIcon" text="" visible=0 100x30
+              [W] CScrollableToolbox name="Toolbox" text="" visible=0 100x30
+                [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 90x30
+                [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                  [W] QScrollBar name="" text="" visible=0 100x30
+                [W] QWidget name="PropertyGroupShadow" text="" visible=0 100x30
+                [W] QWidget name="PropertyGroupShadow" text="" visible=0 100x30
+                [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 6x30
+                  [W] QScrollBar name="" text="" visible=0 6x30
+              [W] QWidget name="m_pNoSelectionContainer" text="" visible=1 513x437
+                [W] QGroupBox name="" text="" visible=1 513x103
+                  [W] QPushButton name="SimpleModeButton" text="Wind" visible=1 245x25
+                  [W] QPushButton name="SimpleModeButton" text="Lighting" visible=1 244x25
+                  [W] QPushButton name="SimpleModeButton" text="Window properties" visible=1 244x25
+                  [W] QPushButton name="SimpleModeButton" text="Global properties" visible=1 245x25
+                [W] QGroupBox name="" text="" visible=1 513x103
+                  [W] QPushButton name="SimpleModeButton" text="Wind wizard..." visible=1 245x25
+                  [W] QPushButton name="SimpleModeButton" text="Compute AO" visible=1 244x25
+                  [W] QPushButton name="SimpleModeButton" text="Export..." visible=1 244x25
+                  [W] QPushButton name="SimpleModeButton" text="Randomize" visible=1 245x25
+                [W] QGroupBox name="" text="" visible=1 513x103
+                  [W] QPushButton name="SimpleModeButton" text="New..." visible=1 245x25
+                  [W] QPushButton name="SimpleModeButton" text="Open..." visible=1 244x25
+                  [W] QPushButton name="SimpleModeButton" text="Browse samples..." visible=1 495x25
+                [W] QGroupBox name="" text="" visible=1 513x102
+                  [W] QPushButton name="SimpleModeButton" text="Documentation..." visible=1 245x25
+                  [W] QPushButton name="SimpleModeButton" text="Video tutorials..." visible=1 244x25
+                  [W] QPushButton name="SimpleModeButton" text="Shop for models..." visible=0 100x30
+                  [W] QPushButton name="SimpleModeButton" text="Forum..." visible=1 245x25
+              [W] CFreehandWidget name="Freehand" text="" visible=0 479x809
+                [W] QGroupBox name="groupBox_4" text="" visible=0 100x30
+                  [W] QToolButton name="m_pBend" text="Bend" visible=0 100x30
+                  [W] QToolButton name="m_pPaintDisplacement" text="Displacement" visible=0 100x30
+                  [W] QToolButton name="m_pTrimMode" text="Trim" visible=0 100x30
+                [W] QGroupBox name="groupBox_5" text="" visible=0 100x30
+                  [W] QToolButton name="m_pClickPlacement" text="Click Place" visible=0 100x30
+                  [W] QToolButton name="m_pHandDraw" text="Hand Draw" visible=0 100x30
+                [W] QGroupBox name="groupBox_6" text="" visible=0 100x30
+                  [W] QToolButton name="m_pPaintVertices" text="Features" visible=0 100x30
+                  [W] QToolButton name="m_pVertexEdit" text="Edit" visible=0 100x30
+                  [W] QToolButton name="m_pPaintVertexColors" text="Colors" visible=0 100x30
+                [W] QGroupBox name="m_pHelpGroup" text="" visible=0 100x30
+                  [W] QToolButton name="m_pHelp" text="Help" visible=0 100x30
+                [W] QLabel name="m_pwModeMessage" text="Mode Message" visible=0 100x30
+                [W] QStackedWidget name="m_pStack" text="" visible=0 100x30
+                  [W] QWidget name="Trim" text="" visible=0 640x480
+                    [W] QGroupBox name="groupBox_TrimMode" text="" visible=0 100x30
+                      [W] QRadioButton name="m_pwTrimPrune" text="Prune" visible=0 100x30
+                      [W] QRadioButton name="m_pwTrimCut" text="Cut" visible=0 100x30
+                      [W] QRadioButton name="m_pwTrimUntrim" text="Untrim" visible=0 100x30
+                      [W] QRadioButton name="m_pwTrimStop" text="Stop" visible=0 100x30
+                      [W] QRadioButton name="m_pwTrimShapeReduce" text="Shrink" visible=0 100x30
+                      [W] QRadioButton name="m_pwTrimShapeEnlarge" text="Expand" visible=0 100x30
+                    [W] QGroupBox name="groupBox_7" text="" visible=0 100x30
+                      [W] QSpinBox name="m_pwTrimMinLevel" text="" visible=0 100x23
+                        [W] QLineEdit name="qt_spinbox_lineedit" text="" visible=0 74x20
+                      [W] QLabel name="label_9" text="to" visible=0 25x30
+                      [W] QSpinBox name="m_pwTrimMaxLevel" text="" visible=0 100x23
+                        [W] QLineEdit name="qt_spinbox_lineedit" text="" visible=0 74x20
+                      [W] QCheckBox name="m_pwTrimShowRange" text="Show range" visible=0 100x30
+                    [W] QPushButton name="m_pwTrimUntrimSelected" text="Clear selected" visible=0 100x20
+                    [W] QPushButton name="m_pwTrimUntrimSelectedDescendants" text="Clear selected + descendants" visible=0 100x20
+                    [W] QPushButton name="m_pwTrimUntrimAll" text="Clear all" visible=0 100x20
+                  [W] QWidget name="ClickPlacement" text="" visible=0 640x480
+                    [W] QGroupBox name="groupBox_9" text="" visible=0 100x30
+                      [W] QLabel name="label_3" text="Hold "Space" and click on an object to manually place a child with ID" visible=0 100x30
+                      [W] QComboBox name="m_pwNextClickID" text="" visible=0 100x23
+                        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+                          [W] QComboBoxListView name="" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                    [W] QGroupBox name="groupBox_10" text="" visible=0 100x30
+                      [W] QListWidget name="m_pwClickList" text="" visible=0 108x30
+                        [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 106x28
+                        [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                          [W] QScrollBar name="" text="" visible=0 100x30
+                        [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                          [W] QScrollBar name="" text="" visible=0 100x30
+                      [W] QPushButton name="m_pwRemoveClick" text="Remove" visible=0 100x20
+                      [W] QPushButton name="m_pwSelectedClickID" text="Change ID" visible=0 100x20
+                      [W] QPushButton name="m_pwClearClicks" text="Clear all" visible=0 100x20
+                  [W] QWidget name="VertexEdit" text="" visible=0 640x480
+                    [W] QGroupBox name="m_pwVertexSelectionBrushGroup" text="" visible=0 100x30
+                      [W] QLabel name="m_pwVertexSkinLabel" text="Skin" visible=0 100x30
+                      [W] QComboBox name="m_pwVertexSkin" text="" visible=0 100x23
+                        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+                          [W] QComboBoxListView name="" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                      [W] QLabel name="label_11" text="Select" visible=0 100x30
+                      [W] QPushButton name="m_pwVertexSelectAll" text="All" visible=0 100x20
+                      [W] QPushButton name="m_pwVertexSelectByColor" text="Matching color" visible=0 100x20
+                      [W] QPushButton name="m_pwVertexClearSelection" text="Clear" visible=0 100x20
+                      [W] QPushButton name="m_pwVertexRemoveEdits" text="Clear edits on selection" visible=0 100x20
+                    [W] QGroupBox name="m_pwVertexActionGroup" text="" visible=0 100x30
+                      [W] QLabel name="label_5" text="Size" visible=0 100x30
+                      [W] QSlider name="m_pwVertexBrushSize" text="" visible=0 100x19
+                      [W] QLabel name="label_10" text="Soft-selection" visible=0 100x30
+                      [W] QCheckBox name="m_pwVertexSoftSelection" text="" visible=0 100x30
+                      [W] CDoubleSpinBox name="m_pwVertexFalloffDistance" text="0" visible=0 100x23
+                        [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 74x20
+                      [W] QComboBox name="m_pwVertexFalloffCurve" text="" visible=0 100x23
+                        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+                          [W] QComboBoxListView name="" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+                            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                              [W] QScrollBar name="" text="" visible=0 100x30
+                      [W] QLabel name="label_7" text="Ignore backfaces" visible=0 100x30
+                      [W] QCheckBox name="m_pwVertexIgnoreBackfaces" text="" visible=0 100x30
+                      [W] QLabel name="label_8" text="Flow" visible=0 100x30
+                      [W] QCheckBox name="m_pwVertexFlow" text="" visible=0 100x30
+                    [W] QGroupBox name="m_pwVertexWindRiggingGroup" text="" visible=0 100x30
+                      [W] QLabel name="label_12" text="Spine" visible=0 100x30
+                      [W] QPushButton name="m_pwVertexPickSpine" text="Pick..." visible=0 100x20
+                      [W] QPushButton name="m_pwVertexForgetSpine" text="Forget" visible=0 100x20
+                      [W] QPushButton name="m_pwVertexSelectForSpine" text="Select verts" visible=0 100x20
+                      [W] QPushButton name="m_pwVertexMakeStationary" text="Make stationary" visible=0 100x20
+                      [W] QPushButton name="m_pwVertexTransferRigging" text="Update lower LODs" visible=0 100x20
+                    [W] QGroupBox name="m_pwVertexSelectedGroup" text="" visible=0 100x30
+                      [W] QTextBrowser name="m_pwVertexReport" text="" visible=0 100x30
+                        [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 98x28
+                        [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                          [W] QScrollBar name="" text="" visible=0 100x30
+                        [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                          [W] QScrollBar name="" text="" visible=0 100x30
+                  [W] QWidget name="HandDraw" text="" visible=0 640x480
+                    [W] QGroupBox name="groupBox" text="" visible=0 100x30
+                      [W] QLabel name="label" text="Step 1: Hold "Space" and click in the scene to start a new branch" visible=0 100x30
+                      [W] QLabel name="label_2" text="Step 2: Hold "Space" then click+drag the diamond at the end to trace out the branch's shape." visible=0 100x30
+                    [W] QGroupBox name="groupBox_2" text="" visible=0 100x30
+                      [W] QPushButton name="m_pwConvertButton" text="Convert to hand drawn" visible=0 100x20
+                      [W] QPushButton name="m_pwConvertGeneratorButton" text="Convert generator to hand drawn" visible=0 100x20
+                    [W] QGroupBox name="groupBox_3" text="" visible=0 100x30
+                      [W] QPushButton name="m_pwMoreControlPoints" text="More" visible=0 100x20
+                      [W] QPushButton name="m_pwFewerControlPoints" text="Fewer" visible=0 100x20
+                      [W] QPushButton name="m_pwRedistributeControlPoints" text="Redistribute" visible=0 100x20
+                  [W] QWidget name="PaintVertexColors" text="" visible=0 640x480
+                    [W] CFreehandPaintWidget name="m_pPaintWidget_3" text="" visible=0 549x446
+                      [W] QGroupBox name="m_pwBrushShapeGroup" text="" visible=0 100x30
+                        [W] QSlider name="m_pwBrushFalloff" text="" visible=0 100x19
+                        [W] QLabel name="label_3" text="Strength" visible=0 100x30
+                        [W] QSlider name="m_pwBrushSize" text="" visible=0 100x19
+                        [W] QLabel name="label_2" text="Falloff" visible=0 100x30
+                        [W] QSlider name="m_pwBrushStrength" text="" visible=0 100x19
+                        [W] QLabel name="label" text="Size" visible=0 100x30
+                      [W] QGroupBox name="m_pwBrushGroup" text="" visible=0 100x30
+                        [W] CDoubleSpinBox name="m_pwSetValue" text="0" visible=0 60x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 34x20
+                        [W] CColorButton name="m_pwSetColor" text="" visible=0 68x20
+                        [W] QLabel name="m_pwRGB" text="RGB" visible=0 100x30
+                        [W] QCheckBox name="m_pwR" text="" visible=0 100x30
+                        [W] QCheckBox name="m_pwG" text="" visible=0 100x30
+                        [W] QCheckBox name="m_pwB" text="" visible=0 100x30
+                        [W] QRadioButton name="m_pwPlusMinusCheck" text="Adjust (+/-)" visible=0 100x30
+                        [W] QRadioButton name="m_pwSetCheck" text="Paint" visible=0 100x30
+                        [W] QRadioButton name="m_pwSmoothCheck" text="Smooth" visible=0 100x30
+                        [W] QRadioButton name="m_pwEraseCheck" text="Erase" visible=0 100x30
+                      [W] QGroupBox name="groupBox" text="" visible=0 100x30
+                        [W] QPushButton name="m_pwFill" text="Fill" visible=0 68x20
+                        [W] QPushButton name="m_pwClear" text="Clear" visible=0 68x20
+                        [W] CDoubleSpinBox name="m_pwFillValue" text="0" visible=0 60x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 34x20
+                        [W] CColorButton name="m_pwFillColor" text="" visible=0 68x20
+                  [W] QWidget name="PaintVertices" text="" visible=0 640x480
+                    [W] CFreehandPaintWidget name="m_pPaintWidget_2" text="" visible=0 549x446
+                      [W] QGroupBox name="m_pwBrushShapeGroup" text="" visible=0 100x30
+                        [W] QSlider name="m_pwBrushFalloff" text="" visible=0 100x19
+                        [W] QLabel name="label_3" text="Strength" visible=0 100x30
+                        [W] QSlider name="m_pwBrushSize" text="" visible=0 100x19
+                        [W] QLabel name="label_2" text="Falloff" visible=0 100x30
+                        [W] QSlider name="m_pwBrushStrength" text="" visible=0 100x19
+                        [W] QLabel name="label" text="Size" visible=0 100x30
+                      [W] QGroupBox name="m_pwBrushGroup" text="" visible=0 100x30
+                        [W] CDoubleSpinBox name="m_pwSetValue" text="0" visible=0 60x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 34x20
+                        [W] CColorButton name="m_pwSetColor" text="" visible=0 68x20
+                        [W] QLabel name="m_pwRGB" text="RGB" visible=0 100x30
+                        [W] QCheckBox name="m_pwR" text="" visible=0 100x30
+                        [W] QCheckBox name="m_pwG" text="" visible=0 100x30
+                        [W] QCheckBox name="m_pwB" text="" visible=0 100x30
+                        [W] QRadioButton name="m_pwPlusMinusCheck" text="Adjust (+/-)" visible=0 100x30
+                        [W] QRadioButton name="m_pwSetCheck" text="Paint" visible=0 100x30
+                        [W] QRadioButton name="m_pwSmoothCheck" text="Smooth" visible=0 100x30
+                        [W] QRadioButton name="m_pwEraseCheck" text="Erase" visible=0 100x30
+                      [W] QGroupBox name="groupBox" text="" visible=0 100x30
+                        [W] QPushButton name="m_pwFill" text="Fill" visible=0 68x20
+                        [W] QPushButton name="m_pwClear" text="Clear" visible=0 68x20
+                        [W] CDoubleSpinBox name="m_pwFillValue" text="0" visible=0 60x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 34x20
+                        [W] CColorButton name="m_pwFillColor" text="" visible=0 68x20
+                  [W] QWidget name="Bend" text="" visible=0 640x480
+                    [W] QGroupBox name="groupBox_8" text="" visible=0 640x122
+                      [W] QLabel name="m_pwBendSizeLabel" text="Size" visible=0 100x30
+                      [W] QSlider name="m_pwBendBrushSize" text="" visible=0 100x19
+                      [W] QLabel name="m_pwBendCurvatureLabel" text="Curvature" visible=0 100x30
+                      [W] QSlider name="m_pwBendBrushCurvature" text="" visible=0 100x19
+                      [W] QLabel name="m_pwBendRotateLabel" text="Rotate gizmo" visible=0 100x30
+                      [W] QCheckBox name="m_pwBendGizmo" text="" visible=0 100x30
+                      [W] QPushButton name="m_pwBendIndexLeft" text="Undo last bend" visible=0 100x20
+                      [W] QPushButton name="m_pwBendIndexRight" text="Redo" visible=0 100x20
+                      [W] QPushButton name="m_pwBendClear" text="  Clear  " visible=0 100x20
+                  [W] QWidget name="PaintDisplacement" text="" visible=0 640x480
+                    [W] CFreehandPaintWidget name="m_pPaintWidget" text="" visible=0 640x480
+                      [W] QGroupBox name="m_pwBrushShapeGroup" text="" visible=0 100x30
+                        [W] QSlider name="m_pwBrushFalloff" text="" visible=0 100x19
+                        [W] QLabel name="label_3" text="Strength" visible=0 100x30
+                        [W] QSlider name="m_pwBrushSize" text="" visible=0 100x19
+                        [W] QLabel name="label_2" text="Falloff" visible=0 100x30
+                        [W] QSlider name="m_pwBrushStrength" text="" visible=0 100x19
+                        [W] QLabel name="label" text="Size" visible=0 100x30
+                      [W] QGroupBox name="m_pwBrushGroup" text="" visible=0 100x30
+                        [W] CDoubleSpinBox name="m_pwSetValue" text="0" visible=0 60x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 34x20
+                        [W] CColorButton name="m_pwSetColor" text="" visible=0 68x20
+                        [W] QLabel name="m_pwRGB" text="RGB" visible=0 100x30
+                        [W] QCheckBox name="m_pwR" text="" visible=0 100x30
+                        [W] QCheckBox name="m_pwG" text="" visible=0 100x30
+                        [W] QCheckBox name="m_pwB" text="" visible=0 100x30
+                        [W] QRadioButton name="m_pwPlusMinusCheck" text="Adjust (+/-)" visible=0 100x30
+                        [W] QRadioButton name="m_pwSetCheck" text="Paint" visible=0 100x30
+                        [W] QRadioButton name="m_pwSmoothCheck" text="Smooth" visible=0 100x30
+                        [W] QRadioButton name="m_pwEraseCheck" text="Erase" visible=0 100x30
+                      [W] QGroupBox name="groupBox" text="" visible=0 100x30
+                        [W] QPushButton name="m_pwFill" text="Fill" visible=0 68x20
+                        [W] QPushButton name="m_pwClear" text="Clear" visible=0 68x20
+                        [W] CDoubleSpinBox name="m_pwFillValue" text="0" visible=0 60x23
+                          [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 34x20
+                        [W] CColorButton name="m_pwFillColor" text="" visible=0 68x20
+              [W] QWidget name="SimpleWidget" text="" visible=0 100x30
+                [W] QLabel name="" text="Unsupported feature(s) selected:
+" visible=0 100x30
+                [W] QLabel name="" text=" - unknown" visible=0 100x30
+                [W] QLabel name="" text="
+<a href="www.speedtree.com/versioninfo" style="color: #93B479">Click here</a> for more information." visible=0 100x30
+        [W] ads::CDockAreaWidget name="" text="" visible=1 535x349
+          [W] ads::CDockAreaTitleBar name="dockAreaTitleBar" text="" visible=1 531x32
+            [W] ads::CDockAreaTabBar name="" text="" visible=1 89x32
+              [W] QWidget name="qt_scrollarea_viewport" text="" visible=1 89x32
+                [W] QWidget name="tabsContainerWidget" text="" visible=1 89x32
+                  [W] ads::CDockWidgetTab name="" text="" visible=1 79x31
+                    [W] ads::CElidingLabel name="dockWidgetTabLabel" text="Generation" visible=1 62x15
+                    [W] QPushButton name="tabCloseButton" text="" visible=0 28x24
+              [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+              [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+                [W] QScrollBar name="" text="" visible=0 100x30
+            [W] ads::CElidingLabel name="autoHideTitleLabel" text="Generation" visible=0 640x480
+            [W] ads::CSpacerWidget name="" text="" visible=1 415x32
+            [W] ads::CTitleBarButton name="tabsMenuButton" text="" visible=0 27x26
+              [W] QMenu name="" text="" visible=0 108x30
+            [W] ads::CTitleBarButton name="detachGroupButton" text="" visible=0 29x26
+            [W] ads::CTitleBarButton name="dockAreaAutoHideButton" text="" visible=0 29x26
+            [W] ads::CTitleBarButton name="dockAreaCloseButton" text="" visible=1 27x26
+          [W] ads::CDockWidget name="GenerationDockWidget" text="" visible=1 531x313
+            [W] CGenerationEditorDockWidget name="Generation" text="" visible=1 529x312
+              [W] QWidget name="DisplaySystem" text="" visible=1 529x308
+                [W] QToolBar name="" text="" visible=1 529x34
+                  [W] QToolBarExtension name="qt_toolbar_ext_button" text="" visible=0 100x30
+                    [W] QMenu name="" text="" visible=0 108x30
+                  [W] QWidget name="" text="" visible=1 164x30
+                  [W] QPushButton name="RibbonButton" text="" visible=1 32x30
+                  [W] QToolBarSeparator name="ToolbarSpacer" text="" visible=1 7x30
+                  [W] QPushButton name="RibbonButton" text="" visible=1 32x30
+                  [W] QToolBarSeparator name="ToolbarSpacer" text="" visible=1 7x30
+                  [W] QPushButton name="RibbonButton" text="" visible=1 32x30
+                  [W] QToolBarSeparator name="ToolbarSpacer" text="" visible=1 7x30
+                  [W] QPushButton name="RibbonButton" text="" visible=1 32x30
+                  [W] QToolBarSeparator name="ToolbarSpacer" text="" visible=1 7x30
+                  [W] QPushButton name="RibbonButton" text="" visible=1 32x30
+                  [W] QWidget name="" text="" visible=1 163x30
+                [W] QWidget name="Ribbon" text="" visible=1 529x38
+                  [W] QPushButton name="RibbonButton" text="Add" visible=1 54x30
+                  [W] QPushButton name="RibbonButton" text="Actions" visible=1 71x30
+                  [W] QPushButton name="RibbonButton" text="Randomize" visible=1 90x30
+                  [W] QPushButton name="RibbonButton" text="Upgrade" visible=0 100x30
+                  [W] QPushButton name="RibbonButton" text="" visible=1 32x30
+                [W] QFrame name="" text="" visible=1 529x234
+                  [W] QOpenGLWidget name="" text="" visible=1 529x234
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 100x30
+        [W] QSplitterHandle name="qt_splithandle_" text="" visible=1 535x4
+      [W] QSplitterHandle name="qt_splithandle_" text="" visible=0 100x30
+      [W] QSplitterHandle name="qt_splithandle_" text="" visible=1 4x884
+      [W] QSplitterHandle name="qt_splithandle_" text="" visible=1 4x884
+  [W] CSplineEditorDialog name="SplineEditorDialog" text="" visible=0 597x356
+    [W] QGroupBox name="groupBox" text="" visible=0 100x30
+      [W] QPushButton name="parenticon" text="" visible=0 18x18
+      [W] QComboBox name="m_pwParent" text="" visible=0 100x23
+        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+          [W] QComboBoxListView name="" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+      [W] QPushButton name="m_pPreset" text="Preset" visible=0 68x22
+      [W] QPushButton name="m_pDraw" text="Draw" visible=0 68x22
+      [W] QComboBox name="m_pwStyle" text="" visible=0 100x23
+        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+          [W] QComboBoxListView name="" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+      [W] QLabel name="label_3" text=" X" visible=0 100x30
+      [W] CDoubleSpinBox name="m_pwX" text="0" visible=0 70x23
+        [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 44x20
+      [W] QLabel name="label_4" text=" Y" visible=0 100x30
+      [W] CDoubleSpinBox name="m_pwY" text="0" visible=0 70x23
+        [W] QLineEdit name="qt_spinbox_lineedit" text="0" visible=0 44x20
+      [W] QOpenGLWidget name="m_pwEditor" text="" visible=0 100x100
+  [W] CMiniColorDialog name="MiniColorSelector" text="" visible=0 300x230
+    [W] QGroupBox name="groupBox" text="" visible=0 100x30
+      [W] QSlider name="m_pwBrightHue" text="" visible=0 100x19
+      [W] CColorButton name="m_pwLast" text="" visible=0 25x25
+      [W] QSlider name="m_pwGray" text="" visible=0 100x19
+      [W] CColorButton name="m_pColorSpace" text="" visible=0 40x40
+      [W] QSlider name="m_pwRed" text="" visible=0 100x19
+      [W] QLabel name="label_4" text="R" visible=0 100x30
+      [W] QLabel name="label_5" text="G" visible=0 100x30
+      [W] QSlider name="m_pwValue" text="" visible=0 100x19
+      [W] QLabel name="label_3" text="V" visible=0 100x30
+      [W] QSlider name="m_pwGreen" text="" visible=0 100x19
+      [W] QLabel name="label_6" text="B" visible=0 100x30
+      [W] QSlider name="m_pwSaturation" text="" visible=0 100x19
+      [W] QLabel name="label_2" text="S" visible=0 100x30
+      [W] QSlider name="m_pwHue" text="" visible=0 100x19
+      [W] QLabel name="label" text="H" visible=0 100x30
+      [W] QSlider name="m_pwBlue" text="" visible=0 100x19
+      [W] QLineEdit name="m_pwHueEdit" text="0" visible=0 100x23
+      [W] QLineEdit name="m_pwSaturationEdit" text="0" visible=0 100x23
+      [W] QLineEdit name="m_pwValueEdit" text="0" visible=0 100x23
+      [W] QLineEdit name="m_pwRedEdit" text="0" visible=0 100x23
+      [W] QLineEdit name="m_pwGreenEdit" text="0" visible=0 100x23
+      [W] QLineEdit name="m_pwBlueEdit" text="0" visible=0 100x23
+  [W] CLicensingDialog name="CLicensingDialog" text="" visible=0 520x628
+    [W] QWidget name="m_pLicenseImageBackground" text="" visible=0 100x45
+      [W] QPushButton name="m_pLogo" text="" visible=0 181x45
+      [W] QLabel name="m_pVersion" text="<html><body><p>SpeedTree&reg; Modeler <br/>Version 10.2.0 (Build Apr 30 2026)</p></body></html>" visible=0 100x30
+    [W] QGroupBox name="m_pMainGroup" text="" visible=0 100x30
+      [W] QLabel name="LicenseTypeLabel" text="License type" visible=0 100x30
+      [W] QWidget name="Ribbon" text="" visible=0 100x30
+        [W] QPushButton name="LeftRibbon" text="Login with Unity ID" visible=0 100x34
+        [W] QPushButton name="RightRibbon" text="Use a license" visible=0 100x34
+        [W] QPushButton name="m_pHelp" text="Help" visible=0 100x30
+      [W] QStackedWidget name="m_pStack" text="" visible=0 100x30
+        [W] QWidget name="m_pwUnityID" text="" visible=0 640x480
+          [W] QPushButton name="m_pwLoginUnityID" text="Login..." visible=0 521x22
+          [W] QCheckBox name="m_pwUnityIdForceFreshLogin" text="Force fresh login" visible=0 115x20
+          [W] QLabel name="m_pwUnityIdMessage" text="Login message" visible=0 640x14
+          [W] QLabel name="m_pwUnityIdLicensingErrorDetails" text="Error details" visible=0 640x14
+          [W] QPushButton name="m_pwUnityIDPurchaseNow" text="Purchase now..." visible=0 103x22
+          [W] QPushButton name="m_pwUnityIDManageAccount" text="Manage account..." visible=0 117x22
+        [W] QWidget name="m_pLicense" text="" visible=0 640x480
+          [W] QLabel name="InformationLabel" text="Information" visible=0 640x27
+          [W] QTextEdit name="m_pLicenseInfo" text="" visible=0 640x240
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 638x238
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QLabel name="LicenseLabel" text="License" visible=0 640x27
+          [W] QTextEdit name="m_pLicenseKey" text="" visible=0 640x144
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 638x142
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QPushButton name="m_pLicenseRequest" text="Request license..." visible=0 112x22
+          [W] QPushButton name="m_pLicensePurchase" text="Purchase now..." visible=0 103x22
+          [W] QPushButton name="m_pLicenseApply" text="Apply License" visible=0 94x22
+    [W] QPushButton name="m_pClose" text="" visible=0 100x30
+[W] QMenu name="" text="" visible=0 108x30
+[W] QMenu name="" text="" visible=0 108x30
+[W] ads::CDockWidget name="MaterialSetDockWidget" text="" visible=0 100x15
+  [W] CAssetMaterialSetPane name="MaterialSet" text="" visible=0 275x250
+    [W] QPushButton name="m_pwDrag" text="" visible=0 28x28
+    [W] QComboBox name="m_pwNameCombo" text="" visible=0 100x27
+      [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+        [W] QComboBoxListView name="" text="" visible=0 640x480
+          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QPushButton name="m_pwAddRemove" text="" visible=0 100x26
+    [W] QPushButton name="m_pwAddSpecial" text="" visible=0 100x26
+    [W] QToolButton name="m_pwCopyPaste" text="" visible=0 100x26
+    [W] QWidget name="m_pGroupMaterial" text="" visible=0 100x30
+      [W] QGroupBox name="groupBox_2" text="" visible=0 100x30
+        [W] QLabel name="label_3" text="Override season" visible=0 100x30
+        [W] QCheckBox name="m_pOverrideSeason" text="" visible=0 100x30
+        [W] CSplineButton name="CurveButton" text="" visible=0 32x20
+      [W] QGroupBox name="m_pChildren" text="" visible=0 100x30
+        [W] QPushButton name="m_pAddChild" text="Add" visible=0 100x30
+        [W] QScrollArea name="m_pChildrenScroll" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 98x28
+            [W] QWidget name="scrollAreaWidgetContents_2" text="" visible=0 98x28
+          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+[W] QMenu name="" text="" visible=0 108x30
+[W] ads::CDockOverlayCross name="" text="" visible=0 100x30
+  [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+  [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+  [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+  [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+  [W] QLabel name="DockWidgetAreaLabel" text="" visible=0 640x480
+[W] QMenu name="" text="" visible=0 108x30
+[W] QMenu name="" text="" visible=0 108x30
+[W] ads::CDockWidget name="DisplacementDockWidget" text="" visible=0 100x30
+  [W] CAssetDisplacementPane name="Displacement" text="" visible=0 275x200
+    [W] QPushButton name="m_pwDrag" text="" visible=0 28x28
+    [W] QComboBox name="m_pwNameCombo" text="" visible=0 100x27
+      [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+        [W] QComboBoxListView name="" text="" visible=0 640x480
+          [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+          [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+          [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+            [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QPushButton name="m_pwAddRemove" text="" visible=0 100x26
+    [W] QPushButton name="m_pwAddSpecial" text="" visible=0 100x26
+    [W] QToolButton name="m_pwCopyPaste" text="" visible=0 100x26
+    [W] QGroupBox name="groupBox" text="" visible=0 100x30
+      [W] QLabel name="label_7" text="Channel" visible=0 100x30
+      [W] QLabel name="label" text="Filename" visible=0 100x30
+      [W] QComboBox name="m_pwChannel" text="" visible=0 100x23
+        [W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+          [W] QComboBoxListView name="" text="" visible=0 640x480
+            [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+            [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+            [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+              [W] QScrollBar name="" text="" visible=0 100x30
+      [W] QLabel name="label_2" text="     Brightness" visible=0 100x30
+      [W] QLabel name="label_4" text="Normalize" visible=0 100x30
+      [W] QSlider name="m_pBrightness" text="" visible=0 100x19
+      [W] QLabel name="label_8" text="Smoothing" visible=0 100x30
+      [W] QCheckBox name="m_pNormalize" text="" visible=0 100x30
+      [W] QSlider name="m_pSmoothing" text="" visible=0 100x19
+      [W] QLabel name="label_3" text="Contrast" visible=0 100x30
+      [W] QSlider name="m_pContrast" text="" visible=0 100x19
+      [W] QLineEdit name="m_pwFilename" text="" visible=0 100x23
+      [W] QPushButton name="m_pwBrowse" text="..." visible=0 28x26
+      [W] QPushButton name="m_pwReload" text="" visible=0 28x26
+    [W] COpenGLPreview name="m_pwPreview" text="" visible=0 100x30
+[W] CMiniColorDialog name="MiniColorSelector" text="" visible=0 300x230
+  [W] QGroupBox name="groupBox" text="" visible=0 100x30
+    [W] QSlider name="m_pwBrightHue" text="" visible=0 100x19
+    [W] CColorButton name="m_pwLast" text="" visible=0 25x25
+    [W] QSlider name="m_pwGray" text="" visible=0 100x19
+    [W] CColorButton name="m_pColorSpace" text="" visible=0 40x40
+    [W] QSlider name="m_pwRed" text="" visible=0 100x19
+    [W] QLabel name="label_4" text="R" visible=0 100x30
+    [W] QLabel name="label_5" text="G" visible=0 100x30
+    [W] QSlider name="m_pwValue" text="" visible=0 100x19
+    [W] QLabel name="label_3" text="V" visible=0 100x30
+    [W] QSlider name="m_pwGreen" text="" visible=0 100x19
+    [W] QLabel name="label_6" text="B" visible=0 100x30
+    [W] QSlider name="m_pwSaturation" text="" visible=0 100x19
+    [W] QLabel name="label_2" text="S" visible=0 100x30
+    [W] QSlider name="m_pwHue" text="" visible=0 100x19
+    [W] QLabel name="label" text="H" visible=0 100x30
+    [W] QSlider name="m_pwBlue" text="" visible=0 100x19
+    [W] QLineEdit name="m_pwHueEdit" text="0" visible=0 100x23
+    [W] QLineEdit name="m_pwSaturationEdit" text="0" visible=0 100x23
+    [W] QLineEdit name="m_pwValueEdit" text="0" visible=0 100x23
+    [W] QLineEdit name="m_pwRedEdit" text="0" visible=0 100x23
+    [W] QLineEdit name="m_pwGreenEdit" text="0" visible=0 100x23
+    [W] QLineEdit name="m_pwBlueEdit" text="0" visible=0 100x23
+[W] QMenu name="" text="" visible=0 108x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QMenu name="menuRecents" text="" visible=0 108x30
+    [M] Show recent files...
+    [M] 
+    [M] &1 C:/Program Files/SpeedTree/Spee...rning/Rules/Oak_Complex_Rules.spm
+    [M] &Recent files
+[W] QMenu name="" text="" visible=0 108x30
+[W] QMenu name="menuAdvanced" text="" visible=0 108x30
+    [M] Open (compute disabled)...
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+[W] QComboBoxPrivateContainer name="" text="" visible=0 100x30
+  [W] QComboBoxListView name="" text="" visible=0 640x480
+    [W] QWidget name="qt_scrollarea_viewport" text="" visible=0 632x472
+    [W] QWidget name="qt_scrollarea_hcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
+    [W] QWidget name="qt_scrollarea_vcontainer" text="" visible=0 100x30
+      [W] QScrollBar name="" text="" visible=0 100x30
