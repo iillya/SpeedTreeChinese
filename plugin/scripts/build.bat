@@ -73,6 +73,10 @@ cl /nologo /O2 /W3 /EHsc /std:c++17 /utf-8 ^
 if errorlevel 1 exit /b 1
 
 echo.
+echo === Copying runtime dictionary ===
+if not exist "%NATIVE%\translations" mkdir "%NATIVE%\translations"
+copy /Y "%ROOT%\translations\dictionary_zh.json" "%NATIVE%\translations\dictionary_zh.json" >nul
+
 echo Build complete:
 echo   %NATIVE%\SpeedTreeChineseHook.dll
 echo   %NATIVE%\SpeedTreeChineseLauncher.exe
