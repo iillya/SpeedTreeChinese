@@ -43,6 +43,22 @@ def is_non_speedtree(k):
     for m in EXTRA_MARKERS:
         if m.lower() in kk:
             return True
+    # sample asset / material names: have a digit or underscore suffix
+    if re.search(r"[\d_]", k):
+        return True
+    # embedded error / status sentences & fragments
+    if re.match(
+        r"^(Bad|Can't|Cannot|Could|could|Application|An |The |This |A |If |when |"
+        r"There |It |You |Please |No such|Unable|Unhandled|Unsupported|Unexpected|"
+        r"Invalid|Insufficient|Missing|Failed|Malformed|Bogus|Premature|"
+        r"Requested|Attempt|Attempted|Warning|Error|Exception|Not |Doesn't|Has |"
+        r"Is |Are |Will |Would |Should |Must |May |Might |In order|Provided|"
+        r"Found |Tried |Ignoring|Skipping|Compiling|Building|Generating|"
+        r"Couldn't|Cannot|No |Unable|Requires|Require|The following|There was)", k):
+        return True
+    # short non-label tokens / bare operators
+    if not re.search(r"[A-Za-z]{3,}", k):
+        return True
     return False
 
 def main():
