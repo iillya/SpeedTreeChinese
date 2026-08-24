@@ -556,11 +556,12 @@ static QString labelSource(QLabel* lbl) {
 // alone so the resize does not fight the user's own window state.
 static void toggleTranslation() {
     g_enabled = !g_enabled;
-    // Custom-painted controls (SpeedTree's C* bars, ads:: dock tabs) cache the
-    // text-based widths / item positions they measured at startup, then keep
-    // using them after a language switch.  Broadcasting a font change makes
-    // each of them re-measure its content for the new language (Qt widgets
-    // recompute cached text metrics in changeEvent(FontChange)).
+    // Custom-painted / docked controls cache the text widths and item positions
+    // they measured at startup and keep using them after a language switch.
+    // Broadcasting a font change makes each re-measure its content for the new
+    // language (Qt widgets recompute cached metrics in changeEvent(FontChange)),
+    // which is what clicking a node also does -- a plain repaint() only redraws
+    // the stale cache and is not enough.
     for (QWidget* w : QApplication::allWidgets()) {
         if (!w) continue;
         QEvent ev(QEvent::FontChange);
@@ -1475,7 +1476,17 @@ static QString keyName(int key) {
 }
 
 static void repaintAll() {
-    for (QWidget* w : QApplication::topLevelWidgets()) w->update();
+    for (QWidget* w : QApplication::allWidgets()) {
+        if (w && w->isVisible()) w->update();
+    }
+    // The dock / central content can finish re-laying-out on a deferred
+    // LayoutRequest *after* this toggle returns, which would leave the panels
+    // showing the previous frame.  Repaint again on the next loop iteration so
+    // the custom / docked controls redraw at the settled Chinese/English width.
+    QTimer::singleShot(0, QApplication::instance(), [] {
+        for (QWidget* w : QApplication::allWidgets())
+            if (w && w->isVisible()) w->update();
+    });
 }
 
 static void refreshLayouts() {
