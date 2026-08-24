@@ -116,6 +116,7 @@ static const wchar_t* kHookDllPrefix = L"SpeedTreeChineseHook";
 // ---------------------------------------------------------------------------
 static bool      g_enabled          = true;
 static int       g_toggleKey        = Qt::Key_F3;    // 中/英 toggle hotkey (default F3)
+static bool      g_hotkeyDlgOpen    = false;         // while the rebind dialog is up
 static QString   g_plugInDir;
 static HMODULE   g_selfModule       = nullptr;
 static bool      g_hooksInstalled   = false;
@@ -772,6 +773,14 @@ public:
             return false;
         if (event->type() == QEvent::KeyRelease) {
             auto* ke = static_cast<QKeyEvent*>(event);
+            // Ignore OS auto-repeat: a held key emits a burst of repeat events,
+            // so without this guard holding F3 (or Shift+`) fires continuously.
+            // We act only on the genuine release (isAutoRepeat()==false).
+            if (ke->isAutoRepeat()) return false;
+            // While the rebind dialog is open, it owns the keyboard to capture a
+            // new hotkey.  Never toggle / sniff in that window, or pressing F3
+            // to rebind would also flip the language.
+            if (g_hotkeyDlgOpen) return false;
             // Shift + ` (the key that also yields ~) dumps untranslated text.
             // The reported key is Key_AsciiTilde (~) on most layouts, or
             // Key_QuoteLeft (`) where the shift doesn't remap it: accept both.
@@ -1058,6 +1067,11 @@ static FmFTBRectRaw g_fmfTBRect = nullptr;
 static FmFTBRectOptRaw g_fmfTBRectOpt = nullptr;
 static FmFElideRaw g_fmfElide   = nullptr;
 static bool       g_fontHooksInstalled = false;
+// Set only after every resolved QFontMetrics symbol is verified to be a real,
+// executable code address.  When false the whole measurement layer is skipped
+// (never installs / never calls the raw-ABI pointers) rather than risking a
+// crash on a mismatched calling convention.
+static bool       g_fontMeasureReady = false;
 
 static QString measureText(const QString& text) {
     if (text.isEmpty() || containsCjk(text)) return {};
@@ -1225,10 +1239,44 @@ static void* hookedFontFElide(const QFontMetricsF* fm, QString* result, const QS
     return result;
 }
 
+// True if p is a committed, executable code address (a real function body, not
+// a null / data / freed pointer).  GetProcAddress() normally returns such an
+// address; this is a cheap defensive check so the font layer can abandon itself
+// if any resolved symbol looks anomalous.
+static bool isExecutableCodeAddr(const void* p) {
+    if (!p) return false;
+    MEMORY_BASIC_INFORMATION mbi{};
+    if (!VirtualQuery(p, &mbi, sizeof(mbi))) return false;
+    if (mbi.State != MEM_COMMIT || mbi.Protect == PAGE_NOACCESS) return false;
+    const DWORD exec = PAGE_EXECUTE | PAGE_EXECUTE_READ |
+                       PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY;
+    return (mbi.Protect & exec) != 0;
+}
+
+// Validate every QFontMetrics/QFontMetricsF symbol that GetProcAddress resolved.
+// A null symbol is acceptable (that overload is simply skipped), but a NON-null
+// symbol that does not point into executable code means the resolution is bogus,
+// so we abandon the whole measurement layer instead of calling into a bad ABI.
+static bool fontSymbolsAreValid() {
+    const void* ptrs[] = {
+        (void*)g_fmHAdv,      (void*)g_fmHAdvOpt,   (void*)g_fmBRect,
+        (void*)g_fmBRectOpt,  (void*)g_fmBRectRect, (void*)g_fmBRectXYWH,
+        (void*)g_fmSize,      (void*)g_fmTBRect,    (void*)g_fmTBRectOpt,
+        (void*)g_fmElide,
+        (void*)g_fmfHAdv,     (void*)g_fmfHAdvOpt,  (void*)g_fmfBRect,
+        (void*)g_fmfBRectOpt, (void*)g_fmfBRectRect,(void*)g_fmfSize,
+        (void*)g_fmfTBRect,   (void*)g_fmfTBRectOpt,(void*)g_fmfElide,
+    };
+    for (const void* p : ptrs)
+        if (p && !isExecutableCodeAddr(p)) return false;
+    return true;
+}
+
 // (Re)scan every loaded module and redirect the QFontMetrics measurement
 // imports (and the QFontMetrics::size import-slot).  Idempotent, so it also
 // patches any DLL that loads after the first pass.
 static void patchFontModules() {
+    if (!g_fontMeasureReady) return;   // layer disabled: never patch/call
     struct Sym { const char* name; void* orig; void* hook; };
     Sym syms[] = {
         {"FMHAdv",      (void*)g_fmHAdv,      (void*)&hookedFontHAdv},
@@ -1329,7 +1377,12 @@ static void installFontMeasurementHooks() {
         "?elidedText@QFontMetricsF@@QEBA?AVQString@@AEBV2@W4TextElideMode@Qt@@NH@Z");
 
     g_fontHooksInstalled = true;
-    patchFontModules();
+    // Fail-safe: only turn the measurement layer on if every resolved symbol is
+    // a genuine executable address.  On any anomaly, abandon the whole layer --
+    // the app degrades to English-width layout instead of risking a raw-ABI
+    // call that could corrupt the stack.
+    g_fontMeasureReady = fontSymbolsAreValid();
+    if (g_fontMeasureReady) patchFontModules();
 }
 
 // (Re)scan every loaded module and redirect its QPainter::drawText imports.
@@ -1528,7 +1581,11 @@ static void openHotkeyDialog() {
     QWidget* parent = g_authorLinkBar ? g_authorLinkBar->window() : nullptr;
     auto* dlg = new ToggleHotkeyDialog(parent);
     g_hotkeyDlg = dlg;
-    QObject::connect(dlg, &QObject::destroyed, [] { g_hotkeyDlg = nullptr; });
+    g_hotkeyDlgOpen = true;
+    QObject::connect(dlg, &QObject::destroyed, [] {
+        g_hotkeyDlg = nullptr;
+        g_hotkeyDlgOpen = false;
+    });
     dlg->show(); dlg->raise();
 }
 
@@ -1640,8 +1697,8 @@ static void RunOnGuiThread(QApplication* app) {
 
     // Late-loaded plugin DLLs (e.g. on-demand imports) would otherwise escape the
     // drawText / font-measurement IAT hooks, which only scan modules at startup.
-    // Re-scan periodically (idempotent, cheap), but only for the first 10 s after
-    // launch so we don't burn cycles for the whole session.
+    // Re-scan periodically (idempotent, cheap), but stop after 60 s so we don't
+    // burn cycles for the whole session while still catching late-loaded DLLs.
     auto* rescanTimer = new QTimer(app);
     rescanTimer->setInterval(2000);
     QObject::connect(rescanTimer, &QTimer::timeout, [] {
@@ -1649,7 +1706,7 @@ static void RunOnGuiThread(QApplication* app) {
         patchFontModules();
     });
     rescanTimer->start();
-    QTimer::singleShot(10000, app, [rescanTimer] { rescanTimer->stop(); });
+    QTimer::singleShot(60000, app, [rescanTimer] { rescanTimer->stop(); });
 }
 
 static DWORD WINAPI Worker(LPVOID) {
