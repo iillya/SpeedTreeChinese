@@ -7,9 +7,9 @@
 //  Dictionaries  sp-translation-v1 JSON in <plug-in>/translations/*_zh.json,
 //                loaded sorted & merged (later files win).
 //  Lookup        1. control-ID specific  2. global exact  3. fuzzy match.
-//  Display       1. event filter + setText for QLabel/buttons/menus
-//                2. QStyledItemDelegate::displayText for list/tree/table
-//                3. QPainter::drawText IAT hook for custom-painted controls
+//  Display       1. QStyledItemDelegate::displayText for list/tree/table
+//                2. QPainter::drawText IAT hook for every painted control
+//  Data model    Never rewritten: no setText/setTabText/setItemText mutations.
 //  Controls      F10 enable/disable, F12 write untranslated strings.
 //  API           C exports so a future settings UI / updater can version it.
 //
@@ -389,9 +389,8 @@ static std::vector<QPointer<QStyledItemDelegate>> g_delegates;
 static std::set<QPointer<QAbstractItemView>> g_delegatedViews;
 
 // ---------------------------------------------------------------------------
-// Item-view delegation: list/tree/table items are translated via the model
-// delegate. Everything else (labels, buttons, menus, custom-painted text) is
-// handled by the QPainter::drawText IAT hook which runs the moment text is drawn.
+// Item-view delegation: list/tree/table items are translated via the delegate.
+// Everything else is translated only at QPainter::drawText call time.
 // ---------------------------------------------------------------------------
 static void applyWidget(QWidget* w);
 
@@ -402,32 +401,9 @@ static void applyTranslations(QApplication* app) {
 }
 
 // ---------------------------------------------------------------------------
-// CElidingLabel (Qt Advanced Docking) full-text access.
-//
-// ads::CElidingLabel shadows QLabel::text() with CElidingLabel::text(), which
-// returns the FULL (un-elided) source string while QLabel::text() returns only
-// the elided fragment drawn (e.g. "Mater…" for "Material").  Because
-// QLabel::setText is NOT virtual, calling lbl->setText() through a QLabel*
-// only changes that visible fragment; SpeedTree then re-elides from the
-// untouched full source on the next resize, reverting the tab to English.
-// So detect the true CElidingLabel and drive its exported setText() (which
-// updates the stored full source, the tooltip and the sizeHint), reading the
-// full source back from the toolTip for dictionary lookup.
+// CElidingLabel (Qt Advanced Docking) read-only full-text access.
+// Its tooltip retains the full source while QLabel::text() may be elided.
 // ---------------------------------------------------------------------------
-using CE_SetText = void(__fastcall*)(void*, const QString&);
-static CE_SetText g_ceSetText  = nullptr;
-static bool       g_ceResolved = false;
-
-static void resolveElidingLabel() {
-    if (g_ceResolved) return;
-    g_ceResolved = true;
-    HMODULE m = GetModuleHandleW(L"QtAdvancedDocking.dll");
-    if (!m) return;
-    g_ceSetText = (CE_SetText)GetProcAddress(m, "?setText@CElidingLabel@ads@@QEAAXAEBVQString@@@Z");
-    if (g_ceSetText)
-        Log("CElidingLabel setText() resolved");
-}
-
 static bool isElidingLabel(QWidget* w) {
     return w && QString::fromLatin1(w->metaObject()->className()) ==
                     QLatin1String("ads::CElidingLabel");
@@ -458,199 +434,19 @@ static QString labelSource(QLabel* lbl) {
     return t;
 }
 
-static void setLabelSource(QLabel* lbl, const QString& text) {
-    if (!lbl) return;
-    resolveElidingLabel();
-    if (isElidingLabel(lbl) && g_ceSetText)
-        g_ceSetText(lbl, text);
-    else
-        lbl->setText(text);
-}
-
-// ---------------------------------------------------------------------------
-// Reversible setText cache.
-//
-// setText modifies the widget's actual text property (so layout/sizeHint follow
-// the Chinese width), which the display-layer hooks cannot undo.  To make the
-// 中/英 toggle fully reversible we remember, per slot, the ORIGINAL English and
-// the Chinese we wrote.  Restoring writes back by the SAME slot index -- never
-// by matching text -- so multi-item controls (menu actions, tabs, combo items)
-// keep their exact order and are never scrambled even with duplicate labels.
-// ---------------------------------------------------------------------------
-enum class RestoreKind { Label, Button, Menu, Tab, Combo };
-struct RestoreEntry {
-    QPointer<QWidget> widget;
-    RestoreKind kind = RestoreKind::Label;
-    std::vector<std::pair<QString, QString>> pairs;  // (original, translation)
-    // Menu actions are remembered by pointer so insert/remove/reorder can
-    // never mis-target restore.  Parallel to pairs() for the Menu kind.
-    std::vector<QPointer<QAction>> actionSlots;
-};
-static std::vector<RestoreEntry> g_restore;
-
-static RestoreEntry* findRestore(QWidget* w) {
-    for (auto& e : g_restore)
-        if (e.widget == w) return &e;
-    return nullptr;
-}
-
-static void rememberText(QWidget* w, RestoreKind kind,
-                         std::vector<std::pair<QString, QString>> pairs,
-                         std::vector<QPointer<QAction>> actions = {}) {
-    if (auto* e = findRestore(w)) {
-        e->kind = kind;
-        e->pairs = std::move(pairs);
-        e->actionSlots = std::move(actions);
-        return;
-    }
-    g_restore.push_back({w, kind, std::move(pairs), std::move(actions)});
-}
-
-// Restore every cached widget back to its original English, in slot order.
-// An empty "translation" slot means it was never changed, so leave it alone.
-static void restoreTexts() {
-    for (auto& e : g_restore) {
-        QWidget* w = e.widget.data();
-        if (!w) continue;
-        switch (e.kind) {
-        case RestoreKind::Label: {
-            auto* lbl = qobject_cast<QLabel*>(w);
-            if (lbl && !e.pairs.empty() && labelSource(lbl) == e.pairs[0].second)
-                setLabelSource(lbl, e.pairs[0].first);
-            break;
-        }
-        case RestoreKind::Button: {
-            auto* b = qobject_cast<QAbstractButton*>(w);
-            if (b && !e.pairs.empty() && b->text() == e.pairs[0].second)
-                b->setText(e.pairs[0].first);
-            break;
-        }
-        case RestoreKind::Menu: {
-            // Restore by action pointer, so menus survive insert/remove/reorder.
-            int n = std::min<int>(e.actionSlots.size(), (int)e.pairs.size());
-            for (int i = 0; i < n; ++i) {
-                QAction* a = e.actionSlots[i].data();
-                if (a && !e.pairs[i].second.isEmpty() &&
-                    a->text() == e.pairs[i].second)
-                    a->setText(e.pairs[i].first);
-            }
-            break;
-        }
-        case RestoreKind::Tab: {
-            auto* tb = qobject_cast<QTabBar*>(w);
-            if (!tb) break;
-            int n = std::min<int>(tb->count(), (int)e.pairs.size());
-            for (int i = 0; i < n; ++i)
-                if (!e.pairs[i].second.isEmpty() &&
-                    tb->tabText(i) == e.pairs[i].second)
-                    tb->setTabText(i, e.pairs[i].first);
-            break;
-        }
-        case RestoreKind::Combo: {
-            auto* cb = qobject_cast<QComboBox*>(w);
-            if (!cb) break;
-            int n = std::min<int>(cb->count(), (int)e.pairs.size());
-            for (int i = 0; i < n; ++i)
-                if (!e.pairs[i].second.isEmpty() &&
-                    cb->itemText(i) == e.pairs[i].second)
-                    cb->setItemText(i, e.pairs[i].first);
-            break;
-        }
-        }
-    }
-    g_restore.clear();
-}
-
-// Translate standard widgets by setText so Qt's sizeHint / layout measure the
-// CHINESE text (width follows the translation, not the English original).
-static void applyWidgetText(QWidget* w) {
-    if (auto* lbl = qobject_cast<QLabel*>(w)) {
-        QString t = labelSource(lbl);
-        if (!t.isEmpty() && !containsCjk(t)) {
-            QString tr = translated(t);
-            if (!tr.isEmpty() && tr != t) {
-                setLabelSource(lbl, tr);
-                rememberText(w, RestoreKind::Label, {{t, tr}});
-            }
-        }
-    } else if (auto* btn = qobject_cast<QAbstractButton*>(w)) {
-        QString t = btn->text();
-        if (!t.isEmpty() && !containsCjk(t)) {
-            QString tr = translated(t);
-            if (!tr.isEmpty() && tr != t) {
-                btn->setText(tr);
-                rememberText(w, RestoreKind::Button, {{t, tr}});
-            }
-        }
-    }
-    if (auto* menu = qobject_cast<QMenu*>(w)) {
-        auto acts = menu->actions();
-        std::vector<std::pair<QString, QString>> pairs;
-        std::vector<QPointer<QAction>> actionSlots;
-        pairs.reserve(acts.size());
-        actionSlots.reserve(acts.size());
-        bool any = false;
-        for (QAction* a : acts) {
-            QString t = a->text();
-            QString tr;
-            actionSlots.push_back(a);
-            if (!t.isEmpty() && !containsCjk(t)) {
-                tr = translated(t);
-                if (!tr.isEmpty() && tr != t) { a->setText(tr); any = true; }
-                else tr.clear();
-            }
-            pairs.push_back({t, tr});
-        }
-        if (any) rememberText(w, RestoreKind::Menu, std::move(pairs),
-                              std::move(actionSlots));
-    }
-    if (auto* tb = qobject_cast<QTabBar*>(w)) {
-        std::vector<std::pair<QString, QString>> pairs;
-        pairs.reserve(tb->count());
-        bool any = false;
-        for (int i = 0; i < tb->count(); ++i) {
-            QString t = tb->tabText(i);
-            QString tr;
-            if (!t.isEmpty() && !containsCjk(t)) {
-                tr = translated(t);
-                if (!tr.isEmpty() && tr != t) { tb->setTabText(i, tr); any = true; }
-                else tr.clear();
-            }
-            pairs.push_back({t, tr});
-        }
-        if (any) rememberText(w, RestoreKind::Tab, std::move(pairs));
-    }
-    if (auto* cb = qobject_cast<QComboBox*>(w)) {
-        std::vector<std::pair<QString, QString>> pairs;
-        pairs.reserve(cb->count());
-        bool any = false;
-        for (int i = 0; i < cb->count(); ++i) {
-            QString t = cb->itemText(i);
-            QString tr;
-            if (!t.isEmpty() && !containsCjk(t)) {
-                tr = translated(t);
-                if (!tr.isEmpty() && tr != t) { cb->setItemText(i, tr); any = true; }
-                else tr.clear();
-            }
-            pairs.push_back({t, tr});
-        }
-        if (any) rememberText(w, RestoreKind::Combo, std::move(pairs));
-    }
-}
-
-// Flip the 中/英 state; on the way to English restore every setText widget.
+// Flip the 中/英 state. Because the experiment never rewrites widget/model
+// strings, toggling only schedules repainting; there is nothing to restore.
 static void toggleTranslation() {
     g_enabled = !g_enabled;
-    if (!g_enabled) restoreTexts();
     repaintAll();
     Log("toggle enabled=" + std::to_string(g_enabled ? 1 : 0));
 }
 
-// Install the display-layer delegate on item views + setText standard widgets.
+// Install only the display-layer delegate. Standard controls are handled by
+// drawText hooks, leaving their text properties and sizeHint inputs untouched.
 // Called from the event filter on Show / UpdateRequest / Paint as controls appear.
 static void applyWidget(QWidget* w) {
     if (!w || !g_enabled) return;
-    applyWidgetText(w);
     if (auto* view = qobject_cast<QAbstractItemView*>(w)) {
         if (g_delegatedViews.count(view) == 0) {
             auto* d = new TranslateDelegate(view);
@@ -1501,6 +1297,7 @@ static void RunOnGuiThread(QApplication* app) {
     LoadDictionaries();
     applyTranslations(app);
     installDrawTextHooks();
+    Log("display mode=pure-paint (widget/model text remains original)");
     app->installEventFilter(new TranslatorFilter(app));
     installAuthorLink();
     Log("ui installed; enabled=" + std::to_string(g_enabled ? 1 : 0));
