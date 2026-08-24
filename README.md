@@ -34,19 +34,13 @@ SpeedTreeChinese/
 │  │  ├─ launcher.cpp       启动器（挂起启动 + 注入 + 恢复）
 │  │  └─ installer.cpp      自包含安装器（GUI、提权、.spm 关联、快捷键、卸载）
 │  ├─ native/               构建产物（Hook.dll、Launcher.exe、Installer.exe、translations 副本）
-│  ├─ translations/         sp-translation-v1 词库（*_zh.json，8 个）
+│  ├─ translations/         sp-translation-v1 词库（*_zh.json）
 │  ├─ resources/            app_icon.rc + speedtree.ico（原版 SpeedTree 图标）
 │  ├─ qt/                   Qt 6.5.3 SDK 的 ASCII 链接（指向 sp插件捆绑 SDK）
 │  ├─ qt5-sdk/              Qt 5.12.0 最小构建 SDK（Qt5 Hook 编译用）
-│  ├─ scripts/
-│  │  ├─ build.bat          一键编译（Hook/Launcher/Installer，编入图标）
-│  │  └─ embed_files.py     把 DLL/启动器/词库打进安装器（payload，原子替换）
-│  └─ tools/
-│     ├─ extract_ui_strings.py   exe/.spm 静态提取 UI 词条
-│     ├─ build_dictionary.py     由提取清单生成词库骨架
-│     ├─ manual/                人工翻译批次 JSON（manual_batch_*.json）
-│     ├─ output/                工具输出文件
-│     └─ scratch/               提取/分析临时文件（非发布内容）
+│  └─ scripts/
+│     ├─ build.bat          一键编译（Hook/Launcher/Installer，编入图标）
+│     └─ embed_files.py     把 DLL/启动器/词库打进安装器（payload，原子替换）
 ├─ dist/
 │  └─ SpeedTreeChineseInstaller.exe   发布安装器（含载荷）
 └─ README.md
