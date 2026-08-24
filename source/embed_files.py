@@ -26,6 +26,9 @@ def payload_files():
     skip = {
         "static_zh.json",
         "untranslated_captured_zh.json",
+        "untranslated_captured2_zh.json",
+        "untranslated_scan_zh.json",
+        "term_context_zh.json",
         "tour_untranslated_zh.json",
         "tr_probe_missing_zh.json",
     }
