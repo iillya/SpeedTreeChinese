@@ -64,6 +64,7 @@
 #include <QtGui/QAction>
 #endif
 #include <QtGui/QPainter>
+#include <QtGui/QColor>
 #include <QtGui/QFontMetrics>
 #include <QtGui/QTextOption>
 #include <QtGui/QKeyEvent>
@@ -447,9 +448,20 @@ public:
     void drawItemText(QPainter* painter, const QRect& rect, int flags,
                       const QPalette& pal, bool enabled, const QString& text,
                       QPalette::ColorRole textRole = QPalette::NoRole) const override {
-        QString tr = translated(text);
+        const QString tr = translated(text);
+        const QString draw = tr.isEmpty() ? text : tr;
+        // The two attribution menu items keep the default menu look but their
+        // label is tinted blue (they used to be rich-text links).
+        if (text == QStringLiteral("Bilibili神说要凑数汉化") ||
+            text == QStringLiteral("Github仓库")) {
+            painter->save();
+            painter->setPen(QColor(0x3B, 0x82, 0xF6));
+            QProxyStyle::drawItemText(painter, rect, flags, pal, enabled, draw, textRole);
+            painter->restore();
+            return;
+        }
         QProxyStyle::drawItemText(painter, rect, flags, pal, enabled,
-                                  tr.isEmpty() ? text : tr, textRole);
+                                  draw, textRole);
     }
 
     QRect itemTextRect(const QFontMetrics& fm, const QRect& r, int flags,
@@ -1798,35 +1810,8 @@ private:
     void closeEvent(QCloseEvent* e) override { stopListen(); QDialog::closeEvent(e); }
 };
 
-static QPointer<QWidget>      g_authorLinkBox;
-static QPointer<QMenuBar>     g_authorLinkBar;
-static QPointer<QAction>      g_authorHelpAction;
-
-static void layoutAuthorLinkBox() {
-    if (!g_authorLinkBox || !g_authorLinkBar || !g_authorHelpAction) return;
-    const QRect hr = g_authorLinkBar->actionGeometry(g_authorHelpAction);
-    if (hr.isEmpty()) return;
-    const int w = g_authorLinkBox->sizeHint().width();
-    const int h = g_authorLinkBar->height();
-    // Vertically fill the menu bar row so the two links sit on the same
-    // vertical middle as the menu items. Horizontal stays just after 中/英.
-    const int x = hr.right() + 12;
-    g_authorLinkBox->setGeometry(x, 0, w, h);
-    g_authorLinkBox->setFixedHeight(h);
-    g_authorLinkBox->raise();
-    g_authorLinkBox->show();
-}
-
-class AuthorLinkResizeFilter : public QObject {
-public:
-    using QObject::QObject;
-    bool eventFilter(QObject* obj, QEvent* ev) override {
-        if (obj && ev->type() == QEvent::Resize) layoutAuthorLinkBox();
-        return false;
-    }
-};
-
 static QPointer<QAction> g_langAction;
+static QPointer<QMenuBar> g_authorLinkBar;   // kept for the hotkey-dialog parent
 
 static void doToggleLanguage() {
     toggleTranslation();
@@ -1887,7 +1872,7 @@ private:
 };
 
 static void installAuthorLink() {
-    if (g_authorLinkBar && g_authorLinkBox) return;   // already installed on this bar
+    if (g_authorLinkBar) return;      // already installed on this bar
     QMenuBar* mb = nullptr;
     for (QWidget* w : QApplication::allWidgets()) {
         if (auto* menu = qobject_cast<QMenuBar*>(w)) {
@@ -1916,39 +1901,30 @@ static void installAuthorLink() {
     QAction* after = (idx >= 0 && idx + 1 < acts.size()) ? acts[idx + 1] : nullptr;
     if (after) mb->insertAction(after, langAct); else mb->addAction(langAct);
 
-    // Author + GitHub as positioned labels (placed after the "中/英" item).
-    auto* box = new QWidget(mb);
-    box->setObjectName(QStringLiteral("speedtree_author"));
-    auto* lay = new QHBoxLayout(box);
-    lay->setContentsMargins(4, 0, 4, 0);
-    lay->setSpacing(10);
-
-    auto* author = new QLabel(
-        QStringLiteral("<a href=\"%1\" style=\"color:#66aaff;text-decoration:underline;\">Bilibili神说要凑数汉化</a>")
-            .arg(kAuthorUrl), box);
-    auto* github = new QLabel(
-        QStringLiteral("<a href=\"%1\" style=\"color:#66aaff;text-decoration:underline;\">Github仓库</a>")
-            .arg(kGitHubUrl), box);
-    for (QLabel* l : {author, github}) {
-        l->setTextFormat(Qt::RichText);
-        l->setOpenExternalLinks(false);
-        l->setTextInteractionFlags(Qt::TextBrowserInteraction);
-        l->setFocusPolicy(Qt::NoFocus);   // no focus rectangle around the link
-        l->setCursor(Qt::PointingHandCursor);
+    // Author + GitHub as real menu-bar actions (same style as 中/英), each
+    // opening its link on click.  Their labels are tinted blue in
+    // ChineseProxyStyle::drawItemText.
+    QAction* afterLang = nullptr;
+    {
+        const auto as = mb->actions();
+        int li = as.indexOf(langAct);
+        afterLang = (li >= 0 && li + 1 < as.size()) ? as[li + 1] : nullptr;
     }
-    QObject::connect(author, &QLabel::linkActivated,
-                     [](const QString& u) { if (!u.isEmpty()) QDesktopServices::openUrl(QUrl(u)); });
-    QObject::connect(github, &QLabel::linkActivated,
-                     [](const QString& u) { if (!u.isEmpty()) QDesktopServices::openUrl(QUrl(u)); });
-    lay->addWidget(author, 0, Qt::AlignVCenter);
-    lay->addWidget(github, 0, Qt::AlignVCenter);
+    auto addLink = [&](const QString& label, const QString& url, const char* obj) {
+        auto* act = new QAction(label, mb);
+        act->setObjectName(QLatin1String(obj));
+        act->setData(url);
+        QObject::connect(act, &QAction::triggered, [act] {
+            const QString u = act->data().toString();
+            if (!u.isEmpty()) QDesktopServices::openUrl(QUrl(u));
+        });
+        if (afterLang) mb->insertAction(afterLang, act);
+        else mb->addAction(act);
+    };
+    addLink(QStringLiteral("Bilibili神说要凑数汉化"), kAuthorUrl, "speedtree_author");
+    addLink(QStringLiteral("Github仓库"), kGitHubUrl, "speedtree_github");
 
-    g_authorLinkBox = box;
     g_authorLinkBar = mb;
-    g_authorHelpAction = langAct;          // position author links after 中/英
-    mb->installEventFilter(new AuthorLinkResizeFilter(mb));
-    QTimer::singleShot(0, mb, [] { layoutAuthorLinkBox(); });
-    layoutAuthorLinkBox();
 }
 
 static void RunOnGuiThread(QApplication* app) {
