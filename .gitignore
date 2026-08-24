@@ -35,7 +35,8 @@
 build/
 dist/
 third_party/
-qt/   # leftover from the old layout (superseded by third_party/; delete it manually)
+# leftover from the old layout (superseded by third_party/; delete it manually)
+qt/
 __pycache__/
 *.pyc
 *.res
