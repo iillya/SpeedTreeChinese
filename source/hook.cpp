@@ -22,7 +22,7 @@
 //                sizeHint / eliding follow the language and UI width matches.
 //                This is the whole sizing story -- no setMinimumWidth needed.
 //  Data model    Never rewritten: no setText/setTabText/setItemText mutations.
-//  Controls      F3 enable/disable, Shift+` write untranslated strings.
+//  Controls      F3 enable/disable; ST_TOUR=1 auto-tour, ST_TRPROBE=1 tr() probe.
 //  API           C exports so a future settings UI / updater can version it.
 //
 //  Delivery      launcher.cpp starts SpeedTree_Modeler.exe SUSPENDED, injects
@@ -119,8 +119,6 @@ static std::unordered_map<std::string, std::string> g_normCache;          // tex
 static constexpr size_t kMaxNormCache = 100000;
 
 static std::set<std::string> g_paintSeen;          // untranslated drawText strings
-static bool     g_sniffActive  = false;             // Shift+` 1.5s sniff window
-static QTimer*  g_sniffTimer   = nullptr;
 
 static QString normalizeForMatch(QString text);
 static bool containsCjk(const QString& text);
@@ -596,7 +594,7 @@ static void applyWidget(QWidget* w) {
 }
 
 // ---------------------------------------------------------------------------
-// F2 toggle, Shift+` sniffer (one application event filter)
+// translatable-string test (used by the auto-tour and the paint hooks)
 // ---------------------------------------------------------------------------
 static bool isTranslatableString(const QString& s) {
     QString t = s.trimmed();
@@ -613,45 +611,10 @@ static bool isTranslatableString(const QString& s) {
     return !numeric;
 }
 
-// ---- untranslated-word sniffer (Shift+` starts a 1.5 s window) --------------
-static void collectWidgetStrings(std::map<std::string, std::string>& pending) {
-    const auto widgets = QApplication::allWidgets();
-    auto add = [&](const QString& s) {
-        if (!isTranslatableString(s)) return;
-        std::string k = s.trimmed().toUtf8().constData();
-        if (k.empty() || g_translations.count(k)) return;
-        pending.emplace(k, "");
-    };
-    for (QWidget* w : widgets) {
-        if (auto* lbl = qobject_cast<QLabel*>(w)) add(labelSource(lbl));
-        if (auto* btn = qobject_cast<QAbstractButton*>(w)) add(btn->text());
-        if (auto* le = qobject_cast<QLineEdit*>(w)) add(le->text());
-        if (auto* cb = qobject_cast<QComboBox*>(w)) {
-            add(cb->currentText());
-            for (int i = 0; i < cb->count(); ++i) add(cb->itemText(i));
-        }
-        if (auto* menu = qobject_cast<QMenu*>(w))
-            for (QAction* a : menu->actions()) add(a->text());
-        if (auto* tb = qobject_cast<QTabBar*>(w))
-            for (int i = 0; i < tb->count(); ++i) add(tb->tabText(i));
-        if (auto* view = qobject_cast<QAbstractItemView*>(w)) {
-            if (view->model()) {
-                auto* model = view->model();
-                int rows = model->rowCount(), cols = model->columnCount();
-                if (rows > 0 && rows < 40000 && cols > 0 && cols < 64) {
-                    for (int r = 0; r < rows; ++r)
-                        for (int c2 = 0; c2 < cols; ++c2)
-                            add(model->data(model->index(r, c2), Qt::DisplayRole).toString());
-                }
-            }
-        }
-    }
-}
-
 // ---------------------------------------------------------------------------
 // Automatic UI tour (ST_TOUR=1): open-ish pass over the whole live UI so every
-// visible / model-driven string is captured without relying on the manual 1.5 s
-// sniffer.  Walks all widgets, every menu + submenu + toolbar action, tabs,
+// visible / model-driven string is captured.  Walks all widgets, every menu +
+// submenu + toolbar action, tabs,
 // combo items, line edits, tooltips, and every item-view model row/column
 // (this is where node parameters live), then also merges the drawText strings
 // seen since launch.  Writes the missing (untranslated) strings to
@@ -910,77 +873,12 @@ static void runUiTour() {
     }
 }
 
-static void writeUntranslated(const std::map<std::string, std::string>& pending) {
-    std::string json = "{\n  \"$schema\": \"sp-translation-v1\",\n"
-                       "  \"id\": \"speedtree-sniffed\",\n"
-                       "  \"language\": \"zh-CN\",\n"
-                       "  \"description\": \"未翻译词条（Shift+` 采集，待填写）\",\n"
-                       "  \"translations\": {\n";
-    bool first = true;
-    for (const auto& kv : pending) {
-        if (!first) json += ",\n";
-        std::string ekey;
-        for (char c : kv.first) { if (c == '"' || c == '\\') ekey += '\\'; ekey += c; }
-        json += "    \"" + ekey + "\": \"\""; first = false;
-    }
-    json += "\n  }\n}\n";
-    std::wstring dir = SelfDirW() + L"\\translations";
-    CreateDirectoryW(dir.c_str(), nullptr);
-    std::wstring path = dir + L"\\untranslated_zh.json";
-    HANDLE h = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
-                           FILE_ATTRIBUTE_NORMAL, nullptr);
-    if (h != INVALID_HANDLE_VALUE) {
-        DWORD wr = 0;
-        WriteFile(h, json.data(), (DWORD)json.size(), &wr, nullptr);
-        CloseHandle(h);
-    }
-}
-
-static void openSnifferDir() {
-    std::wstring dir = SelfDirW() + L"\\translations";
-    CreateDirectoryW(dir.c_str(), nullptr);
-    ShellExecuteW(nullptr, L"open", dir.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
-}
-
-static void finishSniffer() {
-    g_sniffActive = false;
-    std::map<std::string, std::string> pending;
-    collectWidgetStrings(pending);
-    for (const std::string& s : g_paintSeen)
-        if (!s.empty() && !g_translations.count(s)) pending.emplace(s, "");
-    writeUntranslated(pending);
-    g_paintSeen.clear();
-    openSnifferDir();
-}
-
-static void startSniffer() {
-    if (g_sniffActive) return;
-    g_sniffActive = true;
-    g_paintSeen.clear();
-    if (!g_sniffTimer) {
-        g_sniffTimer = new QTimer(QCoreApplication::instance());
-        g_sniffTimer->setSingleShot(true);
-        QObject::connect(g_sniffTimer, &QTimer::timeout, [] { finishSniffer(); });
-    }
-    g_sniffTimer->start(1500);
-}
-
 class TranslatorFilter : public QObject {
 public:
     using QObject::QObject;
     bool eventFilter(QObject* object, QEvent* event) override {
-        if (!g_enabled && event->type() != QEvent::KeyPress &&
-            event->type() != QEvent::KeyRelease)
+        if (!g_enabled && event->type() != QEvent::KeyRelease)
             return false;
-        if (event->type() == QEvent::KeyPress) {
-            auto* ke = static_cast<QKeyEvent*>(event);
-            if ((ke->key() == Qt::Key_QuoteLeft || ke->key() == Qt::Key_AsciiTilde) &&
-                (ke->modifiers() & Qt::ShiftModifier)) {
-                startSniffer();
-                return true;
-            }
-            return false;
-        }
         if (event->type() == QEvent::KeyRelease) {
             auto* ke = static_cast<QKeyEvent*>(event);
             if (ke->key() == g_toggleKey) {
@@ -1094,7 +992,7 @@ static QString translatePaint(QPainter* painter, const QString& text) {
         }
     }
     // Record untranslated paint strings (custom-drawn property labels, etc.).
-    if ((g_sniffActive || g_tourActive) && g_paintSeen.size() < 100000 &&
+    if (g_tourActive && g_paintSeen.size() < 100000 &&
         isTranslatableString(text)) {
         std::string k = text.trimmed().toUtf8().constData();
         if (!k.empty()) g_paintSeen.insert(k);
