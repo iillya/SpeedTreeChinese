@@ -15,11 +15,11 @@ SpeedTree_Modeler.exe（挂起启动）
    └─ 注入 SpeedTreeChineseHook.dll（链接 SpeedTree 的 Qt6）
          └─ 等 QApplication 就绪后：
             1. 加载 translations/*_zh.json（sp-translation-v1）
-            2. 三层显示层翻译：
-               a. QLabel/按钮/菜单 -> setText
-               b. 列表/树/表格      -> QStyledItemDelegate::displayText
-               c. QPainter::drawText -> IAT hook（自绘控件，如属性参数行）
-            3. 每 2 秒重新应用（SpeedTree 加载文档后会重建控件）
+            2. 纯显示层翻译（不改控件/模型文本）：
+               a. 列表/树/表格       -> QStyledItemDelegate::displayText
+               b. QPainter::drawText -> IAT hook（绘制时替换文字）
+               c. QFontMetrics/F 测量 -> IAT hook（sizeHint/省略号按中文宽度计算）
+            3. 安装后刷新布局，让已有控件按中文字形重新计算尺寸
 ```
 
 安装后的词库位于 `ChineseLauncher/translations/*_zh.json`，命中才替换，未命中保持英文。
@@ -30,7 +30,7 @@ SpeedTree_Modeler.exe（挂起启动）
 SpeedTreeChinese/
 ├─ plugin/
 │  ├─ cpp/
-│  │  ├─ hook.cpp           原生翻译引擎（词库 + 三层显示翻译 + drawText IAT + 嗅探 + 中/英开关）
+│  │  ├─ hook.cpp           原生翻译引擎（词库 + 纯绘制层翻译 + 字体测量 + 嗅探 + 中/英开关）
 │  │  ├─ launcher.cpp       启动器（挂起启动 + 注入 + 恢复）
 │  │  └─ installer.cpp      自包含安装器（GUI、提权、.spm 关联、快捷键、卸载）
 │  ├─ native/               构建产物（Hook.dll、Launcher.exe、Installer.exe、translations 副本）
