@@ -3,8 +3,9 @@ setlocal
 
 rem ---------------------------------------------------------------------------
 rem SpeedTree Chinese Localizer - build script
-rem Prereq: Visual Studio 2022 C++ build tools, and the Qt 6.5.3 SDK linked at
-rem         plugin\qt (an ASCII junction to the Substance plug-in SDK).
+rem Prereq: Visual Studio 2022 C++ build tools, and the Qt SDKs bundled under
+rem         third_party\qt6sdk (Qt 6.6.0 MSVC x64) and third_party\qt5sdk
+rem         (Qt 5.12 MSVC x64). Both are trimmed to the 3 modules the hook uses.
 rem Output: build\* (hook DLL, launcher, installer)
 rem ---------------------------------------------------------------------------
 
@@ -19,8 +20,7 @@ if not exist "%OBJDIR%" mkdir "%OBJDIR%"
 
 if not exist "%QT%\lib\Qt6Widgets.lib" (
     echo [ERROR] A complete Qt SDK was not found at %QT%.
-    echo         Create a directory junction named plugin\qt that points to the
-    echo         Substance plug-in Qt 6.5.3 SDK ^(headers and .lib files required^).
+    echo         third_party\qt6sdk must contain Qt 6.6.0 headers and .lib files.
     exit /b 1
 )
 
@@ -45,7 +45,7 @@ if errorlevel 1 exit /b 1
 echo === Compiling Qt5 hook DLL ===
 set "QT5_SDK=%ROOT%\third_party\qt5sdk"
 if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" (
-    echo [WARN] Qt5 SDK not found at %ROOT%\qt5-sdk or %ROOT%\qt5; skipping SpeedTree 9.x Qt5 hook.
+    echo [WARN] Qt5 SDK not found at %QT5_SDK%; skipping SpeedTree 9.x Qt5 hook.
 ) else (
     cl /nologo /O2 /W3 /LD /EHsc /std:c++17 /Zc:__cplusplus /permissive- /utf-8 ^
        /I"%QT5_SDK%\include" ^

@@ -36,12 +36,9 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <algorithm>
-#include <atomic>
 #include <set>
-#include <chrono>
 #include <cctype>
 #include <cstdlib>
-#include <cstdio>
 #include <utility>
 #include <functional>
 
@@ -114,7 +111,6 @@ static std::unordered_map<std::string, std::string> g_foldedTranslations; // fuz
 static std::vector<std::pair<std::string, std::string>> g_sortedKeys;     // lowercased -> original
 static std::unordered_map<std::string, std::string> g_normCache;          // text -> normalized
 static constexpr size_t kMaxNormCache = 100000;
-static int g_patchedSlots = 0;                     // drawText IAT slots replaced
 
 static std::set<std::string> g_paintSeen;          // untranslated drawText strings
 static bool     g_sniffActive  = false;             // Shift+` 1.5s sniff window
@@ -711,7 +707,6 @@ static QMenuExecP  g_menuExecP  = nullptr;
 static QMenuExec0  g_menuExec0  = nullptr;
 static QMenuPopup  g_menuPopup  = nullptr;
 static bool        g_menuHooked = false;
-static long        g_menuCaptured = 0;
 
 static void captureMenu(QMenu* m) {
     if (!m) return;
@@ -722,7 +717,6 @@ static void captureMenu(QMenu* m) {
             if (k.empty() || g_translations.count(k)) continue;
             if (g_paintSeen.size() < 200000) {
                 g_paintSeen.insert(k);
-                ++g_menuCaptured;
             }
         }
         if (a->menu()) captureMenu(a->menu());
@@ -1162,7 +1156,6 @@ static bool replaceImports(HMODULE module, void* original, void* replacement) {
             DWORD ign = 0;
             VirtualProtect(slot, sizeof(void*), old, &ign);
             FlushInstructionCache(GetCurrentProcess(), slot, sizeof(void*));
-            ++g_patchedSlots;
             replaced = true;
         }
     }
@@ -1334,6 +1327,21 @@ static void applyWidthReserve(QWidget* w) {
 }
 
 static void refreshLayouts() {
+    // Prune bookkeeping for widgets that have been destroyed (dynamic panels
+    // come and go), so the vectors stay bounded over a long session.
+    g_widthReserve.erase(
+        std::remove_if(g_widthReserve.begin(), g_widthReserve.end(),
+                       [](const WidthReserve& e) { return !e.widget; }),
+        g_widthReserve.end());
+    g_delegates.erase(
+        std::remove_if(g_delegates.begin(), g_delegates.end(),
+                       [](const QPointer<QStyledItemDelegate>& d) { return !d; }),
+        g_delegates.end());
+    for (auto it = g_delegatedViews.begin(); it != g_delegatedViews.end();) {
+        if (*it) ++it;
+        else it = g_delegatedViews.erase(it);
+    }
+
     for (QWidget* w : QApplication::allWidgets()) {
         // QMenuBar's internal layout uses cached action geometries and does not
         // tolerate a blanket invalidate during startup; invalidating it can make
