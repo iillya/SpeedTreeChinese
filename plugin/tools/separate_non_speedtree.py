@@ -57,7 +57,24 @@ EXTRA_MARKERS = [
     "Frequency order","CSti Color","Deleted Image Count","Display System",
     "Distance to destination","Documents Description","Duplicate tag","Duration is zero",
     "Edited","Editorial Update","Embed Media","Embedded Profile","Empty token",
-    "Enable externsions"
+    "Enable externsions",
+    "Alias Definition","Animation data not found","As Optical Segments",
+    "Contribute to collections","Current wind mode unsupported","Custom image processing",
+    "Get Active Processor","Get Current Ref","Get Sub Layer","Get Tick","Got out-of-range",
+    "Got proxy","Green sphere","Ground Duration","Growing input buffer","HMD Global",
+    "HcA","HcB","Header not found","Hierarchy not found","Hips TOffset","Huge input lookup",
+    "ISO Speed","ISV-defined","ITypedArrayProperty","ITypedGeomParam","IcA","IcB",
+    "Image Data Size","Image Full Length","Image Full Width","Image Processing Count",
+    "Image Render Size","Image Sequence Offset","Image data arrangement","Image data location",
+    "Image input equipment","Image title","Implementation limitation","In placeH",
+    "Inappropriate message buffer","Inches of mercury","Inches per second","Incomplete file data",
+    "Incorrect match of schema","Index is not allocated","Index out of range","Individual control",
+    "Input ID overflow","Input connectability","Integer overflow","Inter Color Profile",
+    "Interoperability","Interrupted function call","Iterator past-the-end",
+    "Diffie-Hellman","E Base","Gaps As Valid Data","Focal Length",
+    "Full Image Size","Function not available","Function not implemented",
+    "Geodetic survey","Base GenI","Bark Example","Blank needed here",
+    "Encompass percentage","EndFrame change"
 ]
 
 def is_non_speedtree(k):
