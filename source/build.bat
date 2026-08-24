@@ -9,7 +9,7 @@ rem Output: build\* (hook DLL, launcher, installer)
 rem ---------------------------------------------------------------------------
 
 set "ROOT=%~dp0.."
-set "CPP=%ROOT%\cpp"
+set "CPP=%ROOT%\source"
 set "NATIVE=%ROOT%\build"
 set "RES=%ROOT%\icon"
 set "QT=%ROOT%\qt"
