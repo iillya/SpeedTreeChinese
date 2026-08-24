@@ -32,10 +32,10 @@
 *.app
 
 # Build output / runtime artifacts
-plugin/native/
+native/
 dist/
-plugin/qt/
-plugin/qt5/
+qt/
+qt5/
 __pycache__/
 *.pyc
 *.res
