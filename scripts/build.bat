@@ -37,7 +37,7 @@ cl /nologo /O2 /W3 /LD /EHsc /std:c++17 /Zc:__cplusplus /permissive- /utf-8 ^
    "%CPP%\hook.cpp" ^
    /Fo"%OBJDIR%\hook.obj" ^
    /Fe:"%NATIVE%\SpeedTreeChineseHook.dll" ^
-   /link /IMPLIB:"%NATIVE%\SpeedTreeChineseHook.lib" ^
+   /link /IMPLIB:"%OBJDIR%\SpeedTreeChineseHook.lib" ^
    "%QT%\lib\Qt6Core.lib" "%QT%\lib\Qt6Gui.lib" "%QT%\lib\Qt6Widgets.lib" ^
    user32.lib shell32.lib version.lib
 if errorlevel 1 exit /b 1
@@ -53,18 +53,18 @@ if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" (
        "%CPP%\hook.cpp" ^
        /Fo"%OBJDIR%\hook_qt5.obj" ^
        /Fe:"%NATIVE%\SpeedTreeChineseHook-qt5.dll" ^
-       /link /IMPLIB:"%NATIVE%\SpeedTreeChineseHook-qt5.lib" ^
+       /link /IMPLIB:"%OBJDIR%\SpeedTreeChineseHook-qt5.lib" ^
        "%QT5_SDK%\lib\Qt5Core.lib" "%QT5_SDK%\lib\Qt5Gui.lib" "%QT5_SDK%\lib\Qt5Widgets.lib" ^
        user32.lib shell32.lib version.lib
 )
 
 echo === Compiling launcher ===
-rc /nologo /fo "%NATIVE%\app_icon.res" "%RES%\app_icon.rc"
+rc /nologo /fo "%OBJDIR%\app_icon.res" "%RES%\app_icon.rc"
 if errorlevel 1 exit /b 1
 cl /nologo /O2 /W3 /EHsc /utf-8 ^
    "%CPP%\launcher.cpp" ^
    /Fo"%OBJDIR%\launcher.obj" ^
-   "%NATIVE%\app_icon.res" ^
+   "%OBJDIR%\app_icon.res" ^
    /Fe:"%NATIVE%\SpeedTreeChineseLauncher.exe" ^
    /link /SUBSYSTEM:WINDOWS user32.lib
 if errorlevel 1 exit /b 1
@@ -73,7 +73,7 @@ echo === Compiling installer (elevated) ===
 cl /nologo /O2 /W3 /EHsc /std:c++17 /utf-8 ^
    "%CPP%\installer.cpp" ^
    /Fo"%OBJDIR%\installer.obj" ^
-   "%NATIVE%\app_icon.res" ^
+   "%OBJDIR%\app_icon.res" ^
    /Fe:"%NATIVE%\SpeedTreeChineseInstaller.exe" ^
    /link /SUBSYSTEM:WINDOWS user32.lib shell32.lib ole32.lib gdi32.lib advapi32.lib ^
    /MANIFEST:EMBED /MANIFESTUAC:"level='requireAdministrator' uiAccess='false'"
