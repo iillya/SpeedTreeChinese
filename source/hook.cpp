@@ -7,19 +7,21 @@
 //  Dictionaries  sp-translation-v1 JSON in <plug-in>/translations/*_zh.json,
 //                loaded sorted & merged (later files win).
 //  Lookup        1. global exact  2. fuzzy match.
-//  DisplayLayer  QProxyStyle (drawItemText / itemTextRect / sizeFromContents)
-//                for every style-drawn control (buttons, checkboxes, menus,
-//                group-box titles, tab bars, combo buttons, headers). Uses only
-//                Qt's public virtual API -- no mangled symbols, no hand-written
-//                x64 sret ABI -- so it is safe across Qt 5 / Qt 6.
+//  DisplayLayer  QProxyStyle (drawItemText / itemTextRect) for every style-drawn
+//                control (buttons, checkboxes, menus, group-box titles, tab
+//                bars, combo buttons, headers). Uses only Qt's public virtual
+//                API -- no mangled symbols, no hand-written x64 sret ABI -- so
+//                it is safe across Qt 5 / Qt 6.
 //  ItemViewLayer QStyledItemDelegate::displayText for list/tree/table.
 //  PaintLayer    QPainter::drawText IAT hook for QLabel + custom-painted text.
 //                All 8 overloads return void, so the hook is ABI-safe; it never
 //                double-translates because it skips strings already containing CJK.
-//  SizeLayer     width reserve (setMinimumWidth) for QLabel / non-style text,
-//                the only widgets whose sizeHint is measured outside QStyle.
+//  MeasureLayer  QFontMetrics/QFontMetricsF IAT hooks: layout measures the
+//                translated (Chinese) width, so sizeHint / eliding follow the
+//                language and the UI width matches when toggling 中/英.
+//  SizeLayer     width reserve (setMinimumWidth) as a sizing supplement.
 //  Data model    Never rewritten: no setText/setTabText/setItemText mutations.
-//  Controls      F2 enable/disable, Shift+` write untranslated strings.
+//  Controls      F3 enable/disable, Shift+` write untranslated strings.
 //  API           C exports so a future settings UI / updater can version it.
 //
 //  Delivery      launcher.cpp starts SpeedTree_Modeler.exe SUSPENDED, injects
@@ -451,48 +453,6 @@ public:
                                          tr.isEmpty() ? text : tr);
     }
 
-    QSize sizeFromContents(ContentsType type, const QStyleOption* option,
-                           const QSize& size, const QWidget* widget) const override {
-        QSize sz = QProxyStyle::sizeFromContents(type, option, size, widget);
-        if (!g_enabled || !option) return sz;
-        switch (type) {
-            case CT_PushButton:
-            case CT_CheckBox:
-            case CT_RadioButton:
-            case CT_MenuItem:
-            case CT_MenuBarItem:
-            case CT_ComboBox:
-            case CT_TabBarTab:
-            case CT_GroupBox:
-            case CT_HeaderSection:
-            case CT_ToolButton:
-                break;
-            default:
-                return sz;
-        }
-        QString text;
-        if (const auto* b = qstyleoption_cast<const QStyleOptionButton*>(option))
-            text = b->text;
-        else if (const auto* m = qstyleoption_cast<const QStyleOptionMenuItem*>(option))
-            text = m->text;
-        else if (const auto* c = qstyleoption_cast<const QStyleOptionComboBox*>(option))
-            text = c->currentText;
-        else if (const auto* t = qstyleoption_cast<const QStyleOptionTab*>(option))
-            text = t->text;
-        else if (const auto* g = qstyleoption_cast<const QStyleOptionGroupBox*>(option))
-            text = g->text;
-        else if (const auto* h = qstyleoption_cast<const QStyleOptionHeader*>(option))
-            text = h->text;
-        else if (const auto* tb = qstyleoption_cast<const QStyleOptionToolButton*>(option))
-            text = tb->text;
-        if (text.isEmpty()) return sz;
-        const QString tr = translated(text);
-        if (tr.isEmpty() || tr == text) return sz;
-        QFontMetrics fm(widget ? widget->font() : QApplication::font());
-        const int delta = fm.horizontalAdvance(tr) - fm.horizontalAdvance(text);
-        if (delta > 0) sz.setWidth(sz.width() + delta);
-        return sz;
-    }
 };
 
 static bool g_proxyStyleInstalled = false;
@@ -1162,6 +1122,283 @@ static bool replaceImports(HMODULE module, void* original, void* replacement) {
     return replaced;
 }
 
+// ---------------------------------------------------------------------------
+// QFontMetrics measurement hooks.
+//
+// Qt layouts calculate sizeHint from the widget's ORIGINAL English text. The
+// pure-paint path translates only at drawText time, so the layout can leave too
+// little space for the wider Chinese rendering. Mirroring Toolbag's approach,
+// translate the string at the font-measurement boundary instead: the widget
+// keeps English internally while layout/eliding sees the Chinese glyph bounds.
+// ---------------------------------------------------------------------------
+typedef int (__fastcall* FmHAdv)(const QFontMetrics*, const QString&, int);
+typedef int (__fastcall* FmHAdvOpt)(const QFontMetrics*, const QString&, const QTextOption&);
+// MSVC x64 returns QRect/QSize/QString through a hidden sret pointer. The
+// function pointer types below model the raw ABI explicitly: RCX = this,
+// RDX = sret, then the ordinary Qt arguments in registers/stack.
+typedef void* (__fastcall* FmBRectRaw)(const QFontMetrics* self, QRect* result, const QString& text);
+typedef void* (__fastcall* FmBRectOptRaw)(const QFontMetrics* self, QRect* result, const QString& text, const QTextOption& opt);
+typedef void* (__fastcall* FmBRectRectRaw)(const QFontMetrics* self, QRect* result, const QRect& rect, int flags, const QString& text, int tabstops, int* tabarray);
+typedef void* (__fastcall* FmSizeRaw)(const QFontMetrics* self, QSize* result, int flags, const QString& text, int tabstops, int* tabarray);
+typedef void* (__fastcall* FmTBRectRaw)(const QFontMetrics* self, QRect* result, const QString& text);
+typedef void* (__fastcall* FmTBRectOptRaw)(const QFontMetrics* self, QRect* result, const QString& text, const QTextOption& opt);
+typedef void* (__fastcall* FmElideRaw)(const QFontMetrics* self, QString* result, const QString& text, Qt::TextElideMode mode, int width, int flags);
+
+typedef qreal (__fastcall* FmFHAdv)(const QFontMetricsF*, const QString&, int);
+typedef qreal (__fastcall* FmFHAdvOpt)(const QFontMetricsF*, const QString&, const QTextOption&);
+typedef void* (__fastcall* FmFBRectRaw)(const QFontMetricsF* self, QRectF* result, const QString& text);
+typedef void* (__fastcall* FmFBRectOptRaw)(const QFontMetricsF* self, QRectF* result, const QString& text, const QTextOption& opt);
+typedef void* (__fastcall* FmFBRectRectRaw)(const QFontMetricsF* self, QRectF* result, const QRectF& rect, int flags, const QString& text, int tabstops, int* tabarray);
+typedef void* (__fastcall* FmFSizeRaw)(const QFontMetricsF* self, QSizeF* result, int flags, const QString& text, int tabstops, int* tabarray);
+typedef void* (__fastcall* FmFTBRectRaw)(const QFontMetricsF* self, QRectF* result, const QString& text);
+typedef void* (__fastcall* FmFTBRectOptRaw)(const QFontMetricsF* self, QRectF* result, const QString& text, const QTextOption& opt);
+typedef void* (__fastcall* FmFElideRaw)(const QFontMetricsF* self, QString* result, const QString& text, Qt::TextElideMode mode, qreal width, int flags);
+
+static FmHAdv     g_fmHAdv      = nullptr;
+static FmHAdvOpt  g_fmHAdvOpt   = nullptr;
+static FmBRectRaw g_fmBRect     = nullptr;
+static FmBRectOptRaw g_fmBRectOpt = nullptr;
+static FmBRectRectRaw g_fmBRectRect = nullptr;
+static FmSizeRaw  g_fmSize      = nullptr;
+static FmTBRectRaw g_fmTBRect   = nullptr;
+static FmTBRectOptRaw g_fmTBRectOpt = nullptr;
+static FmElideRaw g_fmElide     = nullptr;
+static FmFHAdv    g_fmfHAdv     = nullptr;
+static FmFHAdvOpt g_fmfHAdvOpt  = nullptr;
+static FmFBRectRaw g_fmfBRect   = nullptr;
+static FmFBRectOptRaw g_fmfBRectOpt = nullptr;
+static FmFBRectRectRaw g_fmfBRectRect = nullptr;
+static FmFSizeRaw g_fmfSize     = nullptr;
+static FmFTBRectRaw g_fmfTBRect = nullptr;
+static FmFTBRectOptRaw g_fmfTBRectOpt = nullptr;
+static FmFElideRaw g_fmfElide   = nullptr;
+static bool       g_fontHooksInstalled = false;
+
+static QString measureText(const QString& text) {
+    if (text.isEmpty() || containsCjk(text)) return {};
+    return translated(text);
+}
+
+static int hookedFontHAdv(const QFontMetrics* fm, const QString& text, int len) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (len >= 0 && len > t.size()) len = static_cast<int>(t.size());
+    if (g_fmHAdv) return g_fmHAdv(fm, t, len);
+    return 0;
+}
+static int hookedFontHAdvOpt(const QFontMetrics* fm, const QString& text, const QTextOption& opt) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmHAdvOpt) return g_fmHAdvOpt(fm, t, opt);
+    return 0;
+}
+static void* hookedFontBRect(const QFontMetrics* fm, QRect* result, const QString& text) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmBRect) g_fmBRect(fm, result, t);
+    return result;
+}
+static void* hookedFontBRectOpt(const QFontMetrics* fm, QRect* result, const QString& text, const QTextOption& opt) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmBRectOpt) g_fmBRectOpt(fm, result, t, opt);
+    return result;
+}
+static void* hookedFontBRectRect(const QFontMetrics* fm, QRect* result, const QRect& r, int flags, const QString& text, int tabstops, int* tabarray) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmBRectRect) g_fmBRectRect(fm, result, r, flags, t, tabstops, tabarray);
+    return result;
+}
+static void* hookedFontSize(const QFontMetrics* fm, QSize* result, int flags, const QString& text, int tabstops, int* tabarray) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmSize) g_fmSize(fm, result, flags, t, tabstops, tabarray);
+    return result;
+}
+static void* hookedFontTBRect(const QFontMetrics* fm, QRect* result, const QString& text) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmTBRect) g_fmTBRect(fm, result, t);
+    return result;
+}
+static void* hookedFontTBRectOpt(const QFontMetrics* fm, QRect* result, const QString& text, const QTextOption& opt) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmTBRectOpt) g_fmTBRectOpt(fm, result, t, opt);
+    return result;
+}
+static void* hookedFontElide(const QFontMetrics* fm, QString* result, const QString& text, Qt::TextElideMode mode, int width, int flags) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmElide) g_fmElide(fm, result, t, mode, width, flags);
+    else *result = t;
+    return result;
+}
+
+static qreal hookedFontFHAdv(const QFontMetricsF* fm, const QString& text, int len) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (len >= 0 && len > t.size()) len = static_cast<int>(t.size());
+    if (g_fmfHAdv) return g_fmfHAdv(fm, t, len);
+    return 0;
+}
+static qreal hookedFontFHAdvOpt(const QFontMetricsF* fm, const QString& text, const QTextOption& opt) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmfHAdvOpt) return g_fmfHAdvOpt(fm, t, opt);
+    return 0;
+}
+static void* hookedFontFBRect(const QFontMetricsF* fm, QRectF* result, const QString& text) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmfBRect) g_fmfBRect(fm, result, t);
+    return result;
+}
+static void* hookedFontFBRectOpt(const QFontMetricsF* fm, QRectF* result, const QString& text, const QTextOption& opt) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmfBRectOpt) g_fmfBRectOpt(fm, result, t, opt);
+    return result;
+}
+static void* hookedFontFBRectRect(const QFontMetricsF* fm, QRectF* result, const QRectF& r, int flags, const QString& text, int tabstops, int* tabarray) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmfBRectRect) g_fmfBRectRect(fm, result, r, flags, t, tabstops, tabarray);
+    return result;
+}
+static void* hookedFontFSize(const QFontMetricsF* fm, QSizeF* result, int flags, const QString& text, int tabstops, int* tabarray) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmfSize) g_fmfSize(fm, result, flags, t, tabstops, tabarray);
+    return result;
+}
+static void* hookedFontFTBRect(const QFontMetricsF* fm, QRectF* result, const QString& text) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmfTBRect) g_fmfTBRect(fm, result, t);
+    return result;
+}
+static void* hookedFontFTBRectOpt(const QFontMetricsF* fm, QRectF* result, const QString& text, const QTextOption& opt) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmfTBRectOpt) g_fmfTBRectOpt(fm, result, t, opt);
+    return result;
+}
+static void* hookedFontFElide(const QFontMetricsF* fm, QString* result, const QString& text, Qt::TextElideMode mode, qreal width, int flags) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmfElide) g_fmfElide(fm, result, t, mode, width, flags);
+    else *result = t;
+    return result;
+}
+
+static void installFontMeasurementHooks() {
+    if (g_fontHooksInstalled) return;
+    HMODULE qtGui = GetModuleHandleW(kGuiModule);
+    if (!qtGui) return;
+
+    g_fmHAdv = (FmHAdv)GetProcAddress(qtGui,
+        "?horizontalAdvance@QFontMetrics@@QEBAHAEBVQString@@H@Z");
+    g_fmHAdvOpt = (FmHAdvOpt)GetProcAddress(qtGui,
+        "?horizontalAdvance@QFontMetrics@@QEBAHAEBVQString@@AEBVQTextOption@@@Z");
+    g_fmBRect = (FmBRectRaw)GetProcAddress(qtGui,
+        "?boundingRect@QFontMetrics@@QEBA?AVQRect@@AEBVQString@@@Z");
+    g_fmBRectOpt = (FmBRectOptRaw)GetProcAddress(qtGui,
+        "?boundingRect@QFontMetrics@@QEBA?AVQRect@@AEBVQString@@AEBVQTextOption@@@Z");
+    g_fmBRectRect = (FmBRectRectRaw)GetProcAddress(qtGui,
+        "?boundingRect@QFontMetrics@@QEBA?AVQRect@@AEBV2@HAEBVQString@@HPEAH@Z");
+    g_fmSize = (FmSizeRaw)GetProcAddress(qtGui,
+        "?size@QFontMetrics@@QEBA?AVQSize@@HAEBVQString@@HPEAH@Z");
+    g_fmTBRect = (FmTBRectRaw)GetProcAddress(qtGui,
+        "?tightBoundingRect@QFontMetrics@@QEBA?AVQRect@@AEBVQString@@@Z");
+    g_fmTBRectOpt = (FmTBRectOptRaw)GetProcAddress(qtGui,
+        "?tightBoundingRect@QFontMetrics@@QEBA?AVQRect@@AEBVQString@@AEBVQTextOption@@@Z");
+    g_fmElide = (FmElideRaw)GetProcAddress(qtGui,
+        "?elidedText@QFontMetrics@@QEBA?AVQString@@AEBV2@W4TextElideMode@Qt@@HH@Z");
+
+    g_fmfHAdv = (FmFHAdv)GetProcAddress(qtGui,
+        "?horizontalAdvance@QFontMetricsF@@QEBANAEBVQString@@H@Z");
+    g_fmfHAdvOpt = (FmFHAdvOpt)GetProcAddress(qtGui,
+        "?horizontalAdvance@QFontMetricsF@@QEBANAEBVQString@@AEBVQTextOption@@@Z");
+    g_fmfBRect = (FmFBRectRaw)GetProcAddress(qtGui,
+        "?boundingRect@QFontMetricsF@@QEBA?AVQRectF@@AEBVQString@@@Z");
+    g_fmfBRectOpt = (FmFBRectOptRaw)GetProcAddress(qtGui,
+        "?boundingRect@QFontMetricsF@@QEBA?AVQRectF@@AEBVQString@@AEBVQTextOption@@@Z");
+    g_fmfBRectRect = (FmFBRectRectRaw)GetProcAddress(qtGui,
+        "?boundingRect@QFontMetricsF@@QEBA?AVQRectF@@AEBV2@HAEBVQString@@HPEAH@Z");
+    g_fmfSize = (FmFSizeRaw)GetProcAddress(qtGui,
+        "?size@QFontMetricsF@@QEBA?AVQSizeF@@HAEBVQString@@HPEAH@Z");
+    g_fmfTBRect = (FmFTBRectRaw)GetProcAddress(qtGui,
+        "?tightBoundingRect@QFontMetricsF@@QEBA?AVQRectF@@AEBVQString@@@Z");
+    g_fmfTBRectOpt = (FmFTBRectOptRaw)GetProcAddress(qtGui,
+        "?tightBoundingRect@QFontMetricsF@@QEBA?AVQRectF@@AEBVQString@@AEBVQTextOption@@@Z");
+    g_fmfElide = (FmFElideRaw)GetProcAddress(qtGui,
+        "?elidedText@QFontMetricsF@@QEBA?AVQString@@AEBV2@W4TextElideMode@Qt@@NH@Z");
+
+    // Raw ABI hooks: every struct-return is modelled with an explicit sret
+    // first parameter (RCX), matching the Qt6Gui DLL's MSVC x64 calling
+    // convention. This covers QLabel/QMenu/QComboBox's boundingRect paths,
+    // QPushButton/QTabBar/QMenuBar's size paths, and eliding.
+    struct Sym { const char* name; void* orig; void* hook; };
+    Sym syms[] = {
+        {"FMHAdv",      (void*)g_fmHAdv,      (void*)&hookedFontHAdv},
+        {"FMHAdvOpt",   (void*)g_fmHAdvOpt,   (void*)&hookedFontHAdvOpt},
+        {"FMBRect",     (void*)g_fmBRect,     (void*)&hookedFontBRect},
+        {"FMBRectOpt",  (void*)g_fmBRectOpt,  (void*)&hookedFontBRectOpt},
+        {"FMBRectRect", (void*)g_fmBRectRect, (void*)&hookedFontBRectRect},
+        {"FMSize",      (void*)g_fmSize,      (void*)&hookedFontSize},
+        {"FMTBRect",    (void*)g_fmTBRect,    (void*)&hookedFontTBRect},
+        {"FMTBRectOpt", (void*)g_fmTBRectOpt, (void*)&hookedFontTBRectOpt},
+        {"FMElide",     (void*)g_fmElide,     (void*)&hookedFontElide},
+        {"FMfHAdv",     (void*)g_fmfHAdv,     (void*)&hookedFontFHAdv},
+        {"FMfHAdvOpt",  (void*)g_fmfHAdvOpt,  (void*)&hookedFontFHAdvOpt},
+        {"FMfBRect",    (void*)g_fmfBRect,    (void*)&hookedFontFBRect},
+        {"FMfBRectOpt", (void*)g_fmfBRectOpt, (void*)&hookedFontFBRectOpt},
+        {"FMfBRectRect",(void*)g_fmfBRectRect,(void*)&hookedFontFBRectRect},
+        {"FMfSize",     (void*)g_fmfSize,     (void*)&hookedFontFSize},
+        {"FMfTBRect",   (void*)g_fmfTBRect,   (void*)&hookedFontFTBRect},
+        {"FMfTBRectOpt",(void*)g_fmfTBRectOpt,(void*)&hookedFontFTBRectOpt},
+        {"FMfElide",    (void*)g_fmfElide,    (void*)&hookedFontFElide},
+    };
+
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, GetCurrentProcessId());
+    if (snap != INVALID_HANDLE_VALUE) {
+        MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
+        if (Module32FirstW(snap, &mod)) {
+            do {
+                if (_wcsnicmp(mod.szModule, kHookDllPrefix, wcslen(kHookDllPrefix)) == 0) continue;
+                if (_wcsicmp(mod.szModule, kCoreModule) == 0) continue;
+                HMODULE h = GetModuleHandleW(mod.szModule);
+                if (!h) continue;
+                for (auto& s : syms) {
+                    if (s.orig) replaceImports(h, s.orig, s.hook);
+                }
+            } while (Module32NextW(snap, &mod));
+        }
+        CloseHandle(snap);
+    }
+    g_fontHooksInstalled = true;
+}
+
 static void installDrawTextHooks() {
     if (g_hooksInstalled) return;
     HMODULE qtGui = GetModuleHandleW(kGuiModule);
@@ -1599,6 +1836,7 @@ static void RunOnGuiThread(QApplication* app) {
     installProxyStyle();
     applyTranslations(app);
     installDrawTextHooks();
+    installFontMeasurementHooks();
     refreshLayouts();
     app->installEventFilter(new TranslatorFilter(app));
     installAuthorLink();
