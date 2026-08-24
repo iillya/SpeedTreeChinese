@@ -17,6 +17,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <aclapi.h>
+#include <sddl.h>
+#include <tlhelp32.h>
 #include <commctrl.h>
 #include <shlobj.h>
 #include <shellapi.h>
