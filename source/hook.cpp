@@ -43,6 +43,8 @@
 #include <cstdlib>
 #include <utility>
 #include <functional>
+#include <mutex>
+#include <memory>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QMetaObject>
@@ -125,6 +127,7 @@ static void repaintAll();
 static void refreshLayouts();
 static void runUiTour();
 static bool replaceImports(HMODULE module, void* original, void* replacement);
+static void installTranslateProbe();
 
 // ---------------------------------------------------------------------------
 // Paths / logging
@@ -1458,6 +1461,125 @@ static void installDrawTextHooks() {
 }
 
 // ---------------------------------------------------------------------------
+// tr() coverage probe (ST_TRPROBE=1).
+//
+// SpeedTree is built with Qt's standard i18n (its binaries import
+// QCoreApplication::translate and changeEvent), so a chunk of the UI is
+// translated through QObject::tr().  THAT path is what a native QTranslator can
+// cover -- with real text (so layout/width follows) and automatic
+// LanguageChange on switch -- far more cleanly than the paint-level hooks.
+//
+// This diagnostic patches every module's IAT slot for QCoreApplication::translate
+// (installed in DllMain, so it catches even the main-window construction tr()
+// calls) and records, for every tr() call, the context + source text.  It never
+// substitutes a translation: it falls through to the real translate() so the
+// existing display-layer hooks keep rendering Chinese while we measure coverage.
+// Results are written to <SelfDir>\translations\tr_probe.json, where each entry
+// is tagged with whether the source already exists in the loaded dictionary
+// (i.e. would be natively covered by a QTranslator built from that dictionary).
+// ---------------------------------------------------------------------------
+typedef void* (__fastcall* TrTranslate)(void* sret, const char* ctx, const char* src,
+                                        const char* dis, int n);
+static TrTranslate g_realTranslate = nullptr;
+static bool        g_trProbe        = false;
+static bool        g_trProbeInstalled = false;
+static std::unique_ptr<std::map<std::string, std::map<std::string, int>>> g_trProbeHits;
+static std::mutex  g_trProbeMutex;
+
+static void writeTrProbe() {
+    if (!g_trProbe) return;
+    std::map<std::string, std::pair<std::string, int>> rows; // key -> (src,count); ctx folded in key
+    {
+        std::lock_guard<std::mutex> lk(g_trProbeMutex);
+        if (!g_trProbeHits) return;
+        for (const auto& ctxKV : *g_trProbeHits) {
+            for (const auto& srcKV : ctxKV.second)
+                rows[ctxKV.first + "||" + srcKV.first] = {srcKV.first, srcKV.second};
+        }
+    }
+    if (rows.empty()) return;
+
+    int total = 0, inDict = 0;
+    std::string json = "{\n  \"$schema\": \"tr-probe-v1\",\n"
+                       "  \"language\": \"zh-CN\",\n"
+                       "  \"description\": \"SpeedTree QObject::tr() coverage probe\",\n"
+                       "  \"translations\": {\n";
+    bool first = true;
+    for (const auto& kv : rows) {
+        const std::string& src = kv.second.first;
+        const bool has = g_translations.count(src) != 0;
+        ++total; if (has) ++inDict;
+        if (!first) json += ",\n";
+        // key already contains "context||source"; split for readable output.
+        std::string k = kv.first;
+        size_t sep = k.find("||");
+        std::string ctx = sep == std::string::npos ? "" : k.substr(0, sep);
+        json += "    \"" + jsonEscape(k) + "\": {";
+        json += "\"context\":\"" + jsonEscape(ctx) + "\"";
+        json += ",\"source\":\"" + jsonEscape(src) + "\"";
+        json += ",\"count\":" + std::to_string(kv.second.second);
+        json += ",\"in_dict\":" + std::string(has ? "true" : "false");
+        json += "}";
+        first = false;
+    }
+    json += "\n  }\n}\n";
+
+    std::wstring dir = SelfDirW() + L"\\translations";
+    CreateDirectoryW(dir.c_str(), nullptr);
+    std::wstring path = dir + L"\\tr_probe.json";
+    HANDLE h = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+                           FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h != INVALID_HANDLE_VALUE) {
+        DWORD wr = 0;
+        WriteFile(h, json.data(), (DWORD)json.size(), &wr, nullptr);
+        CloseHandle(h);
+    }
+}
+
+static void* __fastcall hookedTranslate(void* sret, const char* ctx, const char* src,
+                                        const char* dis, int n) {
+    if (g_trProbe && src && *src) {
+        std::lock_guard<std::mutex> lk(g_trProbeMutex);
+        if (!g_trProbeHits) g_trProbeHits.reset(new std::map<std::string, std::map<std::string, int>>());
+        const char* c = (ctx && *ctx) ? ctx : "";
+        (*g_trProbeHits)[c][src]++;
+    }
+    if (g_realTranslate) return g_realTranslate(sret, ctx, src, dis, n);
+    return sret; // defensive; never reached because we only install when real is found
+}
+
+static void installTranslateProbe() {
+    if (g_trProbeInstalled) return;
+    HMODULE qtCore = GetModuleHandleW(kCoreModule);
+    if (!qtCore) return;
+    void* real = (void*)GetProcAddress(qtCore,
+        "?translate@QCoreApplication@@SA?AVQString@@PEBD00H@Z");
+    if (!real) real = (void*)GetProcAddress(qtCore,
+        "?translate@QCoreApplication@@SA?AVQString@@PBD00H@Z");
+    if (!real) return;
+    g_realTranslate = (TrTranslate)real;
+
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32,
+                                           GetCurrentProcessId());
+    if (snap != INVALID_HANDLE_VALUE) {
+        MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
+        if (Module32FirstW(snap, &mod)) {
+            do {
+                if (_wcsnicmp(mod.szModule, kHookDllPrefix, wcslen(kHookDllPrefix)) == 0) continue;
+                if (_wcsicmp(mod.szModule, kCoreModule) == 0) continue;
+                if (_wcsicmp(mod.szModule, kGuiModule) == 0) continue;
+                if (_wcsicmp(mod.szModule, kWidgetsModule) == 0) continue; // Qt's own tr() calls
+                HMODULE h = GetModuleHandleW(mod.szModule);
+                if (!h) continue;
+                replaceImports(h, real, (void*)&hookedTranslate);
+            } while (Module32NextW(snap, &mod));
+        }
+        CloseHandle(snap);
+    }
+    g_trProbeInstalled = true;
+}
+
+// ---------------------------------------------------------------------------
 // GUI-thread worker: waits for QApplication, then installs the engine.
 // ---------------------------------------------------------------------------
 static const QString kAuthorUrl = QStringLiteral("https://space.bilibili.com/281243426?spm_id_from=333.1007.0.0");
@@ -1841,6 +1963,19 @@ static void RunOnGuiThread(QApplication* app) {
     app->installEventFilter(new TranslatorFilter(app));
     installAuthorLink();
 
+    // tr() coverage probe: ST_TRPROBE=1 records every QObject::tr() call the
+    // app makes (context + source) so we can judge whether a native QTranslator
+    // would cover the current UI.  Dump the snapshot every 3 s and once more on
+    // process exit (see DllMain).
+    if (g_trProbe) {
+        installTranslateProbe();   // re-enumerate for any late-loaded DLLs too
+        auto* probeTimer = new QTimer(app);
+        probeTimer->setInterval(3000);
+        QObject::connect(probeTimer, &QTimer::timeout, [] { writeTrProbe(); });
+        probeTimer->start();
+        writeTrProbe();
+    }
+
 }
 
 static DWORD WINAPI Worker(LPVOID) {
@@ -1868,8 +2003,16 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID) {
         DisableThreadLibraryCalls(hinst);
         g_selfModule = hinst;
         g_plugInDir = QString::fromStdWString(SelfDirW());
+        char trProbeVal[8] = {};
+        DWORD trProbeLen = GetEnvironmentVariableA("ST_TRPROBE", trProbeVal, sizeof(trProbeVal));
+        if (trProbeLen == 1 && trProbeVal[0] == '1') {
+            g_trProbe = true;
+            installTranslateProbe();   // as early as possible, before main() runs
+        }
         HANDLE h = CreateThread(nullptr, 0, Worker, nullptr, 0, nullptr);
         if (h) CloseHandle(h);
+    } else if (reason == DLL_PROCESS_DETACH) {
+        if (g_trProbe) writeTrProbe();
     }
     return TRUE;
 }
