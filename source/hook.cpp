@@ -531,9 +531,30 @@ static QString labelSource(QLabel* lbl) {
 static void toggleTranslation() {
     g_enabled = !g_enabled;
     refreshLayouts();
+    // Force the (persistent) top menu bar to re-measure its action rects on a
+    // language switch.  QMenuBar caches those rects and only recomputes them when
+    // itemsDirty is set; QMenuBar::changeEvent() does exactly that on
+    // ApplicationFontChange / StyleChange, so the menu items shrink/grow to the
+    // measured Chinese / English width immediately.
+    for (QWidget* w : QApplication::allWidgets()) {
+        if (auto* mb = qobject_cast<QMenuBar*>(w)) {
+            QEvent ev(QEvent::ApplicationFontChange);
+            QApplication::sendEvent(mb, &ev);
+        }
+    }
     const QWidgetList tops = QApplication::topLevelWidgets();
     for (QWidget* w : tops) {
         if (!w || !w->isVisible()) continue;
+        // Force a synchronous re-layout so width follows the language width
+        // immediately, instead of waiting for a deferred LayoutRequest.
+        // QLayout::activate() re-runs doResize() so the dock/central content
+        // sizes follow the measured Chinese / English width right now.  (The
+        // menu bar's own action rects are refreshed by the ApplicationFontChange
+        // loop above, which triggers its itemsDirty -> calcActionRects.)
+        if (QLayout* lay = w->layout()) {
+            lay->invalidate();   // clear the "already activated" flag
+            lay->activate();     // size children (and the menu bar) right now
+        }
         if (w->isMaximized() || w->isFullScreen()) continue;
         w->adjustSize();
     }
@@ -1705,7 +1726,9 @@ static void refreshLayouts() {
         // QMenuBar's internal layout uses cached action geometries and does not
         // tolerate a blanket invalidate during startup; invalidating it can make
         // actionGeometry() return garbage and blank the top menu bar. Leave menu
-        // bars/menus alone and let their own show/paint pass re-layout them.
+        // bars/menus alone here; toggleTranslation() nudges the menu bar with an
+        // ApplicationFontChange (which triggers its itemsDirty -> calcActionRects)
+        // when the user actually switches language.
         if (qobject_cast<QMenuBar*>(w) || qobject_cast<QMenu*>(w))
             continue;
         applyWidthReserve(w);
