@@ -6,16 +6,20 @@ rem SpeedTree Chinese Localizer - build script
 rem Prereq: Visual Studio 2022 C++ build tools, and the Qt SDKs bundled under
 rem         third_party\qt6sdk (Qt 6.6.0 MSVC x64) and third_party\qt5sdk
 rem         (Qt 5.12 MSVC x64). Both are trimmed to the 3 modules the hook uses.
-rem Output: build\* (hook DLL, launcher, installer)
+rem Output:
+rem   build\out\*   intermediate binaries (hook DLLs, launcher, installer shell,
+rem                 runtime dictionary) - not intended for direct distribution
+rem   dist\         SpeedTreeChineseInstaller.exe (single distributable, embeds
+rem                 the payload above via embed_files.py)
 rem ---------------------------------------------------------------------------
 
 set "ROOT=%~dp0.."
 set "CPP=%ROOT%\source"
-set "NATIVE=%ROOT%\build"
+set "OUT=%ROOT%\build\out"
+set "OBJDIR=%ROOT%\build\obj"
 set "RES=%ROOT%\icon"
 set "QT=%ROOT%\third_party\qt6sdk"
-if not exist "%NATIVE%" mkdir "%NATIVE%"
-set "OBJDIR=%NATIVE%\obj"
+if not exist "%OUT%" mkdir "%OUT%"
 if not exist "%OBJDIR%" mkdir "%OBJDIR%"
 
 if not exist "%QT%\lib\Qt6Widgets.lib" (
@@ -36,7 +40,7 @@ cl /nologo /O2 /W3 /LD /EHsc /std:c++17 /Zc:__cplusplus /permissive- /utf-8 ^
    /I"%QT%\include" ^
    "%CPP%\hook.cpp" ^
    /Fo"%OBJDIR%\hook.obj" ^
-   /Fe:"%NATIVE%\SpeedTreeChineseHook.dll" ^
+   /Fe:"%OUT%\SpeedTreeChineseHook.dll" ^
    /link /IMPLIB:"%OBJDIR%\SpeedTreeChineseHook.lib" ^
    "%QT%\lib\Qt6Core.lib" "%QT%\lib\Qt6Gui.lib" "%QT%\lib\Qt6Widgets.lib" ^
    user32.lib shell32.lib version.lib
@@ -51,7 +55,7 @@ if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" (
        /I"%QT5_SDK%\include" ^
        "%CPP%\hook.cpp" ^
        /Fo"%OBJDIR%\hook_qt5.obj" ^
-       /Fe:"%NATIVE%\SpeedTreeChineseHook-qt5.dll" ^
+       /Fe:"%OUT%\SpeedTreeChineseHook-qt5.dll" ^
        /link /IMPLIB:"%OBJDIR%\SpeedTreeChineseHook-qt5.lib" ^
        "%QT5_SDK%\lib\Qt5Core.lib" "%QT5_SDK%\lib\Qt5Gui.lib" "%QT5_SDK%\lib\Qt5Widgets.lib" ^
        user32.lib shell32.lib version.lib
@@ -64,7 +68,7 @@ cl /nologo /O2 /W3 /EHsc /utf-8 ^
    "%CPP%\launcher.cpp" ^
    /Fo"%OBJDIR%\launcher.obj" ^
    "%OBJDIR%\app_icon.res" ^
-   /Fe:"%NATIVE%\SpeedTreeChineseLauncher.exe" ^
+   /Fe:"%OUT%\SpeedTreeChineseLauncher.exe" ^
    /link /SUBSYSTEM:WINDOWS user32.lib
 if errorlevel 1 exit /b 1
 
@@ -73,18 +77,22 @@ cl /nologo /O2 /W3 /EHsc /std:c++17 /utf-8 ^
    "%CPP%\installer.cpp" ^
    /Fo"%OBJDIR%\installer.obj" ^
    "%OBJDIR%\app_icon.res" ^
-   /Fe:"%NATIVE%\SpeedTreeChineseInstaller.exe" ^
+   /Fe:"%OUT%\SpeedTreeChineseInstaller.exe" ^
    /link /SUBSYSTEM:WINDOWS user32.lib shell32.lib ole32.lib gdi32.lib advapi32.lib ^
    /MANIFEST:EMBED /MANIFESTUAC:"level='requireAdministrator' uiAccess='false'"
 if errorlevel 1 exit /b 1
 
 echo.
-echo === Copying runtime dictionary ===
-if not exist "%NATIVE%\translations" mkdir "%NATIVE%\translations"
-copy /Y "%ROOT%\translations\dictionary_zh.json" "%NATIVE%\translations\dictionary_zh.json" >nul
+echo === Staging runtime dictionary (next to the hook for dev launches) ===
+if not exist "%OUT%\translations" mkdir "%OUT%\translations"
+copy /Y "%ROOT%\translations\dictionary_zh.json" "%OUT%\translations\dictionary_zh.json" >nul
+
+echo === Packing dist installer ===
+python "%ROOT%\source\embed_files.py"
+if errorlevel 1 exit /b 1
 
 echo Build complete:
-echo   %NATIVE%\SpeedTreeChineseHook.dll
-echo   %NATIVE%\SpeedTreeChineseLauncher.exe
-echo   %NATIVE%\SpeedTreeChineseInstaller.exe  (payload embedded by embed_files.py)
+echo   %OUT%\SpeedTreeChineseHook.dll
+echo   %OUT%\SpeedTreeChineseLauncher.exe
+echo   dist\SpeedTreeChineseInstaller.exe  (single distributable)
 endlocal
