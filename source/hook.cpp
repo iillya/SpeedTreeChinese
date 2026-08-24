@@ -674,23 +674,19 @@ static void captureMenu(QMenu* m) {
     }
 }
 
-static void closeMenuSoon(QMenu* m) {
-    QTimer::singleShot(80, m, [m] { m->close(); });
-}
-
 static QAction* hookedQMenuExecP(void* _this, const QPoint& pos, QAction* act) {
     auto* m = static_cast<QMenu*>(_this);
-    if (g_tourActive && m) { captureMenu(m); closeMenuSoon(m); }
+    if (g_tourActive && m) captureMenu(m);
     return g_menuExecP ? g_menuExecP(m, pos, act) : nullptr;
 }
 static QAction* hookedQMenuExec0(void* _this) {
     auto* m = static_cast<QMenu*>(_this);
-    if (g_tourActive && m) { captureMenu(m); closeMenuSoon(m); }
+    if (g_tourActive && m) captureMenu(m);
     return g_menuExec0 ? g_menuExec0(m) : nullptr;
 }
 static void hookedQMenuPopup(void* _this, const QPoint& pos, QAction* act) {
     auto* m = static_cast<QMenu*>(_this);
-    if (g_tourActive && m) { captureMenu(m); closeMenuSoon(m); }
+    if (g_tourActive && m) captureMenu(m);
     if (g_menuPopup) g_menuPopup(m, pos, act);
 }
 
