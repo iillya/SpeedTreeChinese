@@ -16,8 +16,9 @@ set "QT=%ROOT%\qt"
 if not exist "%NATIVE%" mkdir "%NATIVE%"
 
 if not exist "%QT%\lib\Qt6Widgets.lib" (
-    echo [ERROR] Qt SDK not found at %QT%. Create an ASCII junction named plugin\qt
-    echo         pointing to the Substance plug-in Qt 6.5.3 SDK.
+    echo [ERROR] A complete Qt SDK was not found at %QT%.
+    echo         Create a directory junction named plugin\qt that points to the
+    echo         Substance plug-in Qt 6.5.3 SDK ^(headers and .lib files required^).
     exit /b 1
 )
 

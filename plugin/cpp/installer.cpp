@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <filesystem>
 
 #pragma comment(lib, "Comctl32.lib")
 #pragma comment(lib, "shell32.lib")
@@ -392,17 +393,28 @@ bool Install(InstallerState& st) {
     if (!ReadWholeFile(ExePath(), payload)) return false;
     std::wstring dir = st.dir;
     if (!HasSpeedTreeExe(dir)) return false;
+    const std::wstring installDir = dir + L"\\ChineseLauncher";
+    if (!IsDir(installDir) && !CreateDirectoryW(installDir.c_str(), nullptr))
+        return false;
 
     for (const auto& e : st.entries) {
-        std::wstring target = dir + L"\\" + e.name;
+        std::wstring target = installDir + L"\\" + e.name;
         std::wstring parent = ParentDir(target);
         if (!IsDir(parent)) CreateDirectoryW(parent.c_str(), nullptr);
         if (!WriteFileFromPayload(target, e, payload)) return false;
     }
 
+    // Remove files left by releases that installed directly beside the EXE.
+    for (const auto& e : st.entries) {
+        const std::wstring legacyTarget = dir + L"\\" + e.name;
+        if (IsFile(legacyTarget)) DeleteFileW(legacyTarget.c_str());
+    }
+    const std::wstring legacyTranslations = dir + L"\\translations";
+    if (IsDir(legacyTranslations)) RemoveDirectoryW(legacyTranslations.c_str());
+
     // Create Desktop + Start Menu "SpeedTree 中文版" shortcuts in the
     // interactive user's real folders (handles elevation + OneDrive redirect).
-    std::wstring launcher = dir + L"\\SpeedTreeChineseLauncher.exe";
+    std::wstring launcher = installDir + L"\\SpeedTreeChineseLauncher.exe";
     std::wstring name = L"SpeedTree 中文版";
     if (IsFile(launcher)) {
         // Per-user Desktop, resolved from the interactive user's SID.
@@ -440,13 +452,17 @@ bool Install(InstallerState& st) {
 // --- uninstall ---------------------------------------------------------------
 bool Uninstall(InstallerState& st) {
     std::wstring dir = st.dir;
+    std::error_code removeError;
+    std::filesystem::remove_all(
+        std::filesystem::path(dir) / L"ChineseLauncher", removeError);
+    if (removeError) return false;
+    // Clean files left by versions that installed directly beside the EXE.
     for (const auto& e : st.entries) {
-        std::wstring target = dir + L"\\" + e.name;
-        if (IsFile(target)) DeleteFileW(target.c_str());
+        const std::wstring legacyTarget = dir + L"\\" + e.name;
+        if (IsFile(legacyTarget)) DeleteFileW(legacyTarget.c_str());
     }
-    // Remove empty translations dir if present.
-    std::wstring tr = dir + L"\\translations";
-    if (IsDir(tr)) RemoveDirectoryW(tr.c_str());
+    const std::wstring legacyTranslations = dir + L"\\translations";
+    if (IsDir(legacyTranslations)) RemoveDirectoryW(legacyTranslations.c_str());
     // Remove shortcuts from the interactive user's folders (the place the
     // installer actually wrote them to).
     std::wstring name = L"SpeedTree 中文版.lnk";
@@ -627,7 +643,7 @@ int ShowInstallerWindow(HINSTANCE instance, InstallerState& state) {
 
 } // namespace
 
-int APIENTRY wWinMain(HINSTANCE hinst, HINSTANCE, PWSTR, int nCmdShow) {
+int APIENTRY wWinMain(HINSTANCE hinst, HINSTANCE, PWSTR, int) {
     SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
     INITCOMMONCONTROLSEX icc{}; icc.dwSize = sizeof(icc);
     icc.dwICC = ICC_STANDARD_CLASSES;

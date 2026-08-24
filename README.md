@@ -22,7 +22,7 @@ SpeedTree_Modeler.exe（挂起启动）
             3. 每 2 秒重新应用（SpeedTree 加载文档后会重建控件）
 ```
 
-词库：`translations/*_zh.json`，命中才替换，未命中保持英文。
+安装后的词库位于 `ChineseLauncher/translations/*_zh.json`，命中才替换，未命中保持英文。
 
 ## 目录结构
 

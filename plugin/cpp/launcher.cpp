@@ -85,7 +85,7 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR cmdLine, int) {
     if (root.empty() || !IsFile(dllPath) || !IsFile(exePath)) {
         MessageBoxW(nullptr,
                     L"找不到 SpeedTree_Modeler.exe 或汉化 DLL。\n"
-                    L"请把汉化启动器放在 SpeedTree win64 目录，或重新运行安装程序。",
+                    L"请重新运行安装程序，修复 ChineseLauncher 目录。",
                     L"SpeedTree 中文补丁", MB_OK | MB_ICONERROR);
         return 1;
     }
@@ -119,8 +119,12 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR cmdLine, int) {
     bool ok = false;
     if (thread) {
         DWORD wait = WaitForSingleObject(thread, 30000);
+        DWORD loadResult = 0;
+        const bool loaded = wait == WAIT_OBJECT_0 &&
+                            GetExitCodeThread(thread, &loadResult) &&
+                            loadResult != 0;
         CloseHandle(thread);
-        ok = (wait == WAIT_OBJECT_0);
+        ok = loaded;
     }
 
     if (ok && ResumeThread(pi.hThread) != (DWORD)-1) {

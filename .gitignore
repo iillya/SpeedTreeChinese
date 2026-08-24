@@ -34,6 +34,9 @@
 # Build output / runtime artifacts
 plugin/native/
 dist/
+plugin/qt/
+__pycache__/
+*.pyc
 *.res
 *.exp
 *.ilk
