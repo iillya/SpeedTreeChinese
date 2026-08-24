@@ -163,6 +163,86 @@ bool GrantShortcutAccess(const std::wstring& lnkPath) {
     return applied;
 }
 
+// The installer runs elevated, so the process identity is an administrator
+// account and NOT necessarily the person who will actually run SpeedTree.
+// Creating shortcuts against the elevated token puts them in the wrong user's
+// Desktop / Start Menu (the user then reports "no shortcut was created").
+// Resolve the interactive console session (the explorer.exe owner of the
+// current session) and place shortcuts in *that* user's real folders instead.
+std::wstring InteractiveSessionSid() {
+    DWORD sessionId = 0;
+    ProcessIdToSessionId(GetCurrentProcessId(), &sessionId);
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (snapshot == INVALID_HANDLE_VALUE) return L"";
+    std::wstring found;
+    PROCESSENTRY32W entry{};
+    entry.dwSize = sizeof(entry);
+    if (Process32FirstW(snapshot, &entry)) {
+        do {
+            if (_wcsicmp(entry.szExeFile, L"explorer.exe") != 0) continue;
+            DWORD processSession = 0;
+            if (!ProcessIdToSessionId(entry.th32ProcessID, &processSession) ||
+                processSession != sessionId) continue;
+            HANDLE process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION,
+                                        FALSE, entry.th32ProcessID);
+            if (!process) continue;
+            HANDLE token = nullptr;
+            if (OpenProcessToken(process, TOKEN_QUERY, &token)) {
+                DWORD required = 0;
+                GetTokenInformation(token, TokenUser, nullptr, 0, &required);
+                std::vector<unsigned char> buffer(required);
+                if (required > 0 && GetTokenInformation(
+                        token, TokenUser, buffer.data(), required, &required)) {
+                    TOKEN_USER* user = reinterpret_cast<TOKEN_USER*>(buffer.data());
+                    LPWSTR sidString = nullptr;
+                    if (ConvertSidToStringSidW(user->User.Sid, &sidString)) {
+                        found = sidString;
+                        LocalFree(sidString);
+                    }
+                }
+                CloseHandle(token);
+            }
+            CloseHandle(process);
+            if (!found.empty()) break;
+        } while (Process32NextW(snapshot, &entry));
+    }
+    CloseHandle(snapshot);
+    return found;
+}
+
+// Read the interactive user's real folder path from HKEY_USERS\<SID>, which
+// reflects Desktop redirection (e.g. OneDrive) and expands %USERPROFILE%.
+std::wstring InteractiveUserShellFolder(const wchar_t* valueName) {
+    const std::wstring sid = InteractiveSessionSid();
+    if (sid.empty()) return L"";
+    HKEY hive = nullptr;
+    if (RegOpenKeyExW(HKEY_USERS, sid.c_str(), 0, KEY_READ, &hive) != ERROR_SUCCESS)
+        return L"";
+    HKEY shellFolders = nullptr;
+    if (RegOpenKeyExW(hive,
+            L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders",
+            0, KEY_READ, &shellFolders) != ERROR_SUCCESS) {
+        RegCloseKey(hive);
+        return L"";
+    }
+    wchar_t raw[2048] = {};
+    DWORD size = sizeof(raw);
+    DWORD type = 0;
+    std::wstring value;
+    if (RegQueryValueExW(shellFolders, valueName, nullptr, &type,
+                         reinterpret_cast<BYTE*>(raw), &size) == ERROR_SUCCESS)
+        value = raw;
+    RegCloseKey(shellFolders);
+    RegCloseKey(hive);
+    if (value.empty()) return L"";
+    std::vector<wchar_t> expanded(8192);
+    const DWORD length = ExpandEnvironmentStringsW(
+        value.c_str(), expanded.data(), static_cast<DWORD>(expanded.size()));
+    if (length && length <= expanded.size())
+        return std::wstring(expanded.data(), length - 1);
+    return value;
+}
+
 // Back up and register the .spm association (HKCU, so no machine-wide risk).
 bool SetSpmAssociation(const std::wstring& launcher) {
     const wchar_t* progId = L"SpeedTreeChinese.spm";
@@ -320,20 +400,37 @@ bool Install(InstallerState& st) {
         if (!WriteFileFromPayload(target, e, payload)) return false;
     }
 
-    // Create Desktop + Start Menu "SpeedTree 中文版" shortcuts.
+    // Create Desktop + Start Menu "SpeedTree 中文版" shortcuts in the
+    // interactive user's real folders (handles elevation + OneDrive redirect).
     std::wstring launcher = dir + L"\\SpeedTreeChineseLauncher.exe";
     std::wstring name = L"SpeedTree 中文版";
     if (IsFile(launcher)) {
-        PWSTR p = nullptr;
-        if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Desktop, 0, nullptr, &p)) && p) {
-            const std::wstring lnk = std::wstring(p) + L"\\" + name + L".lnk";
-            if (CreateShortcut(lnk, launcher, dir)) GrantShortcutAccess(lnk);
-            CoTaskMemFree(p);
+        // Per-user Desktop, resolved from the interactive user's SID.
+        std::wstring desktop = InteractiveUserShellFolder(L"Desktop");
+        if (desktop.empty()) {
+            PWSTR p = nullptr;
+            if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Desktop, 0, nullptr, &p)) && p) {
+                desktop = p;
+                CoTaskMemFree(p);
+            }
         }
-        if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_CommonStartMenu, 0, nullptr, &p)) && p) {
-            const std::wstring lnk = std::wstring(p) + L"\\" + name + L".lnk";
+        if (!desktop.empty()) {
+            const std::wstring lnk = desktop + L"\\" + name + L".lnk";
             if (CreateShortcut(lnk, launcher, dir)) GrantShortcutAccess(lnk);
-            CoTaskMemFree(p);
+        }
+        // Per-user Start Menu (unlike FOLDERID_CommonStartMenu, which is shared
+        // and needs admin). Use the interactive user's Programs folder.
+        std::wstring programs = InteractiveUserShellFolder(L"Programs");
+        if (programs.empty()) {
+            PWSTR p = nullptr;
+            if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Programs, 0, nullptr, &p)) && p) {
+                programs = p;
+                CoTaskMemFree(p);
+            }
+        }
+        if (!programs.empty()) {
+            const std::wstring lnk = programs + L"\\" + name + L".lnk";
+            if (CreateShortcut(lnk, launcher, dir)) GrantShortcutAccess(lnk);
         }
     }
     SetSpmAssociation(launcher);
@@ -350,15 +447,27 @@ bool Uninstall(InstallerState& st) {
     // Remove empty translations dir if present.
     std::wstring tr = dir + L"\\translations";
     if (IsDir(tr)) RemoveDirectoryW(tr.c_str());
-    // Remove shortcuts.
-    PWSTR p = nullptr;
+    // Remove shortcuts from the interactive user's folders (the place the
+    // installer actually wrote them to).
     std::wstring name = L"SpeedTree 中文版.lnk";
-    if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Desktop, 0, nullptr, &p)) && p) {
-        DeleteFileW((std::wstring(p) + L"\\" + name).c_str()); CoTaskMemFree(p);
+    std::wstring desktop = InteractiveUserShellFolder(L"Desktop");
+    if (desktop.empty()) {
+        PWSTR p = nullptr;
+        if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Desktop, 0, nullptr, &p)) && p) {
+            desktop = p;
+            CoTaskMemFree(p);
+        }
     }
-    if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_CommonStartMenu, 0, nullptr, &p)) && p) {
-        DeleteFileW((std::wstring(p) + L"\\" + name).c_str()); CoTaskMemFree(p);
+    std::wstring programs = InteractiveUserShellFolder(L"Programs");
+    if (programs.empty()) {
+        PWSTR p = nullptr;
+        if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Programs, 0, nullptr, &p)) && p) {
+            programs = p;
+            CoTaskMemFree(p);
+        }
     }
+    if (!desktop.empty()) DeleteFileW((desktop + L"\\" + name).c_str());
+    if (!programs.empty()) DeleteFileW((programs + L"\\" + name).c_str());
     RestoreSpmAssociation();
     return true;
 }
