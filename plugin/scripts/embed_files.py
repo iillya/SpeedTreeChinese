@@ -22,6 +22,7 @@ def payload_files():
     """Native binaries + every filled dictionary (skip the placeholder pool)."""
     files = [
         "SpeedTreeChineseHook.dll",
+        "SpeedTreeChineseHook-qt5.dll",
         "SpeedTreeChineseLauncher.exe",
     ]
     trans = os.path.join(ROOT, "translations")

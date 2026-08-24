@@ -49,7 +49,11 @@
 #include <QtCore/QPointer>
 #include <QtCore/QModelIndex>
 #include <QtCore/QAbstractItemModel>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <QtWidgets/QAction>
+#else
 #include <QtGui/QAction>
+#endif
 #include <QtGui/QPainter>
 #include <QtGui/QFontMetrics>
 #include <QtGui/QTextOption>
@@ -609,9 +613,21 @@ static void hookedQMenuPopup(void* _this, const QPoint& pos, QAction* act) {
     if (g_menuPopup) g_menuPopup(m, pos, act);
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+static const wchar_t* kGuiModule = L"Qt5Gui.dll";
+static const wchar_t* kCoreModule = L"Qt5Core.dll";
+static const wchar_t* kWidgetsModule = L"Qt5Widgets.dll";
+static const wchar_t* kHookDllPrefix = L"SpeedTreeChineseHook";
+#else
+static const wchar_t* kGuiModule = L"Qt6Gui.dll";
+static const wchar_t* kCoreModule = L"Qt6Core.dll";
+static const wchar_t* kWidgetsModule = L"Qt6Widgets.dll";
+static const wchar_t* kHookDllPrefix = L"SpeedTreeChineseHook";
+#endif
+
 static void installMenuHooks() {
     if (g_menuHooked) return;
-    HMODULE w = GetModuleHandleW(L"Qt6Widgets.dll");
+    HMODULE w = GetModuleHandleW(kWidgetsModule);
     if (!w) return;
     g_menuExecP = (QMenuExecP)GetProcAddress(w,
         "?exec@QMenu@@QEAAPEAVQAction@@AEBVQPoint@@PEAV2@@Z");
@@ -630,7 +646,7 @@ static void installMenuHooks() {
         MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
         if (Module32FirstW(snap, &mod)) {
             do {
-                if (_wcsicmp(mod.szModule, L"SpeedTreeChineseHook.dll") == 0) continue;
+                if (_wcsnicmp(mod.szModule, kHookDllPrefix, wcslen(kHookDllPrefix)) == 0) continue;
                 HMODULE h = GetModuleHandleW(mod.szModule);
                 if (!h) continue;
                 for (auto& s : syms)
@@ -1166,7 +1182,7 @@ static void* hookedFontFElide(const QFontMetricsF* fm, QString* result, const QS
 
 static void installFontMeasurementHooks() {
     if (g_fontHooksInstalled) return;
-    HMODULE qtGui = GetModuleHandleW(L"Qt6Gui.dll");
+    HMODULE qtGui = GetModuleHandleW(kGuiModule);
     if (!qtGui) return;
 
     g_fmHAdv = (FmHAdv)GetProcAddress(qtGui,
@@ -1238,8 +1254,8 @@ static void installFontMeasurementHooks() {
         MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
         if (Module32FirstW(snap, &mod)) {
             do {
-                if (_wcsicmp(mod.szModule, L"SpeedTreeChineseHook.dll") == 0) continue;
-                if (_wcsicmp(mod.szModule, L"Qt6Core.dll") == 0) continue;
+                if (_wcsnicmp(mod.szModule, kHookDllPrefix, wcslen(kHookDllPrefix)) == 0) continue;
+                if (_wcsicmp(mod.szModule, kCoreModule) == 0) continue;
                 HMODULE h = GetModuleHandleW(mod.szModule);
                 if (!h) continue;
                 for (auto& s : syms) {
@@ -1255,7 +1271,7 @@ static void installFontMeasurementHooks() {
 
 static void installDrawTextHooks() {
     if (g_hooksInstalled) return;
-    HMODULE qtGui = GetModuleHandleW(L"Qt6Gui.dll");
+    HMODULE qtGui = GetModuleHandleW(kGuiModule);
     if (!qtGui) return;
 
     struct Sym { const char* name; void* orig; void* hook; };
@@ -1297,8 +1313,8 @@ static void installDrawTextHooks() {
                 // MUST include Qt6Widgets/Gui: QComboBox and other Qt-styled
                 // widgets draw their text through Qt's own QPainter::drawText,
                 // which would otherwise escape translation.
-                if (_wcsicmp(mod.szModule, L"SpeedTreeChineseHook.dll") == 0) continue;
-                if (_wcsicmp(mod.szModule, L"Qt6Core.dll") == 0) continue;
+                if (_wcsnicmp(mod.szModule, kHookDllPrefix, wcslen(kHookDllPrefix)) == 0) continue;
+                if (_wcsicmp(mod.szModule, kCoreModule) == 0) continue;
                 HMODULE h = GetModuleHandleW(mod.szModule);
                 if (!h) continue;
                 for (auto& s : syms) {

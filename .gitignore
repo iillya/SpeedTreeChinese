@@ -35,6 +35,7 @@
 plugin/native/
 dist/
 plugin/qt/
+plugin/qt5/
 __pycache__/
 *.pyc
 *.res

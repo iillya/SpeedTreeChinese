@@ -78,9 +78,19 @@ LPTHREAD_START_ROUTINE ResolveLoadLibrary(DWORD pid) {
 int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR cmdLine, int) {
     const std::wstring own = ExePath();
     const std::wstring dir = ParentDir(own);
-    const std::wstring dllPath = dir + L"\\SpeedTreeChineseHook.dll";
     const std::wstring root = FindSpeedTreeRoot(dir);
     const std::wstring exePath = root + L"\\SpeedTree_Modeler.exe";
+
+    // Qt5 builds (SpeedTree 9.x) need the separate Qt5 hook DLL; Qt6 builds
+    // (SpeedTree 10.x) use the default Qt6 hook DLL. Detect by the GUI DLL
+    // that ships beside the executable.
+    std::wstring dllPath = dir + L"\\SpeedTreeChineseHook.dll";
+    if (IsFile(root + L"\\Qt5Gui.dll") &&
+        IsFile(dir + L"\\SpeedTreeChineseHook-qt5.dll")) {
+        dllPath = dir + L"\\SpeedTreeChineseHook-qt5.dll";
+    } else if (IsFile(dir + L"\\SpeedTreeChineseHook.dll")) {
+        dllPath = dir + L"\\SpeedTreeChineseHook.dll";
+    }
 
     if (root.empty() || !IsFile(dllPath) || !IsFile(exePath)) {
         MessageBoxW(nullptr,

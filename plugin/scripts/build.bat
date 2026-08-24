@@ -39,6 +39,19 @@ cl /nologo /O2 /W3 /LD /EHsc /std:c++17 /Zc:__cplusplus /permissive- /utf-8 ^
    user32.lib shell32.lib version.lib
 if errorlevel 1 exit /b 1
 
+echo === Compiling Qt5 hook DLL ===
+if not exist "%ROOT%\qt5\lib\Qt5Widgets.lib" (
+    echo [WARN] Qt5 SDK not found at %ROOT%\qt5; skipping SpeedTree 9.x Qt5 hook.
+) else (
+    cl /nologo /O2 /W3 /LD /EHsc /std:c++17 /Zc:__cplusplus /permissive- /utf-8 ^
+       /I"%ROOT%\qt5\include" ^
+       "%CPP%\hook.cpp" ^
+       /Fe:"%NATIVE%\SpeedTreeChineseHook-qt5.dll" ^
+       /link /IMPLIB:"%NATIVE%\SpeedTreeChineseHook-qt5.lib" ^
+       "%ROOT%\qt5\lib\Qt5Core.lib" "%ROOT%\qt5\lib\Qt5Gui.lib" "%ROOT%\qt5\lib\Qt5Widgets.lib" ^
+       user32.lib shell32.lib version.lib
+)
+
 echo === Compiling launcher ===
 rc /nologo /fo "%NATIVE%\app_icon.res" "%RES%\app_icon.rc"
 if errorlevel 1 exit /b 1

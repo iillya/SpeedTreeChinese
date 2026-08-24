@@ -2,7 +2,7 @@
 
 参考 **substance3d_chinese_translator**（Qt 显示层三层翻译 + sp-translation-v1 词库）
 与 **Toolbag 汉化**（挂起启动 + DLL 注入 + 安装器 + .spm 关联）两套成熟方案，
-为 SpeedTree Modeler 10 做的运行时汉化补丁。
+为 SpeedTree Modeler 10（Qt 6.6）和 SpeedTree 9.x（Qt 5.12）做的运行时汉化补丁。
 
 SpeedTree 没有 Python 插件接口，所以把 substance 的方案改成注入式原生引擎：
 启动器把 Hook DLL 注入进程，Hook 在运行期做显示层翻译。不修改
@@ -51,7 +51,8 @@ SpeedTreeChinese/
 
 ## 构建
 
-前置：VS 2022 C++ 生成工具；Qt 6.5.3 SDK 以 `plugin\qt` ASCII 链接。
+前置：VS 2022 C++ 生成工具；Qt 6.5.3 SDK 以 `plugin\qt` ASCII 链接；
+Qt 5.12.0 MSVC2017 x64 SDK 以 `plugin\qt5` 链接（用于 SpeedTree 9.x / Qt5 版本）。
 
 ```bat
 plugin\scripts\build.bat
