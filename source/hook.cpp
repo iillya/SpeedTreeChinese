@@ -16,10 +16,13 @@
 //  PaintLayer    QPainter::drawText IAT hook for QLabel + custom-painted text.
 //                All 8 overloads return void, so the hook is ABI-safe; it never
 //                double-translates because it skips strings already containing CJK.
-//  MeasureLayer  QFontMetrics/QFontMetricsF IAT hooks: layout measures the
-//                translated (Chinese) width, so sizeHint / eliding follow the
-//                language and the UI width matches when toggling 中/英.
-//  SizeLayer     width reserve (setMinimumWidth) as a sizing supplement.
+//  MeasureLayer  QFontMetrics/QFontMetricsF IAT hooks (incl. QFontMetrics::size
+//                patched by import-name and QFontMetrics::boundingRect(int,...)
+//                which QLabel uses): layout measures the translated width, so
+//                sizeHint / eliding follow the language and UI width matches.
+//  SizeLayer     setMinimumWidth safety floor for QLabel only (rich-text /
+//                subclass edge cases); every other control follows via the
+//                measurement hooks in both directions.
 //  Data model    Never rewritten: no setText/setTabText/setItemText mutations.
 //  Controls      F3 enable/disable, Shift+` write untranslated strings.
 //  API           C exports so a future settings UI / updater can version it.
@@ -1209,6 +1212,7 @@ typedef int (__fastcall* FmHAdvOpt)(const QFontMetrics*, const QString&, const Q
 typedef void* (__fastcall* FmBRectRaw)(const QFontMetrics* self, QRect* result, const QString& text);
 typedef void* (__fastcall* FmBRectOptRaw)(const QFontMetrics* self, QRect* result, const QString& text, const QTextOption& opt);
 typedef void* (__fastcall* FmBRectRectRaw)(const QFontMetrics* self, QRect* result, const QRect& rect, int flags, const QString& text, int tabstops, int* tabarray);
+typedef void* (__fastcall* FmBRectXYWHRaw)(const QFontMetrics* self, QRect* result, int x, int y, int w, int h, int flags, const QString& text, int tabstops, int* tabarray);
 typedef void* (__fastcall* FmSizeRaw)(const QFontMetrics* self, QSize* result, int flags, const QString& text, int tabstops, int* tabarray);
 typedef void* (__fastcall* FmTBRectRaw)(const QFontMetrics* self, QRect* result, const QString& text);
 typedef void* (__fastcall* FmTBRectOptRaw)(const QFontMetrics* self, QRect* result, const QString& text, const QTextOption& opt);
@@ -1229,6 +1233,7 @@ static FmHAdvOpt  g_fmHAdvOpt   = nullptr;
 static FmBRectRaw g_fmBRect     = nullptr;
 static FmBRectOptRaw g_fmBRectOpt = nullptr;
 static FmBRectRectRaw g_fmBRectRect = nullptr;
+static FmBRectXYWHRaw g_fmBRectXYWH = nullptr;
 static FmSizeRaw  g_fmSize      = nullptr;
 static FmTBRectRaw g_fmTBRect   = nullptr;
 static FmTBRectOptRaw g_fmTBRectOpt = nullptr;
@@ -1283,6 +1288,13 @@ static void* hookedFontBRectRect(const QFontMetrics* fm, QRect* result, const QR
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (g_fmBRectRect) g_fmBRectRect(fm, result, r, flags, t, tabstops, tabarray);
+    return result;
+}
+static void* hookedFontBRectXYWH(const QFontMetrics* fm, QRect* result, int x, int y, int w, int h, int flags, const QString& text, int tabstops, int* tabarray) {
+    QString t = text;
+    QString tr = measureText(text);
+    if (!tr.isEmpty()) t = tr;
+    if (g_fmBRectXYWH) g_fmBRectXYWH(fm, result, x, y, w, h, flags, t, tabstops, tabarray);
     return result;
 }
 static void* hookedFontSize(const QFontMetrics* fm, QSize* result, int flags, const QString& text, int tabstops, int* tabarray) {
@@ -1396,6 +1408,8 @@ static void installFontMeasurementHooks() {
         "?boundingRect@QFontMetrics@@QEBA?AVQRect@@AEBVQString@@AEBVQTextOption@@@Z");
     g_fmBRectRect = (FmBRectRectRaw)GetProcAddress(qtGui,
         "?boundingRect@QFontMetrics@@QEBA?AVQRect@@AEBV2@HAEBVQString@@HPEAH@Z");
+    g_fmBRectXYWH = (FmBRectXYWHRaw)GetProcAddress(qtGui,
+        "?boundingRect@QFontMetrics@@QEBA?AVQRect@@HHHHHAEBVQString@@HPEAH@Z");
     g_fmSize = (FmSizeRaw)GetProcAddress(qtGui,
         "?size@QFontMetrics@@QEBA?AVQSize@@HAEBVQString@@HPEAH@Z");
     g_fmTBRect = (FmTBRectRaw)GetProcAddress(qtGui,
@@ -1435,6 +1449,7 @@ static void installFontMeasurementHooks() {
         {"FMBRect",     (void*)g_fmBRect,     (void*)&hookedFontBRect},
         {"FMBRectOpt",  (void*)g_fmBRectOpt,  (void*)&hookedFontBRectOpt},
         {"FMBRectRect", (void*)g_fmBRectRect, (void*)&hookedFontBRectRect},
+        {"FMBRectXYWH", (void*)g_fmBRectXYWH, (void*)&hookedFontBRectXYWH},
         {"FMSize",      (void*)g_fmSize,      (void*)&hookedFontSize},
         {"FMTBRect",    (void*)g_fmTBRect,    (void*)&hookedFontTBRect},
         {"FMTBRectOpt", (void*)g_fmTBRectOpt, (void*)&hookedFontTBRectOpt},
@@ -1707,9 +1722,12 @@ static int scalarFontWidth(const QFontMetrics& fm, const QString& text) {
 
 static int neededWidth(QWidget* w) {
     int need = 0;
-    // SizeLayer: setMinimumWidth for the common text widgets. ChineseProxyStyle
-    // also sizes style-drawn controls; the two simply agree (max) so we keep
-    // this as the reliable baseline and let the proxy style add the rest.
+    // SizeLayer: only QLabel keeps a width floor.  Every other text control is
+    // handled by the QFontMetrics measurement hooks (size / boundingRect /
+    // horizontalAdvance / elidedText), which follow BOTH directions, so a
+    // minimum here would only block the shrink half.  QLabel also has those
+    // hooks (boundingRect(int,int,int,int,int,...)), but it still keeps this
+    // floor as a no-clip guarantee for rich-text / subclass edge cases.
     if (auto* lbl = qobject_cast<QLabel*>(w)) {
         QString src = labelSource(lbl);
         QString tr = translated(src);
@@ -1722,40 +1740,6 @@ static int neededWidth(QWidget* w) {
             if (base < 0) base = 0;
             need = base + trW;
         }
-    } else if (auto* btn = qobject_cast<QAbstractButton*>(w)) {
-        QString src = btn->text();
-        QString tr = translated(src);
-        if (!tr.isEmpty() && tr != src) {
-            QFontMetrics fm(btn->font());
-            int srcW = scalarFontWidth(fm, src);
-            int trW = scalarFontWidth(fm, tr);
-            int hint = btn->sizeHint().width();
-            int base = hint - srcW;
-            if (base < 0) base = 0;
-            need = base + trW;
-        }
-    } else if (auto* tb = qobject_cast<QTabBar*>(w)) {
-        QFontMetrics fm(tb->font());
-        int hint = tb->sizeHint().width();
-        int extra = 0;
-        for (int i = 0; i < tb->count(); ++i) {
-            QString src = tb->tabText(i);
-            QString tr = translated(src);
-            if (!tr.isEmpty() && tr != src)
-                extra += scalarFontWidth(fm, tr) - scalarFontWidth(fm, src);
-        }
-        if (extra > 0) need = hint + extra;
-    } else if (auto* cb = qobject_cast<QComboBox*>(w)) {
-        QFontMetrics fm(cb->font());
-        int hint = cb->sizeHint().width();
-        int extra = 0;
-        for (int i = 0; i < cb->count(); ++i) {
-            QString src = cb->itemText(i);
-            QString tr = translated(src);
-            if (!tr.isEmpty() && tr != src)
-                extra = qMax(extra, scalarFontWidth(fm, tr) - scalarFontWidth(fm, src));
-        }
-        if (extra > 0) need = hint + extra;
     }
     return need;
 }
