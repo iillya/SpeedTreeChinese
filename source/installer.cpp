@@ -90,6 +90,36 @@ bool HasSpeedTreeExe(const std::wstring& dir) {
     return IsFile(dir + L"\\SpeedTree_Modeler.exe");
 }
 
+// Scan Program Files\SpeedTree for any installed "SpeedTree Modeler vX.Y.Z"
+// and return its win64 folder, so the installer defaults to the version that is
+// actually present instead of a hard-coded release (works for 9.x and 10.x).
+std::wstring FindDefaultSpeedTreeDir() {
+    wchar_t pf[MAX_PATH] = {};
+    DWORD len = GetEnvironmentVariableW(L"ProgramFiles", pf, MAX_PATH);
+    if (len == 0 || len >= MAX_PATH)
+        len = GetEnvironmentVariableW(L"ProgramW6432", pf, MAX_PATH);
+    if (len == 0 || len >= MAX_PATH) return L"";
+    const std::wstring scanRoot = std::wstring(pf) + L"\\SpeedTree";
+    WIN32_FIND_DATAW fd{};
+    HANDLE find = FindFirstFileW((scanRoot + L"\\SpeedTree Modeler v*").c_str(), &fd);
+    if (find == INVALID_HANDLE_VALUE) return L"";
+    std::wstring best;
+    do {
+        if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) continue;
+        const std::wstring base = scanRoot + L"\\" + fd.cFileName;
+        for (const wchar_t* sub : {L"win64", L""}) {
+            const std::wstring candidate = sub[0] ? (base + L"\\" + sub) : base;
+            if (IsFile(candidate + L"\\SpeedTree_Modeler.exe")) {
+                best = candidate;
+                break;
+            }
+        }
+        if (!best.empty()) break;
+    } while (FindNextFileW(find, &fd));
+    FindClose(find);
+    return best;
+}
+
 bool CreateShortcut(const std::wstring& lnkPath, const std::wstring& target,
                     const std::wstring& workDir) {
     CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
@@ -258,7 +288,10 @@ bool SetSpmAssociation(const std::wstring& launcher) {
         DWORD cb = sizeof(cur);
         if (RegQueryValueExW(HKEY_CURRENT_USER, L"Software\\Classes\\.spm", nullptr,
                              nullptr, (BYTE*)cur, &cb) == ERROR_SUCCESS) {
-            RegSetValueExW(bk, L"spm_default", 0, REG_SZ, (const BYTE*)cur, (DWORD)(cb + 1));
+            // RegQueryValueExW fills cb with the string size INCLUDING the
+            // terminating NUL, so write cb bytes (not cb+1, which would read
+            // one byte past a full cb-sized buffer and store an extra NUL).
+            RegSetValueExW(bk, L"spm_default", 0, REG_SZ, (const BYTE*)cur, (DWORD)cb);
             DWORD one = 1;
             RegSetValueExW(bk, L"spm_had_default", 0, REG_DWORD, (const BYTE*)&one, sizeof(one));
         } else {
@@ -280,11 +313,7 @@ bool SetSpmAssociation(const std::wstring& launcher) {
     RegSetValueExW(cmd, nullptr, 0, REG_SZ, (const BYTE*)openCmd, (DWORD)((wcslen(openCmd) + 1) * 2));
     RegCloseKey(cmd);
 
-    wchar_t def[512] = {};
-    DWORD dcb = sizeof(def);
-    RegQueryValueExW(HKEY_CURRENT_USER, L"Software\\Classes\\SpeedTreeChinese.spm\\shell\\open\\command",
-                     nullptr, nullptr, (BYTE*)def, &dcb);
-    SHChangeNotify(0x08000000, 0, nullptr, nullptr);
+    SHChangeNotify(SHCNE_ASSOCCHANGED, 0, nullptr, nullptr);
     return true;
 }
 
@@ -303,7 +332,7 @@ void RestoreSpmAssociation() {
                 HKEY hk = nullptr;
                 if (RegCreateKeyExW(HKEY_CURRENT_USER, L"Software\\Classes\\.spm", 0, nullptr,
                                     0, KEY_WRITE, nullptr, &hk, nullptr) == ERROR_SUCCESS) {
-                    RegSetValueExW(hk, nullptr, 0, REG_SZ, (const BYTE*)cur, (DWORD)(cb + 1));
+                    RegSetValueExW(hk, nullptr, 0, REG_SZ, (const BYTE*)cur, (DWORD)cb);
                     RegCloseKey(hk);
                 }
             }
@@ -329,7 +358,7 @@ void RestoreSpmAssociation() {
     }
     // Remove the launcher's "Applications" registration we created.
     RegDeleteTreeW(HKEY_CURRENT_USER, L"Software\\Classes\\Applications\\SpeedTreeChineseLauncher.exe");
-    SHChangeNotify(0x08000000, 0, nullptr, nullptr);
+    SHChangeNotify(SHCNE_ASSOCCHANGED, 0, nullptr, nullptr);
 }
 
 // --- embedded payload ------------------------------------------------------
@@ -372,12 +401,17 @@ bool LoadPayload(InstallerState& st) {
         memcpy(e.sha256, p, 32); p += 32;
         st.entries.push_back(e);
     }
+    // Every payload blob must lie entirely before the manifest/tail, otherwise
+    // WriteFileFromPayload would read into (or past) the manifest region.
+    for (const auto& e : st.entries) {
+        if (e.offset > manifest || e.size > manifest - e.offset) return false;
+    }
     return true;
 }
 
 bool WriteFileFromPayload(const std::wstring& dest, const PayloadEntry& e,
                           const std::vector<BYTE>& payload) {
-    if (e.offset + e.size > payload.size() - 16) return false;
+    if (e.offset > payload.size() || e.size > payload.size() - e.offset) return false;
     HANDLE h = CreateFileW(dest.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
                            FILE_ATTRIBUTE_NORMAL, nullptr);
     if (h == INVALID_HANDLE_VALUE) return false;
@@ -657,8 +691,8 @@ int APIENTRY wWinMain(HINSTANCE hinst, HINSTANCE, PWSTR, int) {
         CoUninitialize();
         return 1;
     }
-    const wchar_t* def = L"C:\\Program Files\\SpeedTree\\SpeedTree Modeler v10.2.0\\win64";
-    if (IsDir(def)) state.dir = def;
+    const std::wstring def = FindDefaultSpeedTreeDir();
+    if (!def.empty()) state.dir = def;
 
     const int operationId = ShowInstallerWindow(hinst, state);
     if (operationId == 0) { CoUninitialize(); return 0; }

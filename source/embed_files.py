@@ -20,6 +20,15 @@ MAGIC = 0x314D4B545343  # "SCSTM1"
 
 def payload_files():
     """Native binaries + every filled dictionary (skip the placeholder pool)."""
+    # Runtime probe/capture outputs are only scaffolding for building the
+    # dictionary: every entry is an empty-valued placeholder, which the hook
+    # deliberately ignores, so shipping them just bloats the installer.
+    skip = {
+        "static_zh.json",
+        "untranslated_captured_zh.json",
+        "tour_untranslated_zh.json",
+        "tr_probe_missing_zh.json",
+    }
     files = [
         "SpeedTreeChineseHook.dll",
         "SpeedTreeChineseLauncher.exe",
@@ -30,7 +39,7 @@ def payload_files():
     trans = os.path.join(ROOT, "translations")
     for path in sorted(glob.glob(os.path.join(trans, "*_zh.json"))):
         name = os.path.basename(path)
-        if name == "static_zh.json":       # placeholder pool, don't ship
+        if name in skip:
             continue
         files.append(os.path.join("translations", name))
     return files

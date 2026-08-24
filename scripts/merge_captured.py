@@ -160,7 +160,12 @@ TR = [
 
 
 def main():
-    cand = json.load(open(SRC, encoding="utf-8"))["translations"]
+    if not os.path.isfile(SRC):
+        sys.exit(f"missing capture file: {SRC}  (ST_TRPROBE was removed; it is no longer auto-generated)")
+    try:
+        cand = json.load(open(SRC, encoding="utf-8"))["translations"]
+    except Exception as e:
+        sys.exit(f"failed to read {SRC}: {e}")
     keys = list(cand.keys())
     if len(keys) != len(TR):
         sys.exit(f"candidate count {len(keys)} != translation count {len(TR)}")

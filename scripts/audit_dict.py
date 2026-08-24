@@ -43,7 +43,7 @@ def main():
     for k, v in d.items():
         if cjk(v):
             byval.setdefault(v, []).append(k)
-    issues["dup-value"] = [v for v, ks in byval.items() if len(ks) > 1]
+    issues["dup-value"] = [(v, ks) for v, ks in byval.items() if len(ks) > 1]
     dropped = []
     for k, v in d.items():
         if not cjk(v):
@@ -65,8 +65,12 @@ def main():
     print("dictionary entries:", len(d))
     for name, lst in issues.items():
         print(f"\n=== {name}: {len(lst)} ===")
-        for s in lst[:40]:
-            print(f"   {s[:56]}  =>  {d.get(s,'')[:32]}")
+        if name == "dup-value":
+            for v, ks in lst[:40]:
+                print(f"   {v[:44]}  <=  {', '.join(k[:26] for k in ks)}")
+        else:
+            for s in lst[:40]:
+                print(f"   {s[:56]}  =>  {d.get(s,'')[:32]}")
 
 
 if __name__ == "__main__":

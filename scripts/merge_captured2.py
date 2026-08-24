@@ -5,6 +5,7 @@ official dictionary.  Index-aligned with translations/untranslated_captured2_zh.
 import json
 import os
 import shutil
+import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "translations", "untranslated_captured2_zh.json")
@@ -183,10 +184,14 @@ TR = [
 
 
 def main():
-    cand = json.load(open(SRC, encoding="utf-8"))["translations"]
+    if not os.path.isfile(SRC):
+        sys.exit(f"missing capture file: {SRC}  (ST_TRPROBE was removed; it is no longer auto-generated)")
+    try:
+        cand = json.load(open(SRC, encoding="utf-8"))["translations"]
+    except Exception as e:
+        sys.exit(f"failed to read {SRC}: {e}")
     keys = list(cand.keys())
     if len(keys) != len(TR):
-        import sys
         sys.exit(f"candidate {len(keys)} != translation {len(TR)}")
     maind = json.load(open(MAIN, encoding="utf-8"))
     trans = maind.setdefault("translations", {})

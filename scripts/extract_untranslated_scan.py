@@ -21,7 +21,6 @@ import re
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SPEEDTREE = r"C:\Program Files\SpeedTree\SpeedTree Modeler v10.2.0\win64"
 DICT = os.path.join(ROOT, "build", "translations", "dictionary_zh.json")
 OUT_UNTRANSLATED = os.path.join(ROOT, "translations", "untranslated_scan_zh.json")
 OUT_CONTEXT = os.path.join(ROOT, "translations", "term_context_zh.json")
@@ -29,6 +28,31 @@ RUNTIME_CAPTURE = os.path.join(ROOT, "translations", "untranslated_captured2_zh.
 IGNORE = {"122.spm"}
 
 MAX_BIN = 200 * 1024 * 1024        # skip a .spm if it decompresses absurdly big
+
+
+def find_speedtree_root():
+    """Return (win64_dir, version_root) for the installed SpeedTree.
+    Scans Program Files\\SpeedTree for any version, so it is not tied to a
+    single release (works for 9.x and 10.x)."""
+    import glob
+    for env in ("ProgramFiles", "ProgramW6432"):
+        pf = os.environ.get(env)
+        if not pf or not os.path.isdir(pf):
+            continue
+        base = os.path.join(pf, "SpeedTree")
+        if not os.path.isdir(base):
+            continue
+        for d in sorted(glob.glob(os.path.join(base, "SpeedTree Modeler v*"))):
+            win64 = os.path.join(d, "win64")
+            if os.path.isfile(os.path.join(win64, "SpeedTree_Modeler.exe")):
+                return win64, d
+            if os.path.isfile(os.path.join(d, "SpeedTree_Modeler.exe")):
+                return d, d
+    return (r"C:\Program Files\SpeedTree\SpeedTree Modeler v10.2.0\win64",
+            r"C:\Program Files\SpeedTree\SpeedTree Modeler v10.2.0")
+
+
+SPEEDTREE, SPMTREE = find_speedtree_root()
 
 
 def _keep_phrase(p):
@@ -128,8 +152,6 @@ def load_dict():
 
 def main():
     d = load_dict()
-    tf = d.setdefault("_freq", 0)   # placeholder, not used
-    del tf
     covered = set(d.keys())
     print(f"dictionary entries: {len(covered)}")
 
@@ -148,10 +170,10 @@ def main():
     print(f"binary strings: {len(term_src)}")
 
     # 2) .spm files
-    spms = find_spm_files(r"C:\Program Files\SpeedTree\SpeedTree Modeler v10.2.0")
+    spms = find_spm_files(SPMTREE)
     for sp in spms:
         for w in scan_spm(sp):
-            rel = os.path.relpath(sp, r"C:\Program Files\SpeedTree\SpeedTree Modeler v10.2.0")
+            rel = os.path.relpath(sp, SPMTREE)
             term_src.setdefault(w, set()).add(os.path.basename(sp))
     print(f".spm files scanned: {len(spms)}")
     print(f"total terms: {len(term_src)}")

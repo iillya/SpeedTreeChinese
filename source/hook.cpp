@@ -22,7 +22,7 @@
 //                sizeHint / eliding follow the language and UI width matches.
 //                This is the whole sizing story -- no setMinimumWidth needed.
 //  Data model    Never rewritten: no setText/setTabText/setItemText mutations.
-//  Controls      F3 enable/disable; ST_TOUR=1 auto-tour, ST_TRPROBE=1 tr() probe.
+//  Controls      F3 enable/disable; Shift+` dumps untranslated text to a JSON.
 //  API           C exports so a future settings UI / updater can version it.
 //
 //  Delivery      launcher.cpp starts SpeedTree_Modeler.exe SUSPENDED, injects
@@ -31,21 +31,17 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <shellapi.h>
+#include <shlobj.h>
 #include <tlhelp32.h>
 #include <string>
 #include <vector>
 #include <map>
 #include <unordered_map>
-#include <unordered_set>
 #include <algorithm>
 #include <set>
 #include <cctype>
-#include <cstdlib>
 #include <utility>
 #include <functional>
-#include <mutex>
-#include <memory>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QMetaObject>
@@ -55,6 +51,9 @@
 #include <QtCore/QTimer>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtCore/QJsonParseError>
 #include <QtCore/QPointer>
 #include <QtCore/QModelIndex>
 #include <QtCore/QAbstractItemModel>
@@ -71,18 +70,16 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QKeySequence>
-#include <QtGui/QContextMenuEvent>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QAbstractItemView>
-#include <QtWidgets/QTreeView>
 #include <QtWidgets/QStyledItemDelegate>
 #include <QtWidgets/QProxyStyle>
 #include <QtWidgets/QStyleFactory>
-#include <QtWidgets/QStyleOption>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QAbstractButton>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QMessageBox>
 #include <QtWidgets/QTabBar>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QComboBox>
@@ -102,6 +99,18 @@ extern "C" __declspec(dllexport) const char* __cdecl st_localizer_version() {
     return "0.1.0";
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+static const wchar_t* kGuiModule = L"Qt5Gui.dll";
+static const wchar_t* kCoreModule = L"Qt5Core.dll";
+static const wchar_t* kWidgetsModule = L"Qt5Widgets.dll";
+static const wchar_t* kHookDllPrefix = L"SpeedTreeChineseHook";
+#else
+static const wchar_t* kGuiModule = L"Qt6Gui.dll";
+static const wchar_t* kCoreModule = L"Qt6Core.dll";
+static const wchar_t* kWidgetsModule = L"Qt6Widgets.dll";
+static const wchar_t* kHookDllPrefix = L"SpeedTreeChineseHook";
+#endif
+
 // ---------------------------------------------------------------------------
 // Global state
 // ---------------------------------------------------------------------------
@@ -118,18 +127,17 @@ static std::vector<std::pair<std::string, std::string>> g_sortedKeys;     // low
 static std::unordered_map<std::string, std::string> g_normCache;          // text -> normalized
 static constexpr size_t kMaxNormCache = 100000;
 
-static std::set<std::string> g_paintSeen;          // untranslated drawText strings
+static std::set<std::string> g_paintSeen;   // untranslated drawText strings (Shift+` dump)
 
 static QString normalizeForMatch(QString text);
 static bool containsCjk(const QString& text);
 static void installAuthorLink();
 static void repaintAll();
 static void refreshLayouts();
-static void runUiTour();
 static bool replaceImports(HMODULE module, void* original, void* replacement);
 static bool replaceImportByName(HMODULE module, const char* name, void* replacement,
                                 void** outOriginal);
-static void installTranslateProbe();
+static void captureUntranslated();
 
 // ---------------------------------------------------------------------------
 // Paths / logging
@@ -623,119 +631,13 @@ static bool isTranslatableString(const QString& s) {
 }
 
 // ---------------------------------------------------------------------------
-// Automatic UI tour (ST_TOUR=1): open-ish pass over the whole live UI so every
-// visible / model-driven string is captured.  Walks all widgets, every menu +
-// submenu + toolbar action, tabs,
-// combo items, line edits, tooltips, and every item-view model row/column
-// (this is where node parameters live), then also merges the drawText strings
-// seen since launch.  Writes the missing (untranslated) strings to
-// <plugin>\translations\tour_untranslated_zh.json.
+// Manual untranslated-text sniffer (Shift + `): walk the live UI read-only and
+// append every English string not yet in the dictionary to the user's Desktop
+// as <Desktop>\untranslated_zh.json (sp-translation-v1, empty values).  Each
+// press only ADDS entries that aren't already there, never overwrites existing
+// ones (so manually filled values survive).  Unlike the old ST_TOUR/ST_TRPROBE
+// probes it never mutates the UI and only runs on hotkey.
 // ---------------------------------------------------------------------------
-static bool g_tourActive = false;
-
-// Open/expand the UI so lazy content is created, capturing after each step.
-// Runs on the GUI thread.  Safe: only expands views and cycles tabs/combos,
-// restoring the previous selection afterwards.  Context menus / modal dialogs
-// are NOT auto-triggered here (they can block); they are captured on Show.
-static void autoOpenPanels() {
-    // Safe, read-only capture.  Node parameters live in the tree models and are
-    // materialized by expandAll(); runUiTour() then walks every widget + model
-    // (read-only).  We deliberately do NOT cycle tab bars / combo boxes or open
-    // context menus here -- those mutate UI state and can crash SpeedTree.
-    for (QWidget* w : QApplication::allWidgets())
-        if (auto* tv = qobject_cast<QTreeView*>(w)) tv->expandAll();
-    QApplication::processEvents();
-    runUiTour();
-}
-
-// --- menu capture: any QMenu shown via exec/popup is recorded (untranslated),
-//     and while the auto-tour is active context menus are auto-closed so the
-//     synthetic right-click triggering below never blocks the GUI thread.
-typedef QAction* (__fastcall* QMenuExecP)(void*, const QPoint&, QAction*);
-typedef QAction* (__fastcall* QMenuExec0)(void*);
-typedef void     (__fastcall* QMenuPopup)(void*, const QPoint&, QAction*);
-static QMenuExecP  g_menuExecP  = nullptr;
-static QMenuExec0  g_menuExec0  = nullptr;
-static QMenuPopup  g_menuPopup  = nullptr;
-static bool        g_menuHooked = false;
-
-static void captureMenu(QMenu* m) {
-    if (!m) return;
-    for (QAction* a : m->actions()) {
-        if (!a->text().isEmpty()) {
-            if (!isTranslatableString(a->text())) continue;
-            std::string k = a->text().trimmed().toUtf8().constData();
-            if (k.empty() || g_translations.count(k)) continue;
-            if (g_paintSeen.size() < 200000) {
-                g_paintSeen.insert(k);
-            }
-        }
-        if (a->menu()) captureMenu(a->menu());
-    }
-}
-
-static QAction* hookedQMenuExecP(void* _this, const QPoint& pos, QAction* act) {
-    auto* m = static_cast<QMenu*>(_this);
-    if (g_tourActive && m) captureMenu(m);
-    return g_menuExecP ? g_menuExecP(m, pos, act) : nullptr;
-}
-static QAction* hookedQMenuExec0(void* _this) {
-    auto* m = static_cast<QMenu*>(_this);
-    if (g_tourActive && m) captureMenu(m);
-    return g_menuExec0 ? g_menuExec0(m) : nullptr;
-}
-static void hookedQMenuPopup(void* _this, const QPoint& pos, QAction* act) {
-    auto* m = static_cast<QMenu*>(_this);
-    if (g_tourActive && m) captureMenu(m);
-    if (g_menuPopup) g_menuPopup(m, pos, act);
-}
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-static const wchar_t* kGuiModule = L"Qt5Gui.dll";
-static const wchar_t* kCoreModule = L"Qt5Core.dll";
-static const wchar_t* kWidgetsModule = L"Qt5Widgets.dll";
-static const wchar_t* kHookDllPrefix = L"SpeedTreeChineseHook";
-#else
-static const wchar_t* kGuiModule = L"Qt6Gui.dll";
-static const wchar_t* kCoreModule = L"Qt6Core.dll";
-static const wchar_t* kWidgetsModule = L"Qt6Widgets.dll";
-static const wchar_t* kHookDllPrefix = L"SpeedTreeChineseHook";
-#endif
-
-static void installMenuHooks() {
-    if (g_menuHooked) return;
-    HMODULE w = GetModuleHandleW(kWidgetsModule);
-    if (!w) return;
-    g_menuExecP = (QMenuExecP)GetProcAddress(w,
-        "?exec@QMenu@@QEAAPEAVQAction@@AEBVQPoint@@PEAV2@@Z");
-    g_menuExec0 = (QMenuExec0)GetProcAddress(w,
-        "?exec@QMenu@@QEAAPEAVQAction@@XZ");
-    g_menuPopup = (QMenuPopup)GetProcAddress(w,
-        "?popup@QMenu@@QEAAXAEBVQPoint@@PEAVQAction@@@Z");
-    struct MSym { void* orig; void* hook; };
-    MSym syms[] = {
-        {(void*)g_menuExecP, (void*)&hookedQMenuExecP},
-        {(void*)g_menuExec0, (void*)&hookedQMenuExec0},
-        {(void*)g_menuPopup, (void*)&hookedQMenuPopup},
-    };
-    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, GetCurrentProcessId());
-    if (snap != INVALID_HANDLE_VALUE) {
-        MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
-        if (Module32FirstW(snap, &mod)) {
-            do {
-                if (_wcsnicmp(mod.szModule, kHookDllPrefix, wcslen(kHookDllPrefix)) == 0) continue;
-                HMODULE h = GetModuleHandleW(mod.szModule);
-                if (!h) continue;
-                for (auto& s : syms)
-                    if (s.orig) replaceImports(h, s.orig, s.hook);
-            } while (Module32NextW(snap, &mod));
-        }
-        CloseHandle(snap);
-    }
-    g_menuHooked = true;
-}
-
-// Synthetically right-click each tree view / large panel so its context menu is
 static void collectMenuActions(QMenu* menu, std::function<void(const QString&)> add) {
     if (!menu) return;
     for (QAction* a : menu->actions()) {
@@ -744,7 +646,7 @@ static void collectMenuActions(QMenu* menu, std::function<void(const QString&)> 
     }
 }
 
-static void runUiTour() {
+static void captureUntranslated() {
     std::map<std::string, std::string> pending;
     auto add = [&](const QString& s) {
         if (!isTranslatableString(s)) return;
@@ -753,6 +655,9 @@ static void runUiTour() {
         pending.emplace(k, "");
     };
     const auto widgets = QApplication::allWidgets();
+    // Cap how many model cells we read on a single press, so an enormously
+    // expanded tree can't stall the GUI thread for seconds.
+    int cellBudget = 200000;
     for (QWidget* w : widgets) {
         if (auto* lbl = qobject_cast<QLabel*>(w)) add(labelSource(lbl));
         if (auto* btn = qobject_cast<QAbstractButton*>(w)) add(btn->text());
@@ -774,13 +679,15 @@ static void runUiTour() {
         if (auto* tb2 = qobject_cast<QToolBar*>(w))
             for (QAction* a : tb2->actions()) add(a->text());
         if (auto* view = qobject_cast<QAbstractItemView*>(w)) {
-            if (view->model()) {
+            if (view->model() && cellBudget > 0) {
                 auto* model = view->model();
                 int rows = model->rowCount(), cols = model->columnCount();
                 if (rows > 0 && rows < 100000 && cols > 0 && cols < 64) {
-                    for (int r = 0; r < rows; ++r)
-                        for (int c = 0; c < cols; ++c)
+                    for (int r = 0; r < rows && cellBudget > 0; ++r)
+                        for (int c = 0; c < cols && cellBudget > 0; ++c) {
                             add(model->data(model->index(r, c), Qt::DisplayRole).toString());
+                            --cellBudget;
+                        }
                 }
             }
         }
@@ -790,27 +697,71 @@ static void runUiTour() {
         if (!s.empty() && !g_translations.count(s))
             pending.emplace(s, "");
 
+    // Save to the user's Desktop so it is easy to find.
+    wchar_t desktop[MAX_PATH] = {};
+    if (FAILED(SHGetFolderPathW(nullptr, CSIDL_DESKTOPDIRECTORY, nullptr, 0, desktop)) ||
+        !desktop[0])
+        return;
+    const std::wstring path = std::wstring(desktop) + L"\\untranslated_zh.json";
+
+    // Load whatever was captured on a previous press so we only ADD new keys
+    // and never clobber existing ones (including any values already filled in).
+    std::map<std::string, std::string> merged;
+    {
+        QFile f(QString::fromStdWString(path));
+        if (f.open(QIODevice::ReadOnly)) {
+            QJsonParseError err{};
+            const QJsonDocument doc = QJsonDocument::fromJson(f.readAll(), &err);
+            if (err.error == QJsonParseError::NoError && doc.isObject()) {
+                const QJsonObject tr = doc.object()
+                                           .value(QLatin1String("translations"))
+                                           .toObject();
+                for (auto it = tr.constBegin(); it != tr.constEnd(); ++it)
+                    merged[it.key().toStdString()] = it.value().toString().toStdString();
+            }
+        }
+    }
+    int added = 0;
+    for (const auto& kv : pending) {
+        if (merged.emplace(kv.first, "").second) ++added;
+    }
+    if (added <= 0) return;   // nothing new this press; leave the file untouched
+
     std::string json = "{\n  \"$schema\": \"sp-translation-v1\",\n"
-                       "  \"id\": \"speedtree-tour\",\n"
+                       "  \"id\": \"speedtree-untranslated\",\n"
                        "  \"language\": \"zh-CN\",\n"
-                       "  \"description\": \"UI 巡检采集的未翻译词条（待填写）\",\n"
+                       "  \"description\": \"Shift+` 增量采集的未翻译词条（待填写）\",\n"
                        "  \"translations\": {\n";
     bool first = true;
-    for (const auto& kv : pending) {
+    for (const auto& kv : merged) {
         if (!first) json += ",\n";
-        json += "    \"" + jsonEscape(kv.first) + "\": \"\""; first = false;
+        json += "    \"" + jsonEscape(kv.first) + "\": \"" + jsonEscape(kv.second) + "\"";
+        first = false;
     }
     json += "\n  }\n}\n";
-    std::wstring dir = SelfDirW() + L"\\translations";
-    CreateDirectoryW(dir.c_str(), nullptr);
-    std::wstring path = dir + L"\\tour_untranslated_zh.json";
     HANDLE h = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
                            FILE_ATTRIBUTE_NORMAL, nullptr);
+    bool wrote = false;
     if (h != INVALID_HANDLE_VALUE) {
         DWORD wr = 0;
-        WriteFile(h, json.data(), (DWORD)json.size(), &wr, nullptr);
+        wrote = WriteFile(h, json.data(), (DWORD)json.size(), &wr, nullptr) &&
+                wr == json.size();
         CloseHandle(h);
     }
+    if (!wrote) return;
+    // Defer the pop-up until after this key-release event is fully processed, so
+    // a modal dialog is never shown from inside the event filter.
+    const int         addedCount = added;
+    const int         totalCount = static_cast<int>(merged.size());
+    const std::wstring savedPath = path;
+    QTimer::singleShot(0, QApplication::instance(), [addedCount, totalCount, savedPath]() {
+        QMessageBox::information(
+            nullptr, QStringLiteral("未翻译词条"),
+            QStringLiteral("已捕获 ") + QString::number(addedCount) +
+                QStringLiteral(" 条（共 ") + QString::number(totalCount) +
+                QStringLiteral(" 条）。\n已保存到桌面：\n") +
+                QString::fromStdWString(savedPath));
+    });
 }
 
 class TranslatorFilter : public QObject {
@@ -821,6 +772,15 @@ public:
             return false;
         if (event->type() == QEvent::KeyRelease) {
             auto* ke = static_cast<QKeyEvent*>(event);
+            // Shift + ` (the key that also yields ~) dumps untranslated text.
+            // The reported key is Key_AsciiTilde (~) on most layouts, or
+            // Key_QuoteLeft (`) where the shift doesn't remap it: accept both.
+            const bool isTildeKey = ke->key() == Qt::Key_AsciiTilde ||
+                                    ke->key() == Qt::Key_QuoteLeft;
+            if (isTildeKey && (ke->modifiers() & Qt::ShiftModifier)) {
+                captureUntranslated();
+                return true;
+            }
             if (ke->key() == g_toggleKey) {
                 toggleTranslation();
                 return true;
@@ -834,17 +794,6 @@ public:
             if (object && qobject_cast<QMenuBar*>(object) &&
                 event->type() == QEvent::Show)
                 installAuthorLink();
-            // Capture any menu that pops up (incl. right-click context menus):
-            // record its (untranslated) action texts so the UI tour picks them up.
-            if (event->type() == QEvent::Show) {
-                if (auto* menu = qobject_cast<QMenu*>(object))
-                    collectMenuActions(menu, [](const QString& s) {
-                        if (!isTranslatableString(s)) return;
-                        std::string k = s.trimmed().toUtf8().constData();
-                        if (k.empty() || g_translations.count(k)) return;
-                        if (g_paintSeen.size() < 200000) g_paintSeen.insert(k);
-                    });
-            }
         }
         return false;
     }
@@ -932,11 +881,15 @@ static QString translatePaint(QPainter* painter, const QString& text) {
             }
         }
     }
-    // Record untranslated paint strings (custom-drawn property labels, etc.).
-    if (g_tourActive && g_paintSeen.size() < 100000 &&
-        isTranslatableString(text)) {
+    // Record untranslated paint strings (custom-drawn property labels, etc.)
+    // so Shift+` can dump them.  Bounded so a long session never grows without
+    // limit.  Re-check the set first so a string that is repainted every frame
+    // only pays the expensive isTranslatableString() on its first appearance.
+    if (g_paintSeen.size() < 100000) {
         std::string k = text.trimmed().toUtf8().constData();
-        if (!k.empty()) g_paintSeen.insert(k);
+        if (!k.empty() && g_paintSeen.find(k) == g_paintSeen.end() &&
+            isTranslatableString(text))
+            g_paintSeen.insert(k);
     }
     return {};
 }
@@ -1441,141 +1394,10 @@ static void installDrawTextHooks() {
 }
 
 // ---------------------------------------------------------------------------
-// tr() coverage probe (ST_TRPROBE=1).
-//
-// SpeedTree is built with Qt's standard i18n (its binaries import
-// QCoreApplication::translate and changeEvent), so a chunk of the UI is
-// translated through QObject::tr().  THAT path is what a native QTranslator can
-// cover -- with real text (so layout/width follows) and automatic
-// LanguageChange on switch -- far more cleanly than the paint-level hooks.
-//
-// This diagnostic patches every module's IAT slot for QCoreApplication::translate
-// (installed in DllMain, so it catches even the main-window construction tr()
-// calls) and records, for every tr() call, the context + source text.  It never
-// substitutes a translation: it falls through to the real translate() so the
-// existing display-layer hooks keep rendering Chinese while we measure coverage.
-// Results are written to <SelfDir>\translations\tr_probe.json, where each entry
-// is tagged with whether the source already exists in the loaded dictionary
-// (i.e. would be natively covered by a QTranslator built from that dictionary).
-// ---------------------------------------------------------------------------
-typedef void* (__fastcall* TrTranslate)(void* sret, const char* ctx, const char* src,
-                                        const char* dis, int n);
-static TrTranslate g_realTranslate = nullptr;
-static bool        g_trProbe        = false;
-static bool        g_trProbeInstalled = false;
-static std::unique_ptr<std::map<std::string, std::map<std::string, int>>> g_trProbeHits;
-static std::mutex  g_trProbeMutex;
-
-static void writeTrProbe() {
-    if (!g_trProbe) return;
-    std::map<std::string, std::pair<std::string, int>> rows; // key -> (src,count); ctx folded in key
-    {
-        std::lock_guard<std::mutex> lk(g_trProbeMutex);
-        if (!g_trProbeHits) return;
-        for (const auto& ctxKV : *g_trProbeHits) {
-            for (const auto& srcKV : ctxKV.second)
-                rows[ctxKV.first + "||" + srcKV.first] = {srcKV.first, srcKV.second};
-        }
-    }
-    if (rows.empty()) return;
-
-    int total = 0, inDict = 0;
-    std::string json = "{\n  \"$schema\": \"tr-probe-v1\",\n"
-                       "  \"language\": \"zh-CN\",\n"
-                       "  \"description\": \"SpeedTree QObject::tr() coverage probe\",\n"
-                       "  \"translations\": {\n";
-    bool first = true;
-    for (const auto& kv : rows) {
-        const std::string& src = kv.second.first;
-        const bool has = g_translations.count(src) != 0;
-        ++total; if (has) ++inDict;
-        if (!first) json += ",\n";
-        // key already contains "context||source"; split for readable output.
-        std::string k = kv.first;
-        size_t sep = k.find("||");
-        std::string ctx = sep == std::string::npos ? "" : k.substr(0, sep);
-        json += "    \"" + jsonEscape(k) + "\": {";
-        json += "\"context\":\"" + jsonEscape(ctx) + "\"";
-        json += ",\"source\":\"" + jsonEscape(src) + "\"";
-        json += ",\"count\":" + std::to_string(kv.second.second);
-        json += ",\"in_dict\":" + std::string(has ? "true" : "false");
-        json += "}";
-        first = false;
-    }
-    json += "\n  }\n}\n";
-
-    std::wstring dir = SelfDirW() + L"\\translations";
-    CreateDirectoryW(dir.c_str(), nullptr);
-    std::wstring path = dir + L"\\tr_probe.json";
-    HANDLE h = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
-                           FILE_ATTRIBUTE_NORMAL, nullptr);
-    if (h != INVALID_HANDLE_VALUE) {
-        DWORD wr = 0;
-        WriteFile(h, json.data(), (DWORD)json.size(), &wr, nullptr);
-        CloseHandle(h);
-    }
-}
-
-static void* __fastcall hookedTranslate(void* sret, const char* ctx, const char* src,
-                                        const char* dis, int n) {
-    if (g_trProbe && src && *src) {
-        std::lock_guard<std::mutex> lk(g_trProbeMutex);
-        if (!g_trProbeHits) g_trProbeHits.reset(new std::map<std::string, std::map<std::string, int>>());
-        const char* c = (ctx && *ctx) ? ctx : "";
-        (*g_trProbeHits)[c][src]++;
-    }
-    if (g_realTranslate) return g_realTranslate(sret, ctx, src, dis, n);
-    return sret; // defensive; never reached because we only install when real is found
-}
-
-static void installTranslateProbe() {
-    if (g_trProbeInstalled) return;
-    HMODULE qtCore = GetModuleHandleW(kCoreModule);
-    if (!qtCore) return;
-    void* real = (void*)GetProcAddress(qtCore,
-        "?translate@QCoreApplication@@SA?AVQString@@PEBD00H@Z");
-    if (!real) real = (void*)GetProcAddress(qtCore,
-        "?translate@QCoreApplication@@SA?AVQString@@PBD00H@Z");
-    if (!real) return;
-    g_realTranslate = (TrTranslate)real;
-
-    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32,
-                                           GetCurrentProcessId());
-    if (snap != INVALID_HANDLE_VALUE) {
-        MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
-        if (Module32FirstW(snap, &mod)) {
-            do {
-                if (_wcsnicmp(mod.szModule, kHookDllPrefix, wcslen(kHookDllPrefix)) == 0) continue;
-                if (_wcsicmp(mod.szModule, kCoreModule) == 0) continue;
-                if (_wcsicmp(mod.szModule, kGuiModule) == 0) continue;
-                if (_wcsicmp(mod.szModule, kWidgetsModule) == 0) continue; // Qt's own tr() calls
-                HMODULE h = GetModuleHandleW(mod.szModule);
-                if (!h) continue;
-                replaceImports(h, real, (void*)&hookedTranslate);
-            } while (Module32NextW(snap, &mod));
-        }
-        CloseHandle(snap);
-    }
-    g_trProbeInstalled = true;
-}
-
-// ---------------------------------------------------------------------------
 // GUI-thread worker: waits for QApplication, then installs the engine.
 // ---------------------------------------------------------------------------
 static const QString kAuthorUrl = QStringLiteral("https://space.bilibili.com/281243426?spm_id_from=333.1007.0.0");
 static const QString kGitHubUrl = QStringLiteral("https://github.com/iillya/SpeedTreeChinese");
-
-// Read a "1"/"0" style environment flag. Uses _dupenv_s so the static CRT
-// buffer from getenv() is never clobbered across the injected threads, and
-// avoids the C4996 deprecation warning.
-static bool envIsTrue(const char* name) {
-    char* val = nullptr;
-    size_t len = 0;
-    if (_dupenv_s(&val, &len, name) != 0) return false;
-    const bool isOne = val && val[0] == '1';
-    free(val);
-    return isOne;
-}
 
 static QString keyName(int key) {
     if (key >= Qt::Key_F1 && key <= Qt::Key_F12)
@@ -1807,20 +1629,6 @@ static void installAuthorLink() {
 }
 
 static void RunOnGuiThread(QApplication* app) {
-    // Automatic UI tour: ST_TOUR=1 collects every live UI string at two points
-    // after launch, so late-loading panels are captured too.
-    if (envIsTrue("ST_TOUR")) {
-        g_tourActive = true;
-        installMenuHooks();
-        // Safe, read-only capture: expand trees (materializes node params) and
-        // walk the widgets + models.  No tab/combo cycling or synthetic
-        // right-clicks (those mutate UI state and can crash SpeedTree).
-        QTimer::singleShot(4000, app, [] { autoOpenPanels(); });
-        auto* tourTimer = new QTimer(app);
-        tourTimer->setInterval(5000);
-        QObject::connect(tourTimer, &QTimer::timeout, [] { runUiTour(); });
-        tourTimer->start();
-    }
     LoadDictionaries();
     installProxyStyle();
     applyTranslations();
@@ -1842,20 +1650,6 @@ static void RunOnGuiThread(QApplication* app) {
     });
     rescanTimer->start();
     QTimer::singleShot(10000, app, [rescanTimer] { rescanTimer->stop(); });
-
-    // tr() coverage probe: ST_TRPROBE=1 records every QObject::tr() call the
-    // app makes (context + source) so we can judge whether a native QTranslator
-    // would cover the current UI.  Dump the snapshot every 3 s and once more on
-    // process exit (see DllMain).
-    if (g_trProbe) {
-        installTranslateProbe();   // re-enumerate for any late-loaded DLLs too
-        auto* probeTimer = new QTimer(app);
-        probeTimer->setInterval(3000);
-        QObject::connect(probeTimer, &QTimer::timeout, [] { writeTrProbe(); });
-        probeTimer->start();
-        writeTrProbe();
-    }
-
 }
 
 static DWORD WINAPI Worker(LPVOID) {
@@ -1883,16 +1677,8 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD reason, LPVOID) {
         DisableThreadLibraryCalls(hinst);
         g_selfModule = hinst;
         g_plugInDir = QString::fromStdWString(SelfDirW());
-        char trProbeVal[8] = {};
-        DWORD trProbeLen = GetEnvironmentVariableA("ST_TRPROBE", trProbeVal, sizeof(trProbeVal));
-        if (trProbeLen == 1 && trProbeVal[0] == '1') {
-            g_trProbe = true;
-            installTranslateProbe();   // as early as possible, before main() runs
-        }
         HANDLE h = CreateThread(nullptr, 0, Worker, nullptr, 0, nullptr);
         if (h) CloseHandle(h);
-    } else if (reason == DLL_PROCESS_DETACH) {
-        if (g_trProbe) writeTrProbe();
     }
     return TRUE;
 }
