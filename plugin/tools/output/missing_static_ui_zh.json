@@ -1,0 +1,27 @@
+{
+  "$schema": "sp-static-missing-ui-v1",
+  "description": "纯静态提取的缺失 UI 词条；不会在运行时提取",
+  "generated_utc": "2026-08-24T09:19:46+00:00",
+  "sources": [
+    "SpeedTree_Modeler.exe",
+    "QtAdvancedDocking.dll",
+    "samples/**/*.spm",
+    "tree_templates/**/*.spm"
+  ],
+  "dictionary": "dictionary_zh.json",
+  "counts": {
+    "static_candidates": 7086,
+    "binary_candidates": 6935,
+    "spm_files_scanned": 77,
+    "spm_candidates": 553,
+    "spm_missing": 61,
+    "already_in_dictionary": 2956,
+    "translations": 0,
+    "translations_from_binary": 0,
+    "translations_from_spm": 0,
+    "review_candidates": 0,
+    "discarded_untrusted": 4130
+  },
+  "translations": {},
+  "review_candidates": []
+}

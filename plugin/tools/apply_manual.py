@@ -27,6 +27,8 @@ def main():
         for k, v in b.items():
             d[k] = v
             n += 1
+    # Confirmed binary-symbol noise; never promote it into the runtime dictionary.
+    d.pop("BOb", None)
     payload = {"$schema":"sp-translation-v1","id":"speedtree-merged","language":"zh-CN",
                "description":"SpeedTree 中文汉化词库（人工精翻版）","translations": d}
     for p in (MAIN, NAT):
