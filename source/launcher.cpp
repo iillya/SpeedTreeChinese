@@ -45,9 +45,32 @@ std::wstring FindSpeedTreeRoot(const std::wstring& start) {
         if (parent.empty() || parent == dir) break;
         dir = parent;
     }
-    const wchar_t* known =
-        L"C:\\Program Files\\SpeedTree\\SpeedTree Modeler v10.2.0\\win64";
-    if (IsFile(std::wstring(known) + L"\\SpeedTree_Modeler.exe")) return known;
+    // Fall back to scanning Program Files\SpeedTree for any installed version
+    // ("SpeedTree Modeler vX.Y.Z\win64"), so the launcher is not tied to one
+    // hard-coded release.
+    wchar_t pf[MAX_PATH] = {};
+    DWORD pfLen = GetEnvironmentVariableW(L"ProgramFiles", pf, MAX_PATH);
+    if (pfLen == 0 || pfLen >= MAX_PATH)
+        pfLen = GetEnvironmentVariableW(L"ProgramW6432", pf, MAX_PATH);
+    if (pfLen && pfLen < MAX_PATH) {
+        const std::wstring root = std::wstring(pf) + L"\\SpeedTree";
+        WIN32_FIND_DATAW fd{};
+        HANDLE h = FindFirstFileW((root + L"\\SpeedTree Modeler v*").c_str(), &fd);
+        if (h != INVALID_HANDLE_VALUE) {
+            do {
+                if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) continue;
+                const std::wstring base = root + L"\\" + fd.cFileName;
+                for (const wchar_t* sub : {L"win64", L""}) {
+                    std::wstring candidate = sub[0] ? (base + L"\\" + sub) : base;
+                    if (IsFile(candidate + L"\\SpeedTree_Modeler.exe")) {
+                        FindClose(h);
+                        return candidate;
+                    }
+                }
+            } while (FindNextFileW(h, &fd));
+            FindClose(h);
+        }
+    }
     return L"";
 }
 
