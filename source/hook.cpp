@@ -454,10 +454,14 @@ public:
         // label is tinted blue (they used to be rich-text links).
         if (text == QStringLiteral("Bilibili神说要凑数汉化") ||
             text == QStringLiteral("Github仓库")) {
-            painter->save();
-            painter->setPen(QColor(0x3B, 0x82, 0xF6));
-            QProxyStyle::drawItemText(painter, rect, flags, pal, enabled, draw, textRole);
-            painter->restore();
+            // The base drawItemText() re-selects the pen from the palette, so a
+            // setPen() here would be overridden.  Pass a palette whose ButtonText
+            // (the role CE_MenuBarItem uses) is blue instead.
+            QPalette p = pal;
+            const QColor blue(0x66, 0xAA, 0xFF);   // same #66aaff as the old links
+            p.setColor(QPalette::WindowText, blue);
+            p.setColor(QPalette::ButtonText, blue);
+            QProxyStyle::drawItemText(painter, rect, flags, p, enabled, draw, textRole);
             return;
         }
         QProxyStyle::drawItemText(painter, rect, flags, pal, enabled,
