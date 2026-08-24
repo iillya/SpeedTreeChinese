@@ -44,7 +44,20 @@ EXTRA_MARKERS = [
     "Deprecated","Detected an entity","Device settings","Did Change","Did not find",
     "Diffie","Digital Creation","Digital Zoom","Directory not empty","Document ",
     "Double hyphen","Draft (active)","ComputeInstance","Computed tile","Consult light",
-    "Contact information","Corrupted","country","Diffie"
+    "Contact information","Corrupted","country","Diffie",
+    "Aperture Format","Chroma Blur","End Of File","End Of Image","E-mail","East or West",
+    "Embree","Focal Plane","Firmware Version","Fluid Ounces","Frequency order","FCurve",
+    "File Color Interpolation","Fragment not allowed","Frame disposal","EndEvent",
+    "Empty input file","Entity element","Entity value","Esc to exit","Exact Zero",
+    "Excessive depth","Extension Request","Extra attributes","Extra compressed data",
+    "Extract Folder","Feet per second squared","Filament","Fixture Identifier",
+    "Flip normal G","Floating-point Absolute","Forbidden bone name","Force fresh login",
+    "Forces (temporarily disabled)","Frame Sampling Count","Frame display time",
+    "Frame disposal","Frame rate (fps)","Frame rate used","Frame top","Frame left",
+    "Frequency order","CSti Color","Deleted Image Count","Display System",
+    "Distance to destination","Documents Description","Duplicate tag","Duration is zero",
+    "Edited","Editorial Update","Embed Media","Embedded Profile","Empty token",
+    "Enable externsions"
 ]
 
 def is_non_speedtree(k):
