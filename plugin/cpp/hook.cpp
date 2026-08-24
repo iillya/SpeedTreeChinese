@@ -840,16 +840,22 @@ class TranslatorFilter : public QObject {
 public:
     using QObject::QObject;
     bool eventFilter(QObject* object, QEvent* event) override {
-        if (!g_enabled && event->type() != QEvent::KeyPress) return false;
+        if (!g_enabled && event->type() != QEvent::KeyPress &&
+            event->type() != QEvent::KeyRelease)
+            return false;
         if (event->type() == QEvent::KeyPress) {
             auto* ke = static_cast<QKeyEvent*>(event);
-            if (ke->key() == g_toggleKey) {
-                toggleTranslation();
-                return true;
-            }
             if ((ke->key() == Qt::Key_QuoteLeft || ke->key() == Qt::Key_AsciiTilde) &&
                 (ke->modifiers() & Qt::ShiftModifier)) {
                 startSniffer();
+                return true;
+            }
+            return false;
+        }
+        if (event->type() == QEvent::KeyRelease) {
+            auto* ke = static_cast<QKeyEvent*>(event);
+            if (ke->key() == g_toggleKey) {
+                toggleTranslation();
                 return true;
             }
             return false;
