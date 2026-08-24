@@ -556,6 +556,16 @@ static QString labelSource(QLabel* lbl) {
 // alone so the resize does not fight the user's own window state.
 static void toggleTranslation() {
     g_enabled = !g_enabled;
+    // Custom-painted controls (SpeedTree's C* bars, ads:: dock tabs) cache the
+    // text-based widths / item positions they measured at startup, then keep
+    // using them after a language switch.  Broadcasting a font change makes
+    // each of them re-measure its content for the new language (Qt widgets
+    // recompute cached text metrics in changeEvent(FontChange)).
+    for (QWidget* w : QApplication::allWidgets()) {
+        if (!w) continue;
+        QEvent ev(QEvent::FontChange);
+        QApplication::sendEvent(w, &ev);
+    }
     refreshLayouts();
     // Force the (persistent) top menu bar to re-measure its action rects on a
     // language switch.  QMenuBar caches those rects and only recomputes them when
