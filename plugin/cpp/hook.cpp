@@ -12,7 +12,7 @@
 //  Layout        3. QFontMetrics/F measurement hooks so sizeHint/eliding see
 //                   Chinese glyph bounds while widget/model text stays English.
 //  Data model    Never rewritten: no setText/setTabText/setItemText mutations.
-//  Controls      F10 enable/disable, F12 write untranslated strings.
+//  Controls      F2 enable/disable, Shift+` write untranslated strings.
 //  API           C exports so a future settings UI / updater can version it.
 //
 //  Delivery      launcher.cpp starts SpeedTree_Modeler.exe SUSPENDED, injects
@@ -99,7 +99,6 @@ static HMODULE   g_selfModule       = nullptr;
 static bool      g_hooksInstalled   = false;
 
 static std::unordered_map<std::string, std::string> g_translations;       // global
-static std::unordered_map<std::string, std::string> g_idTranslations;     // control-ID
 static std::unordered_map<std::string, std::string> g_foldedTranslations; // fuzzy index
 static std::unordered_map<std::string, std::string> g_normCache;          // text -> normalized
 static constexpr size_t kMaxNormCache = 100000;
@@ -243,7 +242,6 @@ static std::string ReadFileBytes(const QString& path) {
 
 static void LoadDictionaries() {
     g_translations.clear();
-    g_idTranslations.clear();
     g_foldedTranslations.clear();
     g_normCache.clear();
     QDir dir(g_plugInDir + "/translations");
@@ -255,9 +253,9 @@ static void LoadDictionaries() {
         std::unordered_map<std::string, std::string> map;
         ParseTranslations(body, map);
         for (const auto& kv : map) {
-            if (kv.first.find("||") != std::string::npos)
-                g_idTranslations[kv.first] = kv.second;
-            else
+            // Control-ID keys ("Parent||Self||objectName||text") are no longer
+            // used by the pure display-layer lookup, so skip them entirely.
+            if (kv.first.find("||") == std::string::npos)
                 g_translations[kv.first] = kv.second;
         }
     }
@@ -265,8 +263,7 @@ static void LoadDictionaries() {
     for (const auto& kv : g_translations)
         g_foldedTranslations[normalizeForMatch(QString::fromUtf8(kv.first.c_str()))
                                  .toUtf8().constData()] = kv.second;
-    Log("dictionaries loaded: global=" + std::to_string(g_translations.size()) +
-        " id=" + std::to_string(g_idTranslations.size()));
+    Log("dictionaries loaded: global=" + std::to_string(g_translations.size()));
 }
 
 // ---------------------------------------------------------------------------
@@ -461,7 +458,7 @@ static void applyWidget(QWidget* w) {
 }
 
 // ---------------------------------------------------------------------------
-// F10 toggle, F12 sniffer (one application event filter)
+// F2 toggle, Shift+` sniffer (one application event filter)
 // ---------------------------------------------------------------------------
 static bool isTranslatableString(const QString& s) {
     QString t = s.trimmed();
@@ -484,7 +481,7 @@ static void collectWidgetStrings(std::map<std::string, std::string>& pending) {
     auto add = [&](const QString& s) {
         if (!isTranslatableString(s)) return;
         std::string k = s.trimmed().toUtf8().constData();
-        if (k.empty() || g_translations.count(k) || g_idTranslations.count(k)) return;
+        if (k.empty() || g_translations.count(k)) return;
         pending.emplace(k, "");
     };
     for (QWidget* w : widgets) {
@@ -583,7 +580,7 @@ static void captureMenu(QMenu* m) {
         if (!a->text().isEmpty()) {
             if (!isTranslatableString(a->text())) continue;
             std::string k = a->text().trimmed().toUtf8().constData();
-            if (k.empty() || g_translations.count(k) || g_idTranslations.count(k)) continue;
+            if (k.empty() || g_translations.count(k)) continue;
             if (g_paintSeen.size() < 200000) {
                 g_paintSeen.insert(k);
                 ++g_menuCaptured;
@@ -717,7 +714,7 @@ static void runUiTour() {
     auto add = [&](const QString& s) {
         if (!isTranslatableString(s)) return;
         std::string k = s.trimmed().toUtf8().constData();
-        if (k.empty() || g_translations.count(k) || g_idTranslations.count(k)) return;
+        if (k.empty() || g_translations.count(k)) return;
         pending.emplace(k, "");
     };
     const auto widgets = QApplication::allWidgets();
@@ -871,8 +868,7 @@ public:
                     collectMenuActions(menu, [](const QString& s) {
                         if (!isTranslatableString(s)) return;
                         std::string k = s.trimmed().toUtf8().constData();
-                        if (k.empty() || g_translations.count(k) ||
-                            g_idTranslations.count(k)) return;
+                        if (k.empty() || g_translations.count(k)) return;
                         if (g_paintSeen.size() < 200000) g_paintSeen.insert(k);
                     });
             }
@@ -888,7 +884,7 @@ typedef void(__fastcall* DrawPoint)(QPainter*, const QPoint&, const QString&);
 typedef void(__fastcall* DrawPointF)(QPainter*, const QPointF&, const QString&);
 typedef void(__fastcall* DrawRect)(QPainter*, const QRect&, int, const QString&, QRect*);
 typedef void(__fastcall* DrawRectFOption)(QPainter*, const QRectF&, const QString&, const QTextOption&);
-typedef void(__fastcall* DrawRectFAlign)(QPainter*, const QRectF&, int, const QString&, QRect*);
+typedef void(__fastcall* DrawRectFAlign)(QPainter*, const QRectF&, int, const QString&, QRectF*);
 typedef void(__fastcall* DrawXY)(QPainter*, int, int, const QString&);
 typedef void(__fastcall* DrawXYWH)(QPainter*, int, int, int, int, int, const QString&, QRect*);
 typedef void(__fastcall* DrawPointF2)(QPainter*, const QPointF&, const QString&, int, int);
@@ -943,7 +939,7 @@ static void hookedDrawRectFOption(QPainter* p, const QRectF& r, const QString& t
     QString tr = translatePaint(t);
     if (g_drawRectFOption) g_drawRectFOption(p, r, tr.isEmpty() ? t : tr, o);
 }
-static void hookedDrawRectFAlign(QPainter* p, const QRectF& r, int f, const QString& t, QRect* br) {
+static void hookedDrawRectFAlign(QPainter* p, const QRectF& r, int f, const QString& t, QRectF* br) {
     QString tr = translatePaint(t);
     if (g_drawRectFAlign) g_drawRectFAlign(p, r, f, tr.isEmpty() ? t : tr, br);
 }
