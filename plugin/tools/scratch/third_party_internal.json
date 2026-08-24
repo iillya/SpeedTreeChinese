@@ -335,6 +335,10 @@
   "Camera": "相机",
   "Opacity range": "不透明度范围",
   "Opacity range map": "不透明度范围贴图",
-  "IOR": "折射率"
+  "IOR": "折射率",
+  "Prim": "基元",
+  "Stiffness": "刚度",
+  "Tropical": "热带",
+  "Trust": "信任"
  }
 }
