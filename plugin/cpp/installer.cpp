@@ -16,6 +16,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <aclapi.h>
 #include <commctrl.h>
 #include <shlobj.h>
 #include <shellapi.h>
@@ -107,6 +108,57 @@ bool CreateShortcut(const std::wstring& lnkPath, const std::wstring& target,
     link->Release();
     CoUninitialize();
     return ok;
+}
+
+// The installer runs elevated (requireAdministrator), so the shortcut it writes
+// is owned by the elevated account. Grant the target user full control on the
+// .lnk so a normal user can always open it; otherwise Windows reports that the
+// item referenced by the shortcut cannot be accessed / no permission.
+bool GrantShortcutAccess(const std::wstring& lnkPath) {
+    HANDLE token = nullptr;
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token)) return false;
+    DWORD required = 0;
+    GetTokenInformation(token, TokenUser, nullptr, 0, &required);
+    std::vector<unsigned char> tokenInfo(required);
+    const bool tokenRead = required > 0 && GetTokenInformation(
+        token, TokenUser, tokenInfo.data(), required, &required) != FALSE;
+    CloseHandle(token);
+    if (!tokenRead) return false;
+    auto* tokenUser = reinterpret_cast<TOKEN_USER*>(tokenInfo.data());
+
+    PSECURITY_DESCRIPTOR securityDescriptor = nullptr;
+    PACL currentDacl = nullptr;
+    if (GetNamedSecurityInfoW(const_cast<wchar_t*>(lnkPath.c_str()), SE_FILE_OBJECT,
+                              DACL_SECURITY_INFORMATION, nullptr, nullptr, &currentDacl,
+                              nullptr, &securityDescriptor) != ERROR_SUCCESS) return false;
+
+    EXPLICIT_ACCESSW access{};
+    access.grfAccessPermissions = GENERIC_ALL | WRITE_DAC | WRITE_OWNER | DELETE;
+    access.grfAccessMode = GRANT_ACCESS;
+    access.grfInheritance = NO_INHERITANCE;
+    access.Trustee.TrusteeForm = TRUSTEE_IS_SID;
+    access.Trustee.TrusteeType = TRUSTEE_IS_USER;
+    access.Trustee.ptstrName = static_cast<LPWSTR>(tokenUser->User.Sid);
+
+    PACL updatedDacl = nullptr;
+    const DWORD aclCreated = SetEntriesInAclW(1, &access, currentDacl, &updatedDacl);
+    bool applied = false;
+    if (aclCreated == ERROR_SUCCESS) {
+        // DACL grant is what makes the shortcut openable; setting the owner is
+        // cosmetic and may fail without SeRestorePrivilege, so apply it
+        // independently and never let it block the access grant.
+        applied = SetNamedSecurityInfoW(
+            const_cast<wchar_t*>(lnkPath.c_str()), SE_FILE_OBJECT,
+            DACL_SECURITY_INFORMATION, nullptr, nullptr, updatedDacl,
+            nullptr) == ERROR_SUCCESS;
+        SetNamedSecurityInfoW(const_cast<wchar_t*>(lnkPath.c_str()), SE_FILE_OBJECT,
+                              OWNER_SECURITY_INFORMATION,
+                              static_cast<PSID>(tokenUser->User.Sid),
+                              nullptr, nullptr, nullptr);
+    }
+    if (updatedDacl) LocalFree(updatedDacl);
+    LocalFree(securityDescriptor);
+    return applied;
 }
 
 // Back up and register the .spm association (HKCU, so no machine-wide risk).
@@ -272,11 +324,13 @@ bool Install(InstallerState& st) {
     if (IsFile(launcher)) {
         PWSTR p = nullptr;
         if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Desktop, 0, nullptr, &p)) && p) {
-            CreateShortcut(std::wstring(p) + L"\\" + name + L".lnk", launcher, dir);
+            const std::wstring lnk = std::wstring(p) + L"\\" + name + L".lnk";
+            if (CreateShortcut(lnk, launcher, dir)) GrantShortcutAccess(lnk);
             CoTaskMemFree(p);
         }
         if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_CommonStartMenu, 0, nullptr, &p)) && p) {
-            CreateShortcut(std::wstring(p) + L"\\" + name + L".lnk", launcher, dir);
+            const std::wstring lnk = std::wstring(p) + L"\\" + name + L".lnk";
+            if (CreateShortcut(lnk, launcher, dir)) GrantShortcutAccess(lnk);
             CoTaskMemFree(p);
         }
     }
