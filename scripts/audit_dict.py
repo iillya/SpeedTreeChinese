@@ -46,11 +46,18 @@ def main():
     issues["dup-value"] = [v for v, ks in byval.items() if len(ks) > 1]
     dropped = []
     for k, v in d.items():
-        if cjk(v) and ("->" in k or "&gt;" in k or "_" in k):
-            kw = len(re.findall(r"[A-Za-z]+", k))
-            cj = len(re.findall(r"[\u4e00-\u9fff]", v))
-            if kw > 2 and cj < kw:
-                dropped.append(k)
+        if not cjk(v):
+            continue
+        if "-&gt;" not in k and "->" not in k and "_" not in k:
+            continue
+        # normalize the arrow/entity so "&gt;" doesn't count as a phantom word "gt"
+        kk = k.replace("-&gt;", "→").replace("->", "→").replace("&gt;", "→")
+        kw = [w for w in re.findall(r"[A-Za-z]+", kk) if len(w) >= 2]
+        cj = len(re.findall(r"[\u4e00-\u9fff]", v))
+        nk = len(re.findall(r"\d+", kk))
+        nv = len(re.findall(r"\d+", v))
+        if kw and cj < len(kw) and nv >= nk:
+            dropped.append(k)
     issues["spm-dropped"] = dropped
     issues["html-missing"] = [k for k, v in d.items()
                               if k.startswith("<") and not v.startswith("<")]

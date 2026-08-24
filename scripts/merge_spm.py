@@ -67,6 +67,16 @@ WORD = {
     "Dead tree": "枯树", "Mature tree": "成熟树", "Mesh detail": "网格细节",
     "GEOMETRY WRAP": "几何包裹", "TEXTURE BAND": "纹理条带",
     "SEASONS EXAMPLE LEAVES": "季节示例叶片", "Spark": "火花", "Web": "网",
+    # fourth expansion (age/extension qualifiers + compound terms left in the audit)
+    "GhostOld": "老幽灵", "GhostYoungish": "稍幼幽灵", "GhostYoungAF": "很幼幽灵",
+    "GhostKindaOld": "偏老幽灵", "Older": "较老", "Extension": "延伸",
+    "GrassBlade": "草叶",
+}
+
+# compound terms that must be matched before word-by-word tokenizing
+COMPOUND = {
+    "Grass Blade": "GrassBlade",
+    "Grass Fronds": "GrassBlade",
 }
 
 
@@ -97,11 +107,13 @@ def _root(w):
 def translate_name(s):
     # e.g. "Bifurcating 2->Leaves 2" / "Base-&gt;Decal 4"
     s = s.replace("-&gt;", "->")
+    for c, r in COMPOUND.items():
+        s = s.replace(c, r)
     parts = re.split(r"([^A-Za-z]+)", s)
     out = []
     for p in parts:
         if not re.search(r"[A-Za-z]", p):
-            out.append("→" if p == "->" else p)
+            out.append(p.replace("->", "→"))
             continue
         # translate the alphabetic root, keep trailing digits
         m = re.match(r"([A-Za-z]+)([A-Za-z0-9._-]*)", p)
@@ -109,25 +121,43 @@ def translate_name(s):
         root = _root(word)
         tr = WORD.get(root) or WORD.get(word)
         out.append((tr if tr else word) + tail)
-    return "".join(out)
+    res = "".join(out)
+    # collapse spaces between CJK morphemes ("分叉 枝" -> "分叉枝")
+    res = re.sub(r"(?<=[\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff→])", "", res)
+    res = re.sub(r"(?<=→)\s+(?=[\u4e00-\u9fff])", "", res)
+    return res
 
 
 def main():
     maind = json.load(open(MAIN, encoding="utf-8"))
     trans = maind.setdefault("translations", {})
     added = 0
-    with open(NAMES, encoding="utf-8") as fh:
-        for line in fh:
-            s = line.strip()
-            if not s or s in trans or _skip(s):
-                continue
-            zh = translate_name(s)
-            if zh and zh != s:
-                trans[s] = zh
-                added += 1
+    if os.path.exists(NAMES):
+        with open(NAMES, encoding="utf-8") as fh:
+            for line in fh:
+                s = line.strip()
+                if not s or s in trans or _skip(s):
+                    continue
+                zh = translate_name(s)
+                if zh and zh != s:
+                    trans[s] = zh
+                    added += 1
+    else:
+        print("note: no _spm_remaining.txt, skipping new-name addition")
+    # re-translate existing connection keys so their values stay in sync
+    # ("-&gt;" -> "→", no leftover English roots, no CJK-interleaved spaces)
+    retr = 0
+    for k in list(trans.keys()):
+        if "-&gt;" not in k:
+            continue
+        zh = translate_name(k)
+        if zh and zh != trans[k]:
+            trans[k] = zh
+            retr += 1
     json.dump(maind, open(MAIN, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     shutil.copyfile(MAIN, os.path.join(ROOT, "build", "translations", "dictionary_zh.json"))
-    print(f"added {added} .spm names; dictionary now {len(trans)} entries")
+    print(f"added {added} .spm names, re-translated {retr} connection keys; "
+          f"dictionary now {len(trans)} entries")
 
 
 if __name__ == "__main__":
