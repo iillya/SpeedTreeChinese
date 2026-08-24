@@ -153,7 +153,7 @@ TR = [
     "<html><head/><body><p>时间线</p></body></html>",
     "<html><head/><body><p>使用此曲线来控制生长动画的整体时间</p></body></html>",
     "帧率",
-    "播放",
+    "回放",
     "所有帧",
 ]
 

@@ -5933,7 +5933,7 @@
     "<html><head/><body><p>Timeline</p></body></html>": "<html><head/><body><p>时间线</p></body></html>",
     "<html><head/><body><p>Use this curve to control the overall timing of the growth animation</p></body></html>": "<html><head/><body><p>使用此曲线来控制生长动画的整体时间</p></body></html>",
     "FPS": "帧率",
-    "Playback": "播放",
+    "Playback": "回放",
     "all frames": "所有帧"
   }
 }
