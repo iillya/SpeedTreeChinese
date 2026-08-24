@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+"""Full audit of the translation dictionary: flag suspicious entries."""
+
+import json
+import os
+import re
+import sys
+
+sys.stdout.reconfigure(encoding="utf-8")
+MAIN = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                    "translations", "dictionary_zh.json")
+
+KNOWN_ACRONYM = {
+    "IK", "RGB", "UV", "AO", "SSS", "LOD", "PBR", "SDK", "SPM", "UE", "UE4",
+    "FBX", "XML", "AI", "CPU", "GPU", "ID", "FX", "HDR", "HDRI", "MDI", "FPS",
+    "GI", "API", "GL", "OpenGL", "VFX", "Cinema", "IX", "NURBS", "SubD",
+    "Substance", "Unity", "YouTube", "Twitter", "Tx", "Cf", "Alpha", "FCurve",
+}
+
+
+def cjk(v):
+    return bool(re.search(r"[\u4e00-\u9fff]", v))
+
+
+def lower_leftover(v):
+    return [w for w in re.findall(r"\b[a-z]{2,}\b", v)
+            if w.lower() not in ("alpha", "beta")]
+
+
+def upper_leftover(v):
+    return [w for w in re.findall(r"\b[A-Za-z]{2,}\b", v)
+            if w.isupper() and w not in KNOWN_ACRONYM]
+
+
+def main():
+    d = json.load(open(MAIN, encoding="utf-8"))["translations"]
+    issues = {}
+    issues["no-cjk"] = [k for k, v in d.items() if not cjk(v)]
+    issues["value==key"] = [k for k, v in d.items() if v.strip() == k]
+    issues["lower-english"] = [k for k, v in d.items() if cjk(v) and lower_leftover(v)]
+    issues["upper-english"] = [k for k, v in d.items() if cjk(v) and upper_leftover(v)]
+    byval = {}
+    for k, v in d.items():
+        if cjk(v):
+            byval.setdefault(v, []).append(k)
+    issues["dup-value"] = [v for v, ks in byval.items() if len(ks) > 1]
+    dropped = []
+    for k, v in d.items():
+        if cjk(v) and ("->" in k or "&gt;" in k or "_" in k):
+            kw = len(re.findall(r"[A-Za-z]+", k))
+            cj = len(re.findall(r"[\u4e00-\u9fff]", v))
+            if kw > 2 and cj < kw:
+                dropped.append(k)
+    issues["spm-dropped"] = dropped
+    issues["html-missing"] = [k for k, v in d.items()
+                              if k.startswith("<") and not v.startswith("<")]
+
+    print("dictionary entries:", len(d))
+    for name, lst in issues.items():
+        print(f"\n=== {name}: {len(lst)} ===")
+        for s in lst[:40]:
+            print(f"   {s[:56]}  =>  {d.get(s,'')[:32]}")
+
+
+if __name__ == "__main__":
+    main()

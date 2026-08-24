@@ -54,6 +54,19 @@ WORD = {
     "Decorative": "装饰", "Mesh": "网格", "Weed": "杂草", "Weeds": "杂草", "umbrella": "伞",
     "Weathered": "风化", "base": "基础", "branch": "枝", "branches": "枝", "roots": "根",
     "Scars_and": "伤疤与", "parent curve": "父曲线", "variance": "方差", "uniform": "统一",
+    # third expansion (words seen as leftover in the audited values)
+    "Big": "大", "Little": "小", "tree": "树", "detail": "细节", "Reference": "参考",
+    "scale": "缩放", "BatchedLeaf": "批叶", "Dead": "枯", "Shoots": "芽", "Peduncle": "花梗",
+    "Root": "根", "BigRoots": "大根", "Middle": "中", "Single": "单", "VineBase": "藤基",
+    "offset": "偏移", "tips": "端部", "small": "小", "Drooping": "下垂", "BrokenBark": "破碎树皮",
+    "Larg": "大", "LeafBranch": "叶枝", "LeafTwigs": "叶梢", "SpanishMoss": "西班牙苔藓",
+    "End": "末端", "GEOMETRY": "几何", "TEXTURE": "纹理", "SEASONS": "季节", "EXAMPLE": "示例",
+    "LEAVES": "叶片", "NAT": "自然", "LOW": "低", "BURN": "烧灼", "Switch": "分支状态",
+    "Poly": "多边形", "mesh": "网格", "tip": "尖端", "camera": "相机", "style": "样式",
+    "font": "字体", "weight": "权重", "Converter": "转换器", "WRAP": "包裹", "BAND": "条带",
+    "Dead tree": "枯树", "Mature tree": "成熟树", "Mesh detail": "网格细节",
+    "GEOMETRY WRAP": "几何包裹", "TEXTURE BAND": "纹理条带",
+    "SEASONS EXAMPLE LEAVES": "季节示例叶片", "Spark": "火花", "Web": "网",
 }
 
 
