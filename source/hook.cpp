@@ -127,6 +127,8 @@ static void repaintAll();
 static void refreshLayouts();
 static void runUiTour();
 static bool replaceImports(HMODULE module, void* original, void* replacement);
+static bool replaceImportByName(HMODULE module, const char* name, void* replacement,
+                                void** outOriginal);
 static void installTranslateProbe();
 
 // ---------------------------------------------------------------------------
@@ -1146,6 +1148,50 @@ static bool replaceImports(HMODULE module, void* original, void* replacement) {
     return replaced;
 }
 
+// Patch the IAT slot in `module` that imports the symbol `name` so it calls
+// `replacement`, and report the ORIGINAL resolved address via *outOriginal.
+// Unlike replaceImports(), this matches by the import NAME, not by address.  That
+// matters for symbols such as QFontMetrics::size which the loader resolves as a
+// normal import (QFontMetrics::size is in Qt6Widgets' IAT pointing into
+// Qt6Gui.dll) even though pefile cannot find "size" in Qt6Gui's export table.
+// Hooking it is what lets the menu bar / group box / header -- which measure
+// text through fm.size() -- re-measure at Chinese width.
+static bool replaceImportByName(HMODULE module, const char* name, void* replacement,
+                                void** outOriginal) {
+    if (outOriginal) *outOriginal = nullptr;
+    auto* base = reinterpret_cast<unsigned char*>(module);
+    auto* dos = reinterpret_cast<IMAGE_DOS_HEADER*>(base);
+    if (dos->e_magic != IMAGE_DOS_SIGNATURE) return false;
+    auto* nt = reinterpret_cast<IMAGE_NT_HEADERS*>(base + dos->e_lfanew);
+    if (nt->Signature != IMAGE_NT_SIGNATURE) return false;
+    const DWORD importRva = nt->OptionalHeader
+        .DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
+    if (!importRva) return false;
+    auto* desc = reinterpret_cast<IMAGE_IMPORT_DESCRIPTOR*>(base + importRva);
+    for (; desc->Name; ++desc) {
+        if (!desc->OriginalFirstThunk || !desc->FirstThunk) continue;
+        auto* oft = reinterpret_cast<IMAGE_THUNK_DATA*>(base + desc->OriginalFirstThunk);
+        auto* ftn = reinterpret_cast<IMAGE_THUNK_DATA*>(base + desc->FirstThunk);
+        for (DWORD i = 0; oft[i].u1.AddressOfData; ++i) {
+            const ULONGLONG ordinalFlag = 0x8000000000000000ULL;   // IMAGE_ORDINAL_FLAG64
+            if (oft[i].u1.AddressOfData & ordinalFlag) continue;    // imported by ordinal
+            const char* pname = reinterpret_cast<const char*>(
+                base + oft[i].u1.AddressOfData + 2);               // skip 2-byte hint
+            if (std::strcmp(pname, name) != 0) continue;
+            void** slot = reinterpret_cast<void**>(&ftn[i].u1.Function);
+            if (outOriginal) *outOriginal = *slot;
+            DWORD old = 0;
+            if (!VirtualProtect(slot, sizeof(void*), PAGE_READWRITE, &old)) return true;
+            *slot = replacement;
+            DWORD ign = 0;
+            VirtualProtect(slot, sizeof(void*), old, &ign);
+            FlushInstructionCache(GetCurrentProcess(), slot, sizeof(void*));
+            return true;
+        }
+    }
+    return false;
+}
+
 // ---------------------------------------------------------------------------
 // QFontMetrics measurement hooks.
 //
@@ -1415,6 +1461,27 @@ static void installFontMeasurementHooks() {
                 if (!h) continue;
                 for (auto& s : syms) {
                     if (s.orig) replaceImports(h, s.orig, s.hook);
+                }
+                // QFontMetrics::size is a normal cross-module import (Qt6Widgets'
+                // import table has "?size@QFontMetrics@@...") but it is NOT listed
+                // in Qt6Gui's export table, so GetProcAddress() returns null and the
+                // Sym loop above skips it.  Its real body then runs unhooked, which
+                // is why the menu bar / group box / header stay English-width even
+                // though they call fm.size().  Patch the import slot by NAME instead
+                // and capture the original address from the slot.
+                {
+                    void* orig = nullptr;
+                    if (replaceImportByName(h,
+                            "?size@QFontMetrics@@QEBA?AVQSize@@HAEBVQString@@HPEAH@Z",
+                            (void*)&hookedFontSize, &orig) && !g_fmSize && orig)
+                        g_fmSize = (FmSizeRaw)orig;
+                }
+                {
+                    void* orig = nullptr;
+                    if (replaceImportByName(h,
+                            "?size@QFontMetricsF@@QEBA?AVQSizeF@@HAEBVQString@@HPEAH@Z",
+                            (void*)&hookedFontFSize, &orig) && !g_fmfSize && orig)
+                        g_fmfSize = (FmFSizeRaw)orig;
                 }
             } while (Module32NextW(snap, &mod));
         }
