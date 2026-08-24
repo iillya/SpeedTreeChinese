@@ -20,9 +20,7 @@
 //                patched by import-name and QFontMetrics::boundingRect(int,...)
 //                which QLabel uses): layout measures the translated width, so
 //                sizeHint / eliding follow the language and UI width matches.
-//  SizeLayer     setMinimumWidth safety floor for QLabel only (rich-text /
-//                subclass edge cases); every other control follows via the
-//                measurement hooks in both directions.
+//                This is the whole sizing story -- no setMinimumWidth needed.
 //  Data model    Never rewritten: no setText/setTabText/setItemText mutations.
 //  Controls      F3 enable/disable, Shift+` write untranslated strings.
 //  API           C exports so a future settings UI / updater can version it.
@@ -1704,66 +1702,9 @@ static void repaintAll() {
     for (QWidget* w : QApplication::topLevelWidgets()) w->update();
 }
 
-struct WidthReserve {
-    QPointer<QWidget> widget;
-    int originalMin = 0;
-};
-static std::vector<WidthReserve> g_widthReserve;
-
-static WidthReserve* findWidthReserve(QWidget* w) {
-    for (auto& e : g_widthReserve)
-        if (e.widget == w) return &e;
-    return nullptr;
-}
-
-static int scalarFontWidth(const QFontMetrics& fm, const QString& text) {
-    return fm.horizontalAdvance(text);
-}
-
-static int neededWidth(QWidget* w) {
-    int need = 0;
-    // SizeLayer: only QLabel keeps a width floor.  Every other text control is
-    // handled by the QFontMetrics measurement hooks (size / boundingRect /
-    // horizontalAdvance / elidedText), which follow BOTH directions, so a
-    // minimum here would only block the shrink half.  QLabel also has those
-    // hooks (boundingRect(int,int,int,int,int,...)), but it still keeps this
-    // floor as a no-clip guarantee for rich-text / subclass edge cases.
-    if (auto* lbl = qobject_cast<QLabel*>(w)) {
-        QString src = labelSource(lbl);
-        QString tr = translated(src);
-        if (!tr.isEmpty() && tr != src) {
-            QFontMetrics fm(lbl->font());
-            int srcW = scalarFontWidth(fm, src);
-            int trW = scalarFontWidth(fm, tr);
-            int hint = lbl->sizeHint().width();
-            int base = hint - srcW;
-            if (base < 0) base = 0;
-            need = base + trW;
-        }
-    }
-    return need;
-}
-
-static void applyWidthReserve(QWidget* w) {
-    WidthReserve* e = findWidthReserve(w);
-    int orig = e ? e->originalMin : w->minimumWidth();
-    if (!e) {
-        g_widthReserve.push_back({w, orig});
-        e = &g_widthReserve.back();
-    }
-    int need = neededWidth(w);
-    int target = (g_enabled && need > orig) ? need : orig;
-    if (w->minimumWidth() != target)
-        w->setMinimumWidth(target);
-}
-
 static void refreshLayouts() {
     // Prune bookkeeping for widgets that have been destroyed (dynamic panels
     // come and go), so the vectors stay bounded over a long session.
-    g_widthReserve.erase(
-        std::remove_if(g_widthReserve.begin(), g_widthReserve.end(),
-                       [](const WidthReserve& e) { return !e.widget; }),
-        g_widthReserve.end());
     g_delegates.erase(
         std::remove_if(g_delegates.begin(), g_delegates.end(),
                        [](const QPointer<QStyledItemDelegate>& d) { return !d; }),
@@ -1782,7 +1723,6 @@ static void refreshLayouts() {
         // user actually switches language.
         if (qobject_cast<QMenuBar*>(w) || qobject_cast<QMenu*>(w))
             continue;
-        applyWidthReserve(w);
         if (w) w->updateGeometry();
         if (w && w->layout()) w->layout()->invalidate();
     }
