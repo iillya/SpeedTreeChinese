@@ -50,7 +50,7 @@ cl /nologo /O2 /W3 /EHsc /utf-8 ^
 if errorlevel 1 exit /b 1
 
 echo === Compiling installer (elevated) ===
-cl /nologo /O2 /W3 /EHsc /utf-8 ^
+cl /nologo /O2 /W3 /EHsc /std:c++17 /utf-8 ^
    "%CPP%\installer.cpp" "%NATIVE%\app_icon.res" ^
    /Fe:"%NATIVE%\SpeedTreeChineseInstaller.exe" ^
    /link /SUBSYSTEM:WINDOWS user32.lib shell32.lib ole32.lib gdi32.lib advapi32.lib ^
