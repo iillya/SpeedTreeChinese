@@ -501,7 +501,7 @@ static std::set<QPointer<QAbstractItemView>> g_delegatedViews;
 // ---------------------------------------------------------------------------
 static void applyWidget(QWidget* w);
 
-static void applyTranslations(QApplication* app) {
+static void applyTranslations() {
     if (!g_enabled) return;
     for (QWidget* w : QApplication::allWidgets())
         applyWidget(w);
@@ -578,13 +578,24 @@ static void toggleTranslation() {
     repaintAll();
 }
 
+// Only wrap the view's *genuinely default* delegate. A custom delegate (which
+// SpeedTree uses for its node / property editors) owns its own paint/editor
+// logic; replacing it would silently drop that behavior. Text from custom
+// delegates is still translated at render time by the QStyle + QPainter hooks,
+// so we only need displayText translation for the stock QStyledItemDelegate.
+static bool isDefaultItemDelegate(QAbstractItemView* view) {
+    QAbstractItemDelegate* d = view->itemDelegate();
+    return d && QString::fromLatin1(d->metaObject()->className()) ==
+                    QLatin1String("QStyledItemDelegate");
+}
+
 // Install only the display-layer delegate. Standard controls are handled by
 // drawText hooks, leaving their text properties and sizeHint inputs untouched.
 // Called from the event filter on Show / UpdateRequest / Paint as controls appear.
 static void applyWidget(QWidget* w) {
     if (!w || !g_enabled) return;
     if (auto* view = qobject_cast<QAbstractItemView*>(w)) {
-        if (g_delegatedViews.count(view) == 0) {
+        if (g_delegatedViews.count(view) == 0 && isDefaultItemDelegate(view)) {
             auto* d = new TranslateDelegate(view);
             view->setItemDelegate(d);
             g_delegates.push_back(d);
@@ -781,18 +792,14 @@ static void walkRows(QAbstractItemView* view, const QModelIndex& parent,
 
 static void triggerContextMenus() {
     const auto widgets = QApplication::allWidgets();
-    int views = 0;
     for (QWidget* w : widgets) {
         if (!w || !w->isVisible()) continue;
         // Item views (node/property trees, lists, tables) own the useful context
         // menus; skip generic widgets to avoid opening unintended dialogs.
         auto* view = qobject_cast<QAbstractItemView*>(w);
         if (!view || !view->model()) continue;
-        ++views;
         int budget = 60;
-        int before = (int)g_paintSeen.size();
         walkRows(view, QModelIndex(), 0, budget);
-        int captured = (int)g_paintSeen.size() - before;
     }
 }
 
@@ -933,6 +940,19 @@ static DrawPointF2   g_drawPointF2   = nullptr;
 
 static QString translatePaint(QPainter* painter, const QString& text) {
     if (text.isEmpty() || containsCjk(text)) return {};
+    // Cheap reject for values that can never be UI text (numbers, tiny tokens),
+    // so the expensive QLabel recovery + fuzzy-normalization path is not hit on
+    // every draw (the paint hook runs for every drawText in the whole app).
+    if (text.size() <= 1) return {};
+    bool allValue = true;
+    for (QChar c : text) {
+        if (c.isDigit() || c == QLatin1Char('.') || c == QLatin1Char(',') ||
+            c == QLatin1Char('%') || c == QLatin1Char('-') || c == QLatin1Char('+') ||
+            c == QLatin1Char('e') || c == QLatin1Char('E') || c == QLatin1Char(' '))
+            continue;
+        allValue = false; break;
+    }
+    if (allValue) return {};
     // Recover the FULL source from the painted control (Substance approach):
     // an elided QLabel draws "Mater…" but keeps "Material" in its tooltip /
     // property, so translating the elided fragment misses. Read the complete
@@ -948,18 +968,6 @@ static QString translatePaint(QPainter* painter, const QString& text) {
             }
         }
     }
-    // Cheap reject for values that can never be UI text (numbers, tiny tokens),
-    // so the expensive fuzzy-normalization path is not hit on every draw.
-    if (text.size() <= 1) return {};
-    bool allValue = true;
-    for (QChar c : text) {
-        if (c.isDigit() || c == QLatin1Char('.') || c == QLatin1Char(',') ||
-            c == QLatin1Char('%') || c == QLatin1Char('-') || c == QLatin1Char('+') ||
-            c == QLatin1Char('e') || c == QLatin1Char('E') || c == QLatin1Char(' '))
-            continue;
-        allValue = false; break;
-    }
-    if (allValue) return {};
     QString tr = translated(text);
     if (!tr.isEmpty()) return tr;
     // Elided-text recovery: Qt elides by keeping the head and appending "…", so
@@ -1096,7 +1104,7 @@ static bool replaceImportByName(HMODULE module, const char* name, void* replacem
             void** slot = reinterpret_cast<void**>(&ftn[i].u1.Function);
             if (outOriginal) *outOriginal = *slot;
             DWORD old = 0;
-            if (!VirtualProtect(slot, sizeof(void*), PAGE_READWRITE, &old)) return true;
+            if (!VirtualProtect(slot, sizeof(void*), PAGE_READWRITE, &old)) return false;
             *slot = replacement;
             DWORD ign = 0;
             VirtualProtect(slot, sizeof(void*), old, &ign);
@@ -1120,7 +1128,11 @@ typedef int (__fastcall* FmHAdv)(const QFontMetrics*, const QString&, int);
 typedef int (__fastcall* FmHAdvOpt)(const QFontMetrics*, const QString&, const QTextOption&);
 // MSVC x64 returns QRect/QSize/QString through a hidden sret pointer. The
 // function pointer types below model the raw ABI explicitly: RCX = this,
-// RDX = sret, then the ordinary Qt arguments in registers/stack.
+// RDX = sret, then the ordinary Qt arguments in registers/stack.  This is the
+// MSVC x64 member-function convention and matches SpeedTree's Qt build (which
+// is also MSVC x64); a MinGW or 32-bit build would need different modelling,
+// so we hard-fail the build on anything other than 64-bit.
+static_assert(sizeof(void*) == 8, "SpeedTreeChinese hooks assume MSVC x64 (8-byte pointers)");
 typedef void* (__fastcall* FmBRectRaw)(const QFontMetrics* self, QRect* result, const QString& text);
 typedef void* (__fastcall* FmBRectOptRaw)(const QFontMetrics* self, QRect* result, const QString& text, const QTextOption& opt);
 typedef void* (__fastcall* FmBRectRectRaw)(const QFontMetrics* self, QRect* result, const QRect& rect, int flags, const QString& text, int tabstops, int* tabarray);
@@ -1305,6 +1317,64 @@ static void* hookedFontFElide(const QFontMetricsF* fm, QString* result, const QS
     return result;
 }
 
+// (Re)scan every loaded module and redirect the QFontMetrics measurement
+// imports (and the QFontMetrics::size import-slot).  Idempotent, so it also
+// patches any DLL that loads after the first pass.
+static void patchFontModules() {
+    struct Sym { const char* name; void* orig; void* hook; };
+    Sym syms[] = {
+        {"FMHAdv",      (void*)g_fmHAdv,      (void*)&hookedFontHAdv},
+        {"FMHAdvOpt",   (void*)g_fmHAdvOpt,   (void*)&hookedFontHAdvOpt},
+        {"FMBRect",     (void*)g_fmBRect,     (void*)&hookedFontBRect},
+        {"FMBRectOpt",  (void*)g_fmBRectOpt,  (void*)&hookedFontBRectOpt},
+        {"FMBRectRect", (void*)g_fmBRectRect, (void*)&hookedFontBRectRect},
+        {"FMBRectXYWH", (void*)g_fmBRectXYWH, (void*)&hookedFontBRectXYWH},
+        {"FMSize",      (void*)g_fmSize,      (void*)&hookedFontSize},
+        {"FMTBRect",    (void*)g_fmTBRect,    (void*)&hookedFontTBRect},
+        {"FMTBRectOpt", (void*)g_fmTBRectOpt, (void*)&hookedFontTBRectOpt},
+        {"FMElide",     (void*)g_fmElide,     (void*)&hookedFontElide},
+        {"FMfHAdv",     (void*)g_fmfHAdv,     (void*)&hookedFontFHAdv},
+        {"FMfHAdvOpt",  (void*)g_fmfHAdvOpt,  (void*)&hookedFontFHAdvOpt},
+        {"FMfBRect",    (void*)g_fmfBRect,    (void*)&hookedFontFBRect},
+        {"FMfBRectOpt", (void*)g_fmfBRectOpt, (void*)&hookedFontFBRectOpt},
+        {"FMfBRectRect",(void*)g_fmfBRectRect,(void*)&hookedFontFBRectRect},
+        {"FMfSize",     (void*)g_fmfSize,     (void*)&hookedFontFSize},
+        {"FMfTBRect",   (void*)g_fmfTBRect,   (void*)&hookedFontFTBRect},
+        {"FMfTBRectOpt",(void*)g_fmfTBRectOpt,(void*)&hookedFontFTBRectOpt},
+        {"FMfElide",    (void*)g_fmfElide,    (void*)&hookedFontFElide},
+    };
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, GetCurrentProcessId());
+    if (snap != INVALID_HANDLE_VALUE) {
+        MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
+        if (Module32FirstW(snap, &mod)) {
+            do {
+                if (_wcsnicmp(mod.szModule, kHookDllPrefix, wcslen(kHookDllPrefix)) == 0) continue;
+                if (_wcsicmp(mod.szModule, kCoreModule) == 0) continue;
+                HMODULE h = GetModuleHandleW(mod.szModule);
+                if (!h) continue;
+                for (auto& s : syms) {
+                    if (s.orig) replaceImports(h, s.orig, s.hook);
+                }
+                {
+                    void* orig = nullptr;
+                    if (replaceImportByName(h,
+                            "?size@QFontMetrics@@QEBA?AVQSize@@HAEBVQString@@HPEAH@Z",
+                            (void*)&hookedFontSize, &orig) && !g_fmSize && orig)
+                        g_fmSize = (FmSizeRaw)orig;
+                }
+                {
+                    void* orig = nullptr;
+                    if (replaceImportByName(h,
+                            "?size@QFontMetricsF@@QEBA?AVQSizeF@@HAEBVQString@@HPEAH@Z",
+                            (void*)&hookedFontFSize, &orig) && !g_fmfSize && orig)
+                        g_fmfSize = (FmFSizeRaw)orig;
+                }
+            } while (Module32NextW(snap, &mod));
+        }
+        CloseHandle(snap);
+    }
+}
+
 static void installFontMeasurementHooks() {
     if (g_fontHooksInstalled) return;
     HMODULE qtGui = GetModuleHandleW(kGuiModule);
@@ -1350,96 +1420,15 @@ static void installFontMeasurementHooks() {
     g_fmfElide = (FmFElideRaw)GetProcAddress(qtGui,
         "?elidedText@QFontMetricsF@@QEBA?AVQString@@AEBV2@W4TextElideMode@Qt@@NH@Z");
 
-    // Raw ABI hooks: every struct-return is modelled with an explicit sret
-    // first parameter (RCX), matching the Qt6Gui DLL's MSVC x64 calling
-    // convention. This covers QLabel/QMenu/QComboBox's boundingRect paths,
-    // QPushButton/QTabBar/QMenuBar's size paths, and eliding.
-    struct Sym { const char* name; void* orig; void* hook; };
-    Sym syms[] = {
-        {"FMHAdv",      (void*)g_fmHAdv,      (void*)&hookedFontHAdv},
-        {"FMHAdvOpt",   (void*)g_fmHAdvOpt,   (void*)&hookedFontHAdvOpt},
-        {"FMBRect",     (void*)g_fmBRect,     (void*)&hookedFontBRect},
-        {"FMBRectOpt",  (void*)g_fmBRectOpt,  (void*)&hookedFontBRectOpt},
-        {"FMBRectRect", (void*)g_fmBRectRect, (void*)&hookedFontBRectRect},
-        {"FMBRectXYWH", (void*)g_fmBRectXYWH, (void*)&hookedFontBRectXYWH},
-        {"FMSize",      (void*)g_fmSize,      (void*)&hookedFontSize},
-        {"FMTBRect",    (void*)g_fmTBRect,    (void*)&hookedFontTBRect},
-        {"FMTBRectOpt", (void*)g_fmTBRectOpt, (void*)&hookedFontTBRectOpt},
-        {"FMElide",     (void*)g_fmElide,     (void*)&hookedFontElide},
-        {"FMfHAdv",     (void*)g_fmfHAdv,     (void*)&hookedFontFHAdv},
-        {"FMfHAdvOpt",  (void*)g_fmfHAdvOpt,  (void*)&hookedFontFHAdvOpt},
-        {"FMfBRect",    (void*)g_fmfBRect,    (void*)&hookedFontFBRect},
-        {"FMfBRectOpt", (void*)g_fmfBRectOpt, (void*)&hookedFontFBRectOpt},
-        {"FMfBRectRect",(void*)g_fmfBRectRect,(void*)&hookedFontFBRectRect},
-        {"FMfSize",     (void*)g_fmfSize,     (void*)&hookedFontFSize},
-        {"FMfTBRect",   (void*)g_fmfTBRect,   (void*)&hookedFontFTBRect},
-        {"FMfTBRectOpt",(void*)g_fmfTBRectOpt,(void*)&hookedFontFTBRectOpt},
-        {"FMfElide",    (void*)g_fmfElide,    (void*)&hookedFontFElide},
-    };
-
-    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, GetCurrentProcessId());
-    if (snap != INVALID_HANDLE_VALUE) {
-        MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
-        if (Module32FirstW(snap, &mod)) {
-            do {
-                if (_wcsnicmp(mod.szModule, kHookDllPrefix, wcslen(kHookDllPrefix)) == 0) continue;
-                if (_wcsicmp(mod.szModule, kCoreModule) == 0) continue;
-                HMODULE h = GetModuleHandleW(mod.szModule);
-                if (!h) continue;
-                for (auto& s : syms) {
-                    if (s.orig) replaceImports(h, s.orig, s.hook);
-                }
-                // QFontMetrics::size is a normal cross-module import (Qt6Widgets'
-                // import table has "?size@QFontMetrics@@...") but it is NOT listed
-                // in Qt6Gui's export table, so GetProcAddress() returns null and the
-                // Sym loop above skips it.  Its real body then runs unhooked, which
-                // is why the menu bar / group box / header stay English-width even
-                // though they call fm.size().  Patch the import slot by NAME instead
-                // and capture the original address from the slot.
-                {
-                    void* orig = nullptr;
-                    if (replaceImportByName(h,
-                            "?size@QFontMetrics@@QEBA?AVQSize@@HAEBVQString@@HPEAH@Z",
-                            (void*)&hookedFontSize, &orig) && !g_fmSize && orig)
-                        g_fmSize = (FmSizeRaw)orig;
-                }
-                {
-                    void* orig = nullptr;
-                    if (replaceImportByName(h,
-                            "?size@QFontMetricsF@@QEBA?AVQSizeF@@HAEBVQString@@HPEAH@Z",
-                            (void*)&hookedFontFSize, &orig) && !g_fmfSize && orig)
-                        g_fmfSize = (FmFSizeRaw)orig;
-                }
-            } while (Module32NextW(snap, &mod));
-        }
-        CloseHandle(snap);
-    }
     g_fontHooksInstalled = true;
+    patchFontModules();
 }
 
-static void installDrawTextHooks() {
-    if (g_hooksInstalled) return;
-    HMODULE qtGui = GetModuleHandleW(kGuiModule);
-    if (!qtGui) return;
-
+// (Re)scan every loaded module and redirect its QPainter::drawText imports.
+// Idempotent: replaceImports() only rewrites slots that still point at the
+// ORIGINAL, so re-running patches any DLL that loaded after the first pass.
+static void patchDrawTextModules() {
     struct Sym { const char* name; void* orig; void* hook; };
-    g_drawPoint = (DrawPoint)GetProcAddress(qtGui,
-        "?drawText@QPainter@@QEAAXAEBVQPoint@@AEBVQString@@@Z");
-    g_drawPointF = (DrawPointF)GetProcAddress(qtGui,
-        "?drawText@QPainter@@QEAAXAEBVQPointF@@AEBVQString@@@Z");
-    g_drawRect = (DrawRect)GetProcAddress(qtGui,
-        "?drawText@QPainter@@QEAAXAEBVQRect@@HAEBVQString@@PEAV2@@Z");
-    g_drawRectFOption = (DrawRectFOption)GetProcAddress(qtGui,
-        "?drawText@QPainter@@QEAAXAEBVQRectF@@AEBVQString@@AEBVQTextOption@@@Z");
-    g_drawRectFAlign = (DrawRectFAlign)GetProcAddress(qtGui,
-        "?drawText@QPainter@@QEAAXAEBVQRectF@@HAEBVQString@@PEAV2@@Z");
-    g_drawXY = (DrawXY)GetProcAddress(qtGui,
-        "?drawText@QPainter@@QEAAXHHAEBVQString@@@Z");
-    g_drawXYWH = (DrawXYWH)GetProcAddress(qtGui,
-        "?drawText@QPainter@@QEAAXHHHHHAEBVQString@@PEAVQRect@@@Z");
-    g_drawPointF2 = (DrawPointF2)GetProcAddress(qtGui,
-        "?drawText@QPainter@@QEAAXAEBVQPointF@@AEBVQString@@HH@Z");
-
     Sym syms[] = {
         {"Point",     (void*)g_drawPoint,     (void*)&hookedDrawPoint},
         {"PointF",    (void*)g_drawPointF,    (void*)&hookedDrawPointF},
@@ -1450,8 +1439,6 @@ static void installDrawTextHooks() {
         {"XYWH",      (void*)g_drawXYWH,      (void*)&hookedDrawXYWH},
         {"PointF2",   (void*)g_drawPointF2,   (void*)&hookedDrawPointF2},
     };
-
-    // Patch every loaded non-Qt module's imports (the host exe + SpeedTree DLLs).
     HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, GetCurrentProcessId());
     if (snap != INVALID_HANDLE_VALUE) {
         MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
@@ -1472,7 +1459,30 @@ static void installDrawTextHooks() {
         }
         CloseHandle(snap);
     }
+}
+
+static void installDrawTextHooks() {
+    if (g_hooksInstalled) return;
+    HMODULE qtGui = GetModuleHandleW(kGuiModule);
+    if (!qtGui) return;
+    g_drawPoint = (DrawPoint)GetProcAddress(qtGui,
+        "?drawText@QPainter@@QEAAXAEBVQPoint@@AEBVQString@@@Z");
+    g_drawPointF = (DrawPointF)GetProcAddress(qtGui,
+        "?drawText@QPainter@@QEAAXAEBVQPointF@@AEBVQString@@@Z");
+    g_drawRect = (DrawRect)GetProcAddress(qtGui,
+        "?drawText@QPainter@@QEAAXAEBVQRect@@HAEBVQString@@PEAV2@@Z");
+    g_drawRectFOption = (DrawRectFOption)GetProcAddress(qtGui,
+        "?drawText@QPainter@@QEAAXAEBVQRectF@@AEBVQString@@AEBVQTextOption@@@Z");
+    g_drawRectFAlign = (DrawRectFAlign)GetProcAddress(qtGui,
+        "?drawText@QPainter@@QEAAXAEBVQRectF@@HAEBVQString@@PEAV2@@Z");
+    g_drawXY = (DrawXY)GetProcAddress(qtGui,
+        "?drawText@QPainter@@QEAAXHHAEBVQString@@@Z");
+    g_drawXYWH = (DrawXYWH)GetProcAddress(qtGui,
+        "?drawText@QPainter@@QEAAXHHHHHAEBVQString@@PEAVQRect@@@Z");
+    g_drawPointF2 = (DrawPointF2)GetProcAddress(qtGui,
+        "?drawText@QPainter@@QEAAXAEBVQPointF@@AEBVQString@@HH@Z");
     g_hooksInstalled = true;
+    patchDrawTextModules();
 }
 
 // ---------------------------------------------------------------------------
@@ -1599,6 +1609,18 @@ static void installTranslateProbe() {
 // ---------------------------------------------------------------------------
 static const QString kAuthorUrl = QStringLiteral("https://space.bilibili.com/281243426?spm_id_from=333.1007.0.0");
 static const QString kGitHubUrl = QStringLiteral("https://github.com/iillya/SpeedTreeChinese");
+
+// Read a "1"/"0" style environment flag. Uses _dupenv_s so the static CRT
+// buffer from getenv() is never clobbered across the injected threads, and
+// avoids the C4996 deprecation warning.
+static bool envIsTrue(const char* name) {
+    char* val = nullptr;
+    size_t len = 0;
+    if (_dupenv_s(&val, &len, name) != 0) return false;
+    const bool isOne = val && val[0] == '1';
+    free(val);
+    return isOne;
+}
 
 static QString keyName(int key) {
     if (key >= Qt::Key_F1 && key <= Qt::Key_F12)
@@ -1832,8 +1854,7 @@ static void installAuthorLink() {
 static void RunOnGuiThread(QApplication* app) {
     // Automatic UI tour: ST_TOUR=1 collects every live UI string at two points
     // after launch, so late-loading panels are captured too.
-    const char* tour = std::getenv("ST_TOUR");
-    if (tour && *tour == '1') {
+    if (envIsTrue("ST_TOUR")) {
         g_tourActive = true;
         installMenuHooks();
         // Phase 1: expand trees (+ capture), then cycle tabs & combos (+ capture)
@@ -1848,12 +1869,23 @@ static void RunOnGuiThread(QApplication* app) {
     }
     LoadDictionaries();
     installProxyStyle();
-    applyTranslations(app);
+    applyTranslations();
     installDrawTextHooks();
     installFontMeasurementHooks();
     refreshLayouts();
     app->installEventFilter(new TranslatorFilter(app));
     installAuthorLink();
+
+    // Late-loaded plugin DLLs (e.g. on-demand imports) would otherwise escape the
+    // drawText / font-measurement IAT hooks, which only scan modules at startup.
+    // Periodically re-scan (idempotent, cheap) so those get patched too.
+    auto* rescanTimer = new QTimer(app);
+    rescanTimer->setInterval(2000);
+    QObject::connect(rescanTimer, &QTimer::timeout, [] {
+        patchDrawTextModules();
+        patchFontModules();
+    });
+    rescanTimer->start();
 
     // tr() coverage probe: ST_TRPROBE=1 records every QObject::tr() call the
     // app makes (context + source) so we can judge whether a native QTranslator

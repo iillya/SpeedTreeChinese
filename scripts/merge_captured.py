@@ -11,6 +11,7 @@ Run:  python scripts/merge_captured.py
 import json
 import os
 import shutil
+import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, "translations", "untranslated_captured_zh.json")
@@ -191,5 +192,4 @@ def main():
 
 
 if __name__ == "__main__":
-    import sys
     main()
