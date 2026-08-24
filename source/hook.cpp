@@ -1878,7 +1878,8 @@ static void RunOnGuiThread(QApplication* app) {
 
     // Late-loaded plugin DLLs (e.g. on-demand imports) would otherwise escape the
     // drawText / font-measurement IAT hooks, which only scan modules at startup.
-    // Periodically re-scan (idempotent, cheap) so those get patched too.
+    // Re-scan periodically (idempotent, cheap), but only for the first 10 s after
+    // launch so we don't burn cycles for the whole session.
     auto* rescanTimer = new QTimer(app);
     rescanTimer->setInterval(2000);
     QObject::connect(rescanTimer, &QTimer::timeout, [] {
@@ -1886,6 +1887,7 @@ static void RunOnGuiThread(QApplication* app) {
         patchFontModules();
     });
     rescanTimer->start();
+    QTimer::singleShot(10000, app, [rescanTimer] { rescanTimer->stop(); });
 
     // tr() coverage probe: ST_TRPROBE=1 records every QObject::tr() call the
     // app makes (context + source) so we can judge whether a native QTranslator
