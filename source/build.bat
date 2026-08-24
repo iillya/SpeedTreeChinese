@@ -12,7 +12,7 @@ set "ROOT=%~dp0.."
 set "CPP=%ROOT%\source"
 set "NATIVE=%ROOT%\build"
 set "RES=%ROOT%\icon"
-set "QT=%ROOT%\qt"
+set "QT=%ROOT%\third_party\qt6sdk"
 if not exist "%NATIVE%" mkdir "%NATIVE%"
 set "OBJDIR=%NATIVE%\obj"
 if not exist "%OBJDIR%" mkdir "%OBJDIR%"
@@ -43,8 +43,7 @@ cl /nologo /O2 /W3 /LD /EHsc /std:c++17 /Zc:__cplusplus /permissive- /utf-8 ^
 if errorlevel 1 exit /b 1
 
 echo === Compiling Qt5 hook DLL ===
-set "QT5_SDK=%ROOT%\qt5-sdk"
-if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" set "QT5_SDK=%ROOT%\qt5"
+set "QT5_SDK=%ROOT%\third_party\qt5sdk"
 if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" (
     echo [WARN] Qt5 SDK not found at %ROOT%\qt5-sdk or %ROOT%\qt5; skipping SpeedTree 9.x Qt5 hook.
 ) else (

@@ -34,8 +34,8 @@
 # Build output / runtime artifacts
 build/
 dist/
-qt/
-qt5/
+third_party/
+qt/   # leftover from the old layout (superseded by third_party/; delete it manually)
 __pycache__/
 *.pyc
 *.res
