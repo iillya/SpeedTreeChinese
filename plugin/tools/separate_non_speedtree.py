@@ -33,7 +33,18 @@ EXTRA_MARKERS = [
     "IPSec","roam file","Activation key","Activation database","Activation server",
     "licf","keyf","sCAL","bootstrap","chunk","ImageInfo","codec","bit_depth",
     "Sampling factors","sampleCount","ArResolver","ArResolved","asset resolver",
-    "Deferring","variants","Unifi","Unity","Licens"
+    "Deferring","variants","Unifi","Unity","Licens",
+    "Adaptive Optics","Albedo With","AttValue","Attribute element","Attribute default",
+    "Attribute index","Attribute time","Axis system","BeginWrite","Bearing of",
+    "Blue box","Body serial","Bounce on","Broken pipe","Buffer overflow","Builder Two",
+    "Bytes per","Client rejected","Comment not","Comment too","Connection refused",
+    "Constant Key","Content Location","Country Name","Create Singleton","Crop Hi",
+    "Cubic meters","Customer name","Cycle detected","Data Rate","DataType",
+    "Date Created","DateTime","Debris","Debug XML","Default reached","Demo activation",
+    "Deprecated","Detected an entity","Device settings","Did Change","Did not find",
+    "Diffie","Digital Creation","Digital Zoom","Directory not empty","Document ",
+    "Double hyphen","Draft (active)","ComputeInstance","Computed tile","Consult light",
+    "Contact information","Corrupted","country","Diffie"
 ]
 
 def is_non_speedtree(k):
