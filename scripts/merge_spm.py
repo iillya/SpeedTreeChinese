@@ -4,10 +4,11 @@ and merge them into the official dictionary.  Reads build/_spmnames.txt."""
 
 import json
 import os
+import re
 import shutil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-NAMES = os.path.join(ROOT, "build", "translations", "_spmnames.txt")
+NAMES = os.path.join(ROOT, "build", "translations", "_spm_remaining.txt")
 MAIN = os.path.join(ROOT, "translations", "dictionary_zh.json")
 
 WORD = {
@@ -31,34 +32,71 @@ WORD = {
     "Subd": "细分", "Subdivision": "细分", "Surface": "表面", "Photogrammetry": "摄影测量",
     "Displacement": "置换", "DecalAndMesh": "贴花与网格", "MeshDetail": "网格细节",
     "ConvertInPlace": "原位转换", "Detach": "分离", "Ground": "地面",
+    # second expansion (words seen in the remaining .spm display names)
+    "Cutout": "镂空", "Cutouts": "镂空", "Blade": "叶片", "Blades": "叶片",
+    "Bud": "芽", "Chunk": "块", "Stem": "茎", "Petals": "花瓣", "Petal": "花瓣",
+    "Cluster": "簇", "Needle": "针叶", "Needles": "针叶", "Moss": "苔藓", "Moss_Atlas": "苔藓图集",
+    "Flower": "花", "Flower_Atlas": "花图集", "Oak": "橡树", "Oak_Bud": "橡树芽",
+    "White_Oak": "白橡", "Redbud": "紫荆", "English": "英国", "Eastern": "东部",
+    "Front": "正面", "Front_Season": "正季节", "Ferns": "蕨", "Fern": "蕨",
+    "Ghost": "幽灵", "Ghosts": "幽灵", "KindaOld": "旧一些", "Younger": "较嫩", "Youngish": "稍嫩",
+    "Temp": "临时", "Field": "田野", "Forest": "森林", "BigBranches": "大枝", "SWITCH": "分支状态",
+    "Vine": "藤", "Vines": "藤", "Hanging": "悬挂", "Hagning": "悬挂", "Tendrils": "卷须",
+    "Twig": "细枝", "Knot": "节疤", "Knots": "节疤", "Mature": "成熟", "Sapling": "幼树",
+    "Biome": "生态区", "Fire": "火", "Flooring": "地板", "Bounce": "反弹", "Both": "两者",
+    "Spread": "扩展", "Target": "目标", "Scars": "伤疤", "bumps": "凸起", "Seeds": "种子",
+    "radial": "径向", "Relax": "松弛", "Ripple": "波纹", "Iteration": "迭代", "Inherited": "继承",
+    "weight": "权重", "Upper": "上方", "Lower": "下方", "Main": "主", "middle": "中间",
+    "Ortho": "正交", "Orthographic": "正交", "boxes": "立方体", "sphere": "球体",
+    "attract": "吸引", "first": "先", "second": "再", "grow": "生长", "fill": "填充",
+    "Fill": "填充", "Conversion-Tools": "转换工具", "Decidous": "落叶", "Dirt": "泥土",
+    "Summer": "夏", "Spring": "春", "Fall": "秋", "Winter": "冬", "Season": "季节",
+    "Decorative": "装饰", "Mesh": "网格", "Weed": "杂草", "Weeds": "杂草", "umbrella": "伞",
+    "Weathered": "风化", "base": "基础", "branch": "枝", "branches": "枝", "roots": "根",
+    "Scars_and": "伤疤与", "parent curve": "父曲线", "variance": "方差", "uniform": "统一",
 }
+
+
+def _skip(s):
+    """Strings we should never translate (files, dates, versions, internal codes)."""
+    if re.search(r"\.(png|jpg|jpeg|tga|obj|fbx|hdr|tex|dds)$", s, re.I): return True
+    if re.match(r"(Mon|Tue|Wed|Thu|Fri|Sat|Sun) \w+ \d+ \d{4}", s): return True
+    if re.search(r"\bModeler\b|\bVersion\b|\bv\d+\.\d+", s): return True
+    if re.fullmatch(r"[A-Z][A-Z_A-Z0-9]{3,}", s) and "_" in s: return True   # MATURE_LOW, STUMP_BURN
+    if s.upper() == s and len(s) >= 3 and not s.isdigit(): return True      # NAT, SAPLING_VFX
+    if re.fullmatch(r"^[a-z]{2,6}$", s): return True   # st9, box, rook (lowercase code-ish)
+    if s in ("Quercus robur",): return True            # Latin species name
+    if re.search(r"[()]", s): return True              # "Modeler v9.0.0 RC 3 (Cinema Edition)"
+    if "_" in s and " " not in s: return True          # concatenated internal IDs (GhostOld_Field_Trunk)
+    return False
 
 
 def _root(w):
     w = w.strip()
-    # strip trailing number/suffix like "2", " 1"
-    m = None
-    for key in sorted(WORD, key=len, reverse=True):
-        if w == key or w.startswith(key) or w == key + "s":
-            return key
+    # exact match, or a plural "Name" -> "Names"
+    if w in WORD:
+        return w
+    if w.rstrip("s") in WORD:
+        return w.rstrip("s")
     return w
 
 
 def translate_name(s):
     # e.g. "Bifurcating 2->Leaves 2" / "Base-&gt;Decal 4"
     s = s.replace("-&gt;", "->")
-    parts = s.split("->")
+    parts = re.split(r"([^A-Za-z]+)", s)
     out = []
     for p in parts:
-        p = p.strip()
-        # split "Name Number" -> translate Name, keep number
-        sp = p.rsplit(" ", 1)
-        word, num = (sp[0], sp[1]) if len(sp) == 2 and sp[1].isdigit() else (p, "")
+        if not re.search(r"[A-Za-z]", p):
+            out.append("→" if p == "->" else p)
+            continue
+        # translate the alphabetic root, keep trailing digits
+        m = re.match(r"([A-Za-z]+)([A-Za-z0-9._-]*)", p)
+        word = m.group(1); tail = m.group(2) or ""
         root = _root(word)
         tr = WORD.get(root) or WORD.get(word)
-        seg = (tr if tr else word) + ((" " + num) if num else "")
-        out.append(seg)
-    return "->".join(out)
+        out.append((tr if tr else word) + tail)
+    return "".join(out)
 
 
 def main():
@@ -68,7 +106,7 @@ def main():
     with open(NAMES, encoding="utf-8") as fh:
         for line in fh:
             s = line.strip()
-            if not s or s in trans:
+            if not s or s in trans or _skip(s):
                 continue
             zh = translate_name(s)
             if zh and zh != s:
