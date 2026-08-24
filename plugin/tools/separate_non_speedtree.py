@@ -97,6 +97,16 @@ def is_non_speedtree(k):
         r"Found |Tried |Ignoring|Skipping|Compiling|Building|Generating|"
         r"Couldn't|Cannot|No |Unable|Requires|Require|The following|There was)", k):
         return True
+    # sentence-style embedded errors (mutator verbs / declarative English)
+    if re.match(
+        r"^(All |Allow|Always|Arch|Attribute |Comment |Compression |Connection |"
+        r"Contributes|Controls|Counter|Current|Cycle|Date |Determines|Didn|"
+        r"Directory|Disconnected|Dynamic|Do nothing|Edit Map|Edit Mesh|"
+        r"Content |Convert to|Copy |Control |Color space|Does|Have|Has|Been|Being)",
+        k):
+        return True
+    if re.search(r"\.\s*$", k):
+        return True
     # short non-label tokens / bare operators
     if not re.search(r"[A-Za-z]{3,}", k):
         return True
