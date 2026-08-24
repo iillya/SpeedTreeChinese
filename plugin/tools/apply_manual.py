@@ -20,9 +20,9 @@ def main():
     for k, v in manual_zh.MANUAL.items():
         d[k] = v
         n += 1
-    # merge per-batch hand-authored JSON files (manual_batch_*.json)
-    for p in sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                           "manual_batch_*.json"))):
+    # merge per-batch hand-authored JSON files (manual/manual_batch_*.json)
+    manual_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "manual")
+    for p in sorted(glob.glob(os.path.join(manual_dir, "manual_batch_*.json"))):
         b = json.load(open(p, encoding="utf-8"))
         for k, v in b.items():
             d[k] = v

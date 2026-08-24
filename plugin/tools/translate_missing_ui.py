@@ -12,7 +12,7 @@ import urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 SOURCE = os.path.join(HERE, "output", "missing_static_ui_zh.json")
 CACHE = os.path.join(HERE, "output", "missing_static_ui_translation_cache.json")
-OUTPUT = os.path.join(HERE, "manual_batch_missing_static.json")
+OUTPUT = os.path.join(HERE, "manual", "manual_batch_missing_static.json")
 
 OVERRIDES = {
     "Absolute From Camera": "相对于相机的绝对值",

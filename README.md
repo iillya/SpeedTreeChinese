@@ -37,13 +37,16 @@ SpeedTreeChinese/
 │  ├─ translations/         sp-translation-v1 词库（*_zh.json，8 个）
 │  ├─ resources/            app_icon.rc + speedtree.ico（原版 SpeedTree 图标）
 │  ├─ qt/                   Qt 6.5.3 SDK 的 ASCII 链接（指向 sp插件捆绑 SDK）
+│  ├─ qt5-sdk/              Qt 5.12.0 最小构建 SDK（Qt5 Hook 编译用）
 │  ├─ scripts/
 │  │  ├─ build.bat          一键编译（Hook/Launcher/Installer，编入图标）
 │  │  └─ embed_files.py     把 DLL/启动器/词库打进安装器（payload，原子替换）
 │  └─ tools/
 │     ├─ extract_ui_strings.py   exe/.spm 静态提取 UI 词条
 │     ├─ build_dictionary.py     由提取清单生成词库骨架
-│     └─ scratch/                提取/分析临时文件（非发布内容）
+│     ├─ manual/                人工翻译批次 JSON（manual_batch_*.json）
+│     ├─ output/                工具输出文件
+│     └─ scratch/               提取/分析临时文件（非发布内容）
 ├─ dist/
 │  └─ SpeedTreeChineseInstaller.exe   发布安装器（含载荷）
 └─ README.md
@@ -52,7 +55,7 @@ SpeedTreeChinese/
 ## 构建
 
 前置：VS 2022 C++ 生成工具；Qt 6.5.3 SDK 以 `plugin\qt` ASCII 链接；
-Qt 5.12.0 MSVC2017 x64 SDK 以 `plugin\qt5` 链接（用于 SpeedTree 9.x / Qt5 版本）。
+Qt 5.12.0 最小构建 SDK 已包含在 `plugin\qt5-sdk`（用于 SpeedTree 9.x / Qt5 版本）。
 
 ```bat
 plugin\scripts\build.bat
