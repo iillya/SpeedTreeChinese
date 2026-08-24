@@ -22,25 +22,27 @@ SpeedTree_Modeler.exe（挂起启动）
             3. 安装后刷新布局，让已有控件按中文字形重新计算尺寸
 ```
 
-安装后的词库位于 `ChineseLauncher/translations/*_zh.json`，命中才替换，未命中保持英文。
+词库位于 `build/translations/dictionary_zh.json`（开发运行）；安装后位于
+`SpeedTree Modeler v10.2.0\win64\translations\`。命中才替换，未命中保持英文。
 
 ## 目录结构
 
 ```text
 SpeedTreeChinese/
-├─ plugin/
-│  ├─ cpp/
-│  │  ├─ hook.cpp           原生翻译引擎（词库 + 纯绘制层翻译 + 字体测量 + 嗅探 + 中/英开关）
-│  │  ├─ launcher.cpp       启动器（挂起启动 + 注入 + 恢复）
-│  │  └─ installer.cpp      自包含安装器（GUI、提权、.spm 关联、快捷键、卸载）
-│  ├─ native/               构建产物（Hook.dll、Launcher.exe、Installer.exe、translations 副本）
-│  ├─ translations/         sp-translation-v1 词库（*_zh.json）
-│  ├─ resources/            app_icon.rc + speedtree.ico（原版 SpeedTree 图标）
-│  ├─ qt/                   Qt 6.5.3 SDK 的 ASCII 链接（指向 sp插件捆绑 SDK）
-│  ├─ qt5-sdk/              Qt 5.12.0 最小构建 SDK（Qt5 Hook 编译用）
-│  └─ scripts/
-│     ├─ build.bat          一键编译（Hook/Launcher/Installer，编入图标）
-│     └─ embed_files.py     把 DLL/启动器/词库打进安装器（payload，原子替换）
+├─ cpp/
+│  ├─ hook.cpp              原生翻译引擎（词库 + 绘制层翻译 + 字体测量 + 嗅探 + 中/英开关）
+│  ├─ launcher.cpp          启动器（挂起启动 + 注入 + 恢复）
+│  └─ installer.cpp         自包含安装器（GUI、提权、.spm 关联、快捷键、卸载）
+├─ icon/
+│  ├─ app_icon.rc           图标资源
+│  └─ speedtree.ico         原版 SpeedTree 图标
+├─ qt/                      Qt 6.5.3 SDK 的 ASCII 链接（指向 sp插件捆绑 SDK）
+├─ scripts/
+│  ├─ build.bat             一键编译（Hook/Launcher/Installer，编入图标，复制词库到 build/translations）
+│  └─ embed_files.py        把 DLL/启动器/词库打进安装器（payload，原子替换）
+├─ translations/
+│  └─ dictionary_zh.json    sp-translation-v1 词库（主词典，全部人工精翻）
+├─ build/                   构建产物（Hook.dll、Launcher.exe、Installer.exe、translations 副本）
 ├─ dist/
 │  └─ SpeedTreeChineseInstaller.exe   发布安装器（含载荷）
 └─ README.md

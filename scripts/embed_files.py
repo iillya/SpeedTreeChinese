@@ -13,7 +13,7 @@ import glob
 import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-NATIVE = os.path.join(ROOT, "native")
+NATIVE = os.path.join(ROOT, "build")
 DIST = os.path.join(ROOT, "dist")
 
 MAGIC = 0x314D4B545343  # "SCSTM1"

@@ -5,12 +5,12 @@ rem ---------------------------------------------------------------------------
 rem SpeedTree Chinese Localizer - build script
 rem Prereq: Visual Studio 2022 C++ build tools, and the Qt 6.5.3 SDK linked at
 rem         plugin\qt (an ASCII junction to the Substance plug-in SDK).
-rem Output: plugin\native\* (hook DLL, launcher, installer)
+rem Output: build\* (hook DLL, launcher, installer)
 rem ---------------------------------------------------------------------------
 
 set "ROOT=%~dp0.."
 set "CPP=%ROOT%\cpp"
-set "NATIVE=%ROOT%\native"
+set "NATIVE=%ROOT%\build"
 set "RES=%ROOT%\icon"
 set "QT=%ROOT%\qt"
 if not exist "%NATIVE%" mkdir "%NATIVE%"
