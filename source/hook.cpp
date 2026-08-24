@@ -638,40 +638,14 @@ static bool g_tourActive = false;
 // restoring the previous selection afterwards.  Context menus / modal dialogs
 // are NOT auto-triggered here (they can block); they are captured on Show.
 static void autoOpenPanels() {
-    // 1) Expand every tree view to materialize lazy node rows / parameters.
+    // Safe, read-only capture.  Node parameters live in the tree models and are
+    // materialized by expandAll(); runUiTour() then walks every widget + model
+    // (read-only).  We deliberately do NOT cycle tab bars / combo boxes or open
+    // context menus here -- those mutate UI state and can crash SpeedTree.
     for (QWidget* w : QApplication::allWidgets())
         if (auto* tv = qobject_cast<QTreeView*>(w)) tv->expandAll();
     QApplication::processEvents();
     runUiTour();
-
-    // 2) Cycle each standard tab bar (normal Qt tabs); dock tabs are handled by
-    //    switching the underlying CDockWidgetTab widgets below.
-    for (QWidget* w : QApplication::allWidgets()) {
-        auto* tb = qobject_cast<QTabBar*>(w);
-        if (!tb || tb->count() < 2) continue;
-        const int cur = tb->currentIndex();
-        for (int i = 0; i < tb->count(); ++i) {
-            tb->setCurrentIndex(i);
-            QApplication::processEvents();
-            runUiTour();
-        }
-        tb->setCurrentIndex(cur);
-        QApplication::processEvents();
-    }
-
-    // 3) Cycle every combo box to reveal dependent controls (restore after).
-    for (QWidget* w : QApplication::allWidgets()) {
-        auto* cb = qobject_cast<QComboBox*>(w);
-        if (!cb || cb->count() < 2) continue;
-        const int cur = cb->currentIndex();
-        for (int i = 0; i < cb->count(); ++i) {
-            cb->setCurrentIndex(i);
-            QApplication::processEvents();
-            runUiTour();
-        }
-        cb->setCurrentIndex(cur);
-        QApplication::processEvents();
-    }
 }
 
 // --- menu capture: any QMenu shown via exec/popup is recorded (untranslated),
@@ -766,43 +740,6 @@ static void installMenuHooks() {
 }
 
 // Synthetically right-click each tree view / large panel so its context menu is
-// created, captured by the exec/popup hook, then auto-closed.
-static void walkRows(QAbstractItemView* view, const QModelIndex& parent,
-                     int depth, int& budget) {
-    if (budget <= 0 || depth > 4 || !view->model()) return;
-    QAbstractItemModel* m = view->model();
-    int rows = m->rowCount(parent);
-    for (int r = 0; r < rows && budget > 0; ++r) {
-        QModelIndex idx = m->index(r, 0, parent);
-        if (!idx.isValid()) continue;
-        --budget;
-        view->setCurrentIndex(idx);
-        const QRect rect = view->visualRect(idx);
-        if (!rect.isEmpty()) {
-            QPoint pos = rect.center();
-            QContextMenuEvent ev(QContextMenuEvent::Mouse, pos,
-                                 view->mapToGlobal(pos),
-                                 QApplication::keyboardModifiers());
-            QApplication::sendEvent(view, &ev);
-            QApplication::processEvents();
-        }
-        walkRows(view, idx, depth + 1, budget);
-    }
-}
-
-static void triggerContextMenus() {
-    const auto widgets = QApplication::allWidgets();
-    for (QWidget* w : widgets) {
-        if (!w || !w->isVisible()) continue;
-        // Item views (node/property trees, lists, tables) own the useful context
-        // menus; skip generic widgets to avoid opening unintended dialogs.
-        auto* view = qobject_cast<QAbstractItemView*>(w);
-        if (!view || !view->model()) continue;
-        int budget = 60;
-        walkRows(view, QModelIndex(), 0, budget);
-    }
-}
-
 static void collectMenuActions(QMenu* menu, std::function<void(const QString&)> add) {
     if (!menu) return;
     for (QAction* a : menu->actions()) {
@@ -1178,19 +1115,32 @@ static QString measureText(const QString& text) {
     return translated(text);
 }
 
+// One CJK glyph is roughly the font's em advance.  Measure a representative "中"
+// with the REAL (unhooked) advance so we don't recurse; fall back to the height.
+// Adds a one-CJK-character of slack when the text was translated to Chinese, so
+// Chinese-leaning UI is a touch roomier and never clips.
+static int cjkPad(const QFontMetrics* fm) {
+    if (g_fmHAdv) { int w = g_fmHAdv(fm, QStringLiteral("中"), -1); if (w > 0) return w; }
+    return fm->height();
+}
+static int cjkPadF(const QFontMetricsF* fm) {
+    if (g_fmfHAdv) { qreal w = g_fmfHAdv(fm, QStringLiteral("中"), -1); if (w > 0) return (int)w; }
+    return (int)fm->height();
+}
+
 static int hookedFontHAdv(const QFontMetrics* fm, const QString& text, int len) {
     QString t = text;
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (len >= 0 && len > t.size()) len = static_cast<int>(t.size());
-    if (g_fmHAdv) return g_fmHAdv(fm, t, len);
+    if (g_fmHAdv) return g_fmHAdv(fm, t, len) + (tr.isEmpty() ? 0 : cjkPad(fm));
     return 0;
 }
 static int hookedFontHAdvOpt(const QFontMetrics* fm, const QString& text, const QTextOption& opt) {
     QString t = text;
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
-    if (g_fmHAdvOpt) return g_fmHAdvOpt(fm, t, opt);
+    if (g_fmHAdvOpt) return g_fmHAdvOpt(fm, t, opt) + (tr.isEmpty() ? 0 : cjkPad(fm));
     return 0;
 }
 static void* hookedFontBRect(const QFontMetrics* fm, QRect* result, const QString& text) {
@@ -1198,6 +1148,7 @@ static void* hookedFontBRect(const QFontMetrics* fm, QRect* result, const QStrin
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (g_fmBRect) g_fmBRect(fm, result, t);
+    if (!tr.isEmpty()) result->setWidth(result->width() + cjkPad(fm));
     return result;
 }
 static void* hookedFontBRectOpt(const QFontMetrics* fm, QRect* result, const QString& text, const QTextOption& opt) {
@@ -1205,6 +1156,7 @@ static void* hookedFontBRectOpt(const QFontMetrics* fm, QRect* result, const QSt
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (g_fmBRectOpt) g_fmBRectOpt(fm, result, t, opt);
+    if (!tr.isEmpty()) result->setWidth(result->width() + cjkPad(fm));
     return result;
 }
 static void* hookedFontBRectRect(const QFontMetrics* fm, QRect* result, const QRect& r, int flags, const QString& text, int tabstops, int* tabarray) {
@@ -1212,6 +1164,7 @@ static void* hookedFontBRectRect(const QFontMetrics* fm, QRect* result, const QR
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (g_fmBRectRect) g_fmBRectRect(fm, result, r, flags, t, tabstops, tabarray);
+    if (!tr.isEmpty()) result->setWidth(result->width() + cjkPad(fm));
     return result;
 }
 static void* hookedFontBRectXYWH(const QFontMetrics* fm, QRect* result, int x, int y, int w, int h, int flags, const QString& text, int tabstops, int* tabarray) {
@@ -1219,6 +1172,7 @@ static void* hookedFontBRectXYWH(const QFontMetrics* fm, QRect* result, int x, i
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (g_fmBRectXYWH) g_fmBRectXYWH(fm, result, x, y, w, h, flags, t, tabstops, tabarray);
+    if (!tr.isEmpty()) result->setWidth(result->width() + cjkPad(fm));
     return result;
 }
 static void* hookedFontSize(const QFontMetrics* fm, QSize* result, int flags, const QString& text, int tabstops, int* tabarray) {
@@ -1226,6 +1180,7 @@ static void* hookedFontSize(const QFontMetrics* fm, QSize* result, int flags, co
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (g_fmSize) g_fmSize(fm, result, flags, t, tabstops, tabarray);
+    if (!tr.isEmpty()) result->setWidth(result->width() + cjkPad(fm));
     return result;
 }
 static void* hookedFontTBRect(const QFontMetrics* fm, QRect* result, const QString& text) {
@@ -1256,14 +1211,14 @@ static qreal hookedFontFHAdv(const QFontMetricsF* fm, const QString& text, int l
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (len >= 0 && len > t.size()) len = static_cast<int>(t.size());
-    if (g_fmfHAdv) return g_fmfHAdv(fm, t, len);
+    if (g_fmfHAdv) return g_fmfHAdv(fm, t, len) + (tr.isEmpty() ? 0 : cjkPadF(fm));
     return 0;
 }
 static qreal hookedFontFHAdvOpt(const QFontMetricsF* fm, const QString& text, const QTextOption& opt) {
     QString t = text;
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
-    if (g_fmfHAdvOpt) return g_fmfHAdvOpt(fm, t, opt);
+    if (g_fmfHAdvOpt) return g_fmfHAdvOpt(fm, t, opt) + (tr.isEmpty() ? 0 : cjkPadF(fm));
     return 0;
 }
 static void* hookedFontFBRect(const QFontMetricsF* fm, QRectF* result, const QString& text) {
@@ -1271,6 +1226,7 @@ static void* hookedFontFBRect(const QFontMetricsF* fm, QRectF* result, const QSt
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (g_fmfBRect) g_fmfBRect(fm, result, t);
+    if (!tr.isEmpty()) result->setWidth(result->width() + cjkPadF(fm));
     return result;
 }
 static void* hookedFontFBRectOpt(const QFontMetricsF* fm, QRectF* result, const QString& text, const QTextOption& opt) {
@@ -1278,6 +1234,7 @@ static void* hookedFontFBRectOpt(const QFontMetricsF* fm, QRectF* result, const 
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (g_fmfBRectOpt) g_fmfBRectOpt(fm, result, t, opt);
+    if (!tr.isEmpty()) result->setWidth(result->width() + cjkPadF(fm));
     return result;
 }
 static void* hookedFontFBRectRect(const QFontMetricsF* fm, QRectF* result, const QRectF& r, int flags, const QString& text, int tabstops, int* tabarray) {
@@ -1285,6 +1242,7 @@ static void* hookedFontFBRectRect(const QFontMetricsF* fm, QRectF* result, const
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (g_fmfBRectRect) g_fmfBRectRect(fm, result, r, flags, t, tabstops, tabarray);
+    if (!tr.isEmpty()) result->setWidth(result->width() + cjkPadF(fm));
     return result;
 }
 static void* hookedFontFSize(const QFontMetricsF* fm, QSizeF* result, int flags, const QString& text, int tabstops, int* tabarray) {
@@ -1292,6 +1250,7 @@ static void* hookedFontFSize(const QFontMetricsF* fm, QSizeF* result, int flags,
     QString tr = measureText(text);
     if (!tr.isEmpty()) t = tr;
     if (g_fmfSize) g_fmfSize(fm, result, flags, t, tabstops, tabarray);
+    if (!tr.isEmpty()) result->setWidth(result->width() + cjkPadF(fm));
     return result;
 }
 static void* hookedFontFTBRect(const QFontMetricsF* fm, QRectF* result, const QString& text) {
@@ -1857,11 +1816,10 @@ static void RunOnGuiThread(QApplication* app) {
     if (envIsTrue("ST_TOUR")) {
         g_tourActive = true;
         installMenuHooks();
-        // Phase 1: expand trees (+ capture), then cycle tabs & combos (+ capture)
+        // Safe, read-only capture: expand trees (materializes node params) and
+        // walk the widgets + models.  No tab/combo cycling or synthetic
+        // right-clicks (those mutate UI state and can crash SpeedTree).
         QTimer::singleShot(4000, app, [] { autoOpenPanels(); });
-        // Phase 2: synthetically right-click item views to open & capture their
-        // context menus (auto-closed by the exec/popup hook).
-        QTimer::singleShot(12000, app, [] { triggerContextMenus(); runUiTour(); });
         auto* tourTimer = new QTimer(app);
         tourTimer->setInterval(5000);
         QObject::connect(tourTimer, &QTimer::timeout, [] { runUiTour(); });
