@@ -1,4 +1,4 @@
-QT.opengl.VERSION = 6.5.3
+QT.opengl.VERSION = 6.6.0
 QT.opengl.name = QtOpenGL
 QT.opengl.module = Qt6OpenGL
 QT.opengl.libs = $$QT_MODULE_LIB_BASE

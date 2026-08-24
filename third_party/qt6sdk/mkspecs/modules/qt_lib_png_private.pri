@@ -1,9 +1,9 @@
-QT.png_private.VERSION = 6.5.3
+QT.png_private.VERSION = 6.6.0
 QT.png_private.name = QtPng
 QT.png_private.module = 
 QT.png_private.libs = $$QT_MODULE_LIB_BASE
 QT.png_private.ldflags = 
-QT.png_private.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtPng $$QT_MODULE_INCLUDE_BASE/QtPng/6.5.3 $$QT_MODULE_INCLUDE_BASE/QtPng/6.5.3/QtPng
+QT.png_private.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtPng $$QT_MODULE_INCLUDE_BASE/QtPng/6.6.0 $$QT_MODULE_INCLUDE_BASE/QtPng/6.6.0/QtPng
 QT.png_private.frameworks = 
 QT.png_private.bins = $$QT_MODULE_BIN_BASE
 QT.png_private.depends =  

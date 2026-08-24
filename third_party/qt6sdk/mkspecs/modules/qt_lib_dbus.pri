@@ -1,4 +1,4 @@
-QT.dbus.VERSION = 6.5.3
+QT.dbus.VERSION = 6.6.0
 QT.dbus.name = QtDBus
 QT.dbus.module = Qt6DBus
 QT.dbus.libs = $$QT_MODULE_LIB_BASE

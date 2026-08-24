@@ -1,9 +1,9 @@
-QT.devicediscovery_support_private.VERSION = 6.5.3
+QT.devicediscovery_support_private.VERSION = 6.6.0
 QT.devicediscovery_support_private.name = QtDeviceDiscoverySupport
 QT.devicediscovery_support_private.module = Qt6DeviceDiscoverySupport
 QT.devicediscovery_support_private.libs = $$QT_MODULE_LIB_BASE
 QT.devicediscovery_support_private.ldflags = 
-QT.devicediscovery_support_private.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtDeviceDiscoverySupport $$QT_MODULE_INCLUDE_BASE/QtDeviceDiscoverySupport/6.5.3 $$QT_MODULE_INCLUDE_BASE/QtDeviceDiscoverySupport/6.5.3/QtDeviceDiscoverySupport
+QT.devicediscovery_support_private.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtDeviceDiscoverySupport $$QT_MODULE_INCLUDE_BASE/QtDeviceDiscoverySupport/6.6.0 $$QT_MODULE_INCLUDE_BASE/QtDeviceDiscoverySupport/6.6.0/QtDeviceDiscoverySupport
 QT.devicediscovery_support_private.frameworks = 
 QT.devicediscovery_support_private.bins = $$QT_MODULE_BIN_BASE
 QT.devicediscovery_support_private.depends =  core_private

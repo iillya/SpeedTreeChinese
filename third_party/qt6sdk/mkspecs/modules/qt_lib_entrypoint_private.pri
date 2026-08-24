@@ -1,4 +1,4 @@
-QT.entrypoint_private.VERSION = 6.5.3
+QT.entrypoint_private.VERSION = 6.6.0
 QT.entrypoint_private.name = QtEntryPoint
 QT.entrypoint_private.module = 
 QT.entrypoint_private.libs = $$QT_MODULE_LIB_BASE

@@ -1,9 +1,9 @@
-QT.fb_support_private.VERSION = 6.5.3
+QT.fb_support_private.VERSION = 6.6.0
 QT.fb_support_private.name = QtFbSupport
 QT.fb_support_private.module = Qt6FbSupport
 QT.fb_support_private.libs = $$QT_MODULE_LIB_BASE
 QT.fb_support_private.ldflags = 
-QT.fb_support_private.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtFbSupport $$QT_MODULE_INCLUDE_BASE/QtFbSupport/6.5.3 $$QT_MODULE_INCLUDE_BASE/QtFbSupport/6.5.3/QtFbSupport
+QT.fb_support_private.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtFbSupport $$QT_MODULE_INCLUDE_BASE/QtFbSupport/6.6.0 $$QT_MODULE_INCLUDE_BASE/QtFbSupport/6.6.0/QtFbSupport
 QT.fb_support_private.frameworks = 
 QT.fb_support_private.bins = $$QT_MODULE_BIN_BASE
 QT.fb_support_private.depends =  core_private gui_private

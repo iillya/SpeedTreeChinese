@@ -1,8 +1,8 @@
-QT.testlib_private.VERSION = 6.5.3
+QT.testlib_private.VERSION = 6.6.0
 QT.testlib_private.name = QtTest
 QT.testlib_private.module =
 QT.testlib_private.libs = $$QT_MODULE_LIB_BASE
-QT.testlib_private.includes = $$QT_MODULE_INCLUDE_BASE/QtTest/6.5.3 $$QT_MODULE_INCLUDE_BASE/QtTest/6.5.3/QtTest
+QT.testlib_private.includes = $$QT_MODULE_INCLUDE_BASE/QtTest/6.6.0 $$QT_MODULE_INCLUDE_BASE/QtTest/6.6.0/QtTest
 QT.testlib_private.frameworks = 
 QT.testlib_private.depends = core_private testlib
 QT.testlib_private.uses = 

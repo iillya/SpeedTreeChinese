@@ -1,9 +1,9 @@
-QT.zlib_private.VERSION = 6.5.3
+QT.zlib_private.VERSION = 6.6.0
 QT.zlib_private.name = QtZlib
 QT.zlib_private.module = 
 QT.zlib_private.libs = $$QT_MODULE_LIB_BASE
 QT.zlib_private.ldflags = 
-QT.zlib_private.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtZlib $$QT_MODULE_INCLUDE_BASE/QtZlib/6.5.3 $$QT_MODULE_INCLUDE_BASE/QtZlib/6.5.3/QtZlib
+QT.zlib_private.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtZlib $$QT_MODULE_INCLUDE_BASE/QtZlib/6.6.0 $$QT_MODULE_INCLUDE_BASE/QtZlib/6.6.0/QtZlib
 QT.zlib_private.frameworks = 
 QT.zlib_private.bins = $$QT_MODULE_BIN_BASE
 QT.zlib_private.depends =  

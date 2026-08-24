@@ -1,7 +1,5 @@
 #define QT_FEATURE_clock_monotonic -1
 
-#define QT_FEATURE_doubleconversion 1
-
 #define QT_FEATURE_cxx11_future 1
 
 #define QT_FEATURE_cxx17_filesystem 1
@@ -84,7 +82,7 @@
 
 #define QT_FEATURE_cborstreamwriter 1
 
-#define QT_FEATURE_permissions -1
+#define QT_FEATURE_permissions 1
 
 #define QT_NO_CLOCK_MONOTONIC 1
 #define QT_NO_EVENTFD 1

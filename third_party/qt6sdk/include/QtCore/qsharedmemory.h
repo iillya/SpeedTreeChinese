@@ -4,7 +4,7 @@
 #ifndef QSHAREDMEMORY_H
 #define QSHAREDMEMORY_H
 
-#include <QtCore/qglobal.h>
+#include <QtCore/qtipccommon.h>
 #ifndef QT_NO_QOBJECT
 # include <QtCore/qobject.h>
 #else
@@ -12,8 +12,8 @@
 # include <QtCore/qscopedpointer.h>
 # include <QtCore/qstring.h>
 #endif
-QT_BEGIN_NAMESPACE
 
+QT_BEGIN_NAMESPACE
 
 #if QT_CONFIG(sharedmemory)
 
@@ -30,6 +30,7 @@ public:
         ReadOnly,
         ReadWrite
     };
+    Q_ENUM(AccessMode)
 
     enum SharedMemoryError
     {
@@ -43,15 +44,29 @@ public:
         OutOfResources,
         UnknownError
     };
+    Q_ENUM(SharedMemoryError)
 
     QSharedMemory(QObject *parent = nullptr);
-    QSharedMemory(const QString &key, QObject *parent = nullptr);
+    QSharedMemory(const QNativeIpcKey &key, QObject *parent = nullptr);
     ~QSharedMemory();
 
+#if QT_DEPRECATED_SINCE(6, 10)
+    QT_DEPRECATED_VERSION_X_6_10("Please refer to 'Native IPC Key' documentation")
+    QSharedMemory(const QString &key, QObject *parent = nullptr);
+    QT_DEPRECATED_VERSION_X_6_10("Please refer to 'Native IPC Key' documentation")
     void setKey(const QString &key);
+    QT_DEPRECATED_VERSION_X_6_10("Please refer to 'Native IPC Key' documentation")
     QString key() const;
-    void setNativeKey(const QString &key);
+#endif
+
+    void setNativeKey(const QNativeIpcKey &key);
+    void setNativeKey(const QString &key, QNativeIpcKey::Type type = QNativeIpcKey::legacyDefaultTypeForOs())
+    { setNativeKey({ key, type }); }
     QString nativeKey() const;
+    QNativeIpcKey nativeIpcKey() const;
+#if QT_CORE_REMOVED_SINCE(6, 5)
+    void setNativeKey(const QString &key);
+#endif
 
     bool create(qsizetype size, AccessMode mode = ReadWrite);
     qsizetype size() const;
@@ -72,6 +87,12 @@ public:
     SharedMemoryError error() const;
     QString errorString() const;
 
+    static bool isKeyTypeSupported(QNativeIpcKey::Type type) Q_DECL_CONST_FUNCTION;
+    static QNativeIpcKey platformSafeKey(const QString &key,
+            QNativeIpcKey::Type type = QNativeIpcKey::DefaultTypeForOs);
+    static QNativeIpcKey legacyNativeKey(const QString &key,
+            QNativeIpcKey::Type type = QNativeIpcKey::legacyDefaultTypeForOs());
+
 private:
     Q_DISABLE_COPY(QSharedMemory)
 };
@@ -81,4 +102,3 @@ private:
 QT_END_NAMESPACE
 
 #endif // QSHAREDMEMORY_H
-

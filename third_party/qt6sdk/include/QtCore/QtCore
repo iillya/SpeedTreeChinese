@@ -3,10 +3,12 @@
 #include <QtCore/QtCoreDepends>
 #include "qglobal.h"
 #include "q20algorithm.h"
+#include "q20chrono.h"
 #include "q20functional.h"
 #include "q20iterator.h"
 #include "q20memory.h"
 #include "q23functional.h"
+#include "q23utility.h"
 #if QT_CONFIG(animation)
 #include "qabstractanimation.h"
 #endif
@@ -131,6 +133,7 @@
 #include "qjsonobject.h"
 #include "qjsonvalue.h"
 #include "qlatin1stringmatcher.h"
+#include "qlatin1stringview.h"
 #if QT_CONFIG(library)
 #include "qlibrary.h"
 #endif
@@ -171,6 +174,9 @@
 #endif
 #if QT_CONFIG(animation)
 #include "qpauseanimation.h"
+#endif
+#if QT_CONFIG(permissions)
+#include "qpermissions.h"
 #endif
 #include "qplugin.h"
 #include "qpluginloader.h"
@@ -248,6 +254,7 @@
 #include "qsystemsemaphore.h"
 #include "qtaggedpointer.h"
 #include "qtclasshelpermacros.h"
+#include "qtconfiginclude.h"
 #include "qtconfigmacros.h"
 #include "qtcoreversion.h"
 #include "qtdeprecationmarkers.h"
@@ -266,6 +273,7 @@
 #endif
 #include "qtimer.h"
 #include "qtimezone.h"
+#include "qtipccommon.h"
 #include "qtmetamacros.h"
 #include "qtnoop.h"
 #include "qtpreprocessorsupport.h"

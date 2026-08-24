@@ -1,9 +1,9 @@
-QT.freetype_private.VERSION = 6.5.3
+QT.freetype_private.VERSION = 6.6.0
 QT.freetype_private.name = QtFreetype
 QT.freetype_private.module = 
 QT.freetype_private.libs = $$QT_MODULE_LIB_BASE
 QT.freetype_private.ldflags = 
-QT.freetype_private.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtFreetype $$QT_MODULE_INCLUDE_BASE/QtFreetype/6.5.3 $$QT_MODULE_INCLUDE_BASE/QtFreetype/6.5.3/QtFreetype
+QT.freetype_private.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtFreetype $$QT_MODULE_INCLUDE_BASE/QtFreetype/6.6.0 $$QT_MODULE_INCLUDE_BASE/QtFreetype/6.6.0/QtFreetype
 QT.freetype_private.frameworks = 
 QT.freetype_private.bins = $$QT_MODULE_BIN_BASE
 QT.freetype_private.depends =  

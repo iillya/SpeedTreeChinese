@@ -1,4 +1,4 @@
-QT.testlib.VERSION = 6.5.3
+QT.testlib.VERSION = 6.6.0
 QT.testlib.name = QtTest
 QT.testlib.module = Qt6Test
 QT.testlib.libs = $$QT_MODULE_LIB_BASE

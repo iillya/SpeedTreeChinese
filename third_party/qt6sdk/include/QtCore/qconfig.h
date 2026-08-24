@@ -20,14 +20,6 @@
 
 #define QT_FEATURE_framework -1
 
-#define QT_FEATURE_cxx11 1
-
-#define QT_FEATURE_cxx14 1
-
-#define QT_FEATURE_cxx17 1
-
-#define QT_FEATURE_cxx1z 1
-
 #define QT_FEATURE_cxx20 -1
 
 #define QT_FEATURE_cxx2a -1
@@ -35,10 +27,6 @@
 #define QT_FEATURE_cxx2b -1
 
 #define QT_FEATURE_cxx2b -1
-
-#define QT_FEATURE_c99 1
-
-#define QT_FEATURE_c11 1
 
 #define QT_FEATURE_reduce_relocations -1
 
@@ -65,13 +53,13 @@
 #define QT_FEATURE_opensslv30 1
 
 
-#define QT_VERSION_STR "6.5.3"
+#define QT_VERSION_STR "6.6.0"
 
 #define QT_VERSION_MAJOR 6
 
-#define QT_VERSION_MINOR 5
+#define QT_VERSION_MINOR 6
 
-#define QT_VERSION_PATCH 3
+#define QT_VERSION_PATCH 0
 #define QT_LARGEFILE_SUPPORT 64
 #define QT_COMPILER_SUPPORTS_SSE2 1
 #define QT_COMPILER_SUPPORTS_SSE3 1

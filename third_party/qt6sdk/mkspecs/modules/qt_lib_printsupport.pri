@@ -1,4 +1,4 @@
-QT.printsupport.VERSION = 6.5.3
+QT.printsupport.VERSION = 6.6.0
 QT.printsupport.name = QtPrintSupport
 QT.printsupport.module = Qt6PrintSupport
 QT.printsupport.libs = $$QT_MODULE_LIB_BASE

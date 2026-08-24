@@ -1,10 +1,12 @@
 // Copyright (C) 2022 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 
-#include <QtCore/qglobal.h>
-
 #ifndef QTCOREEXPORTS_H
 #define QTCOREEXPORTS_H
+
+#include <QtCore/qcompilerdetection.h>
+#include <QtCore/qtconfigmacros.h> // Q_CORE_EXPORT
+#include <QtCore/qtdeprecationmarkers.h> // QT_IF_DEPRECATED_SINCE
 
 #if defined(QT_SHARED) || !defined(QT_STATIC)
 #  if defined(QT_BUILD_CORE_LIB)
