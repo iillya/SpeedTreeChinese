@@ -84,9 +84,6 @@ def is_non_speedtree(k):
     for m in EXTRA_MARKERS:
         if m.lower() in kk:
             return True
-    # sample asset / material names: have a digit or underscore suffix
-    if re.search(r"[\d_]", k):
-        return True
     # embedded error / status sentences & fragments
     if re.match(
         r"^(Bad|Can't|Cannot|Could|could|Application|An |The |This |A |If |when |"
