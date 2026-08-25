@@ -93,10 +93,11 @@ LPTHREAD_START_ROUTINE ResolveLoadLibrary(DWORD pid) {
         }
         CloseHandle(snap);
     }
-    // A function address from this process is not guaranteed to be valid in
-    // the target process. If its kernel32 module could not be located, fail
-    // safely instead of starting a remote thread at an unverified address.
-    return nullptr;
+    // A newly created suspended process can temporarily reject module
+    // snapshots on some Windows builds. Both processes have the same
+    // architecture and share the boot-time system DLL mapping, so retain the
+    // proven compatibility fallback used by the stable launcher.
+    return reinterpret_cast<LPTHREAD_START_ROUTINE>(fn);
 }
 
 } // namespace
@@ -153,8 +154,10 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR cmdLine, int) {
         thread = CreateRemoteThread(pi.hProcess, nullptr, 0, loadLib, remote, 0, nullptr);
 
     bool ok = false;
+    bool remoteThreadCompleted = false;
     if (thread) {
         DWORD wait = WaitForSingleObject(thread, 30000);
+        remoteThreadCompleted = wait == WAIT_OBJECT_0;
         DWORD loadResult = 0;
         const bool loaded = wait == WAIT_OBJECT_0 &&
                             GetExitCodeThread(thread, &loadResult) &&
@@ -173,7 +176,10 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR cmdLine, int) {
                     L"SpeedTree 中文补丁", MB_OK | MB_ICONERROR);
     }
 
-    if (remote) VirtualFreeEx(pi.hProcess, remote, 0, MEM_RELEASE);
+    // A timed-out remote thread may still be reading the DLL path. The failure
+    // path terminates the child, so let process teardown reclaim the memory.
+    if (remote && remoteThreadCompleted)
+        VirtualFreeEx(pi.hProcess, remote, 0, MEM_RELEASE);
     CloseHandle(pi.hThread);
     CloseHandle(pi.hProcess);
     return ok ? 0 : 3;
