@@ -93,7 +93,10 @@ LPTHREAD_START_ROUTINE ResolveLoadLibrary(DWORD pid) {
         }
         CloseHandle(snap);
     }
-    return (LPTHREAD_START_ROUTINE)fn;
+    // A function address from this process is not guaranteed to be valid in
+    // the target process. If its kernel32 module could not be located, fail
+    // safely instead of starting a remote thread at an unverified address.
+    return nullptr;
 }
 
 } // namespace

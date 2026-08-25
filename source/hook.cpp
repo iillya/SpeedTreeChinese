@@ -159,131 +159,6 @@ static std::wstring SelfDirW() {
     return L"";
 }
 
-static bool Hex4(const char* p, unsigned int& out) {
-    out = 0;
-    for (int i = 0; i < 4; ++i) {
-        char c = p[i];
-        out <<= 4;
-        if (c >= '0' && c <= '9') out |= static_cast<unsigned int>(c - '0');
-        else if (c >= 'a' && c <= 'f') out |= static_cast<unsigned int>(c - 'a' + 10);
-        else if (c >= 'A' && c <= 'F') out |= static_cast<unsigned int>(c - 'A' + 10);
-        else return false;
-    }
-    return true;
-}
-
-static void AppendUtf8(std::string& out, unsigned int cp) {
-    if (cp < 0x80) out.push_back(static_cast<char>(cp));
-    else if (cp < 0x800) {
-        out.push_back(static_cast<char>(0xC0 | (cp >> 6)));
-        out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-    } else if (cp < 0x10000) {
-        out.push_back(static_cast<char>(0xE0 | (cp >> 12)));
-        out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-        out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-    } else {
-        out.push_back(static_cast<char>(0xF0 | (cp >> 18)));
-        out.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
-        out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-        out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-    }
-}
-
-static bool ParseJsonString(const char*& p, std::string& out) {
-    if (*p != '"') return false;
-    ++p;
-    out.clear();
-    while (*p && *p != '"') {
-        if (static_cast<unsigned char>(*p) < 0x20) return false;
-        if (*p == '\\') {
-            ++p;
-            switch (*p) {
-                case '"':  out.push_back('"');  break;
-                case '\\': out.push_back('\\'); break;
-                case '/':  out.push_back('/');  break;
-                case 'b':  out.push_back('\b'); break;
-                case 'f':  out.push_back('\f'); break;
-                case 'n':  out.push_back('\n'); break;
-                case 'r':  out.push_back('\r'); break;
-                case 't':  out.push_back('\t'); break;
-                case 'u': {
-                    unsigned int cp = 0;
-                    if (!Hex4(p + 1, cp)) return false;
-                    int extra = 0;
-                    if (cp >= 0xD800 && cp <= 0xDBFF) {
-                        // High surrogate: consume the following "\uXXXX" low
-                        // surrogate if present, so a non-BMP code point is
-                        // emitted as one valid 4-byte UTF-8 sequence instead of
-                        // every unpaired surrogate (which is invalid UTF-8).
-                        if (p[5] == '\\' && p[6] == 'u') {
-                            unsigned int low = 0;
-                            if (Hex4(p + 7, low)) {
-                                cp = (low >= 0xDC00 && low <= 0xDFFF)
-                                         ? 0x10000 + ((cp - 0xD800) << 10) + (low - 0xDC00)
-                                         : 0xFFFD;
-                            } else {
-                                cp = 0xFFFD;
-                            }
-                            extra = 6; // step past the second "\uXXXX"
-                        } else {
-                            cp = 0xFFFD; // unpaired high surrogate
-                        }
-                    } else if (cp >= 0xDC00 && cp <= 0xDFFF) {
-                        cp = 0xFFFD; // stray low surrogate
-                    }
-                    AppendUtf8(out, cp);
-                    p += 4 + extra; // trailing ++p below finishes the advance
-                    break;
-                }
-                default: return false;
-            }
-            ++p;
-        } else {
-            out.push_back(*p);
-            ++p;
-        }
-    }
-    if (*p != '"') return false;
-    ++p;
-    return true;
-}
-
-static void ParseTranslations(const std::string& body,
-                              std::unordered_map<std::string, std::string>& out) {
-    size_t pos = body.find("\"translations\"");
-    if (pos == std::string::npos) return;
-    pos = body.find('{', pos);
-    if (pos == std::string::npos) return;
-    const char* p = body.c_str() + pos + 1;
-    while (*p) {
-        if (*p == '}') break;                       // end of translations object
-        if (*p == '"') {
-            std::string key, value;
-            if (ParseJsonString(p, key)) {
-                while (*p && std::isspace((unsigned char)*p)) ++p;
-                if (*p == ':') {
-                    ++p;
-                    while (*p && std::isspace((unsigned char)*p)) ++p;
-                    if (ParseJsonString(p, value)) {
-                        // Empty value = placeholder, not loaded (substance rule).
-                        if (!value.empty() && !key.empty())
-                            out[key] = value;
-                    }
-                }
-            }
-        } else {
-            ++p;
-        }
-    }
-}
-
-static std::string ReadFileBytes(const QString& path) {
-    QFile f(path);
-    if (!f.open(QIODevice::ReadOnly)) return {};
-    QByteArray data = f.readAll();
-    return std::string(data.constData(), data.size());
-}
-
 static void LoadDictionaries() {
     g_translations.clear();
     g_foldedTranslations.clear();
@@ -292,15 +167,23 @@ static void LoadDictionaries() {
     if (!dir.exists()) return;
     QStringList files = dir.entryList({"*_zh.json"}, QDir::Files, QDir::Name);
     for (const QString& name : files) {
-        std::string body = ReadFileBytes(dir.filePath(name));
-        if (body.empty()) continue;
-        std::unordered_map<std::string, std::string> map;
-        ParseTranslations(body, map);
-        for (const auto& kv : map) {
+        QFile file(dir.filePath(name));
+        if (!file.open(QIODevice::ReadOnly)) continue;
+        QJsonParseError error{};
+        const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &error);
+        if (error.error != QJsonParseError::NoError || !document.isObject()) continue;
+        const QJsonObject map = document.object()
+                                    .value(QLatin1String("translations"))
+                                    .toObject();
+        for (auto it = map.constBegin(); it != map.constEnd(); ++it) {
+            if (!it.value().isString()) continue;
+            const QString value = it.value().toString();
+            if (it.key().isEmpty() || value.isEmpty()) continue;
+            const std::string key = it.key().toUtf8().toStdString();
             // Control-ID keys ("Parent||Self||objectName||text") are no longer
             // used by the pure display-layer lookup, so skip them entirely.
-            if (kv.first.find("||") == std::string::npos)
-                g_translations[kv.first] = kv.second;
+            if (key.find("||") == std::string::npos)
+                g_translations[key] = value.toUtf8().toStdString();
         }
     }
     // Build the fuzzy index (normalized English key -> Chinese).
@@ -501,7 +384,6 @@ static void installProxyStyle() {
     g_proxyStyleInstalled = true;
 }
 
-static std::vector<QPointer<QStyledItemDelegate>> g_delegates;
 static std::set<QPointer<QAbstractItemView>> g_delegatedViews;
 
 // ---------------------------------------------------------------------------
@@ -618,7 +500,6 @@ static void applyWidget(QWidget* w) {
         if (g_delegatedViews.count(view) == 0 && isDefaultItemDelegate(view)) {
             auto* d = new TranslateDelegate(view);
             view->setItemDelegate(d);
-            g_delegates.push_back(d);
             g_delegatedViews.insert(view);
         }
     }
@@ -1490,12 +1371,8 @@ static void repaintAll() {
 }
 
 static void refreshLayouts() {
-    // Prune bookkeeping for widgets that have been destroyed (dynamic panels
-    // come and go), so the vectors stay bounded over a long session.
-    g_delegates.erase(
-        std::remove_if(g_delegates.begin(), g_delegates.end(),
-                       [](const QPointer<QStyledItemDelegate>& d) { return !d; }),
-        g_delegates.end());
+    // Prune bookkeeping for views that have been destroyed, so the set stays
+    // bounded as dynamic panels come and go.
     for (auto it = g_delegatedViews.begin(); it != g_delegatedViews.end();) {
         if (*it) ++it;
         else it = g_delegatedViews.erase(it);

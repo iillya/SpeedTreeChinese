@@ -16,6 +16,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <bcrypt.h>
 #include <aclapi.h>
 #include <sddl.h>
 #include <tlhelp32.h>
@@ -27,10 +28,12 @@
 #include <vector>
 #include <cstdint>
 #include <filesystem>
+#include <limits>
 
 #pragma comment(lib, "Comctl32.lib")
 #pragma comment(lib, "shell32.lib")
 #pragma comment(lib, "ole32.lib")
+#pragma comment(lib, "bcrypt.lib")
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 namespace {
@@ -88,6 +91,60 @@ bool IsFile(const std::wstring& p) {
 
 bool HasSpeedTreeExe(const std::wstring& dir) {
     return IsFile(dir + L"\\SpeedTree_Modeler.exe");
+}
+
+bool IsSafePayloadName(const std::wstring& name) {
+    if (name.empty() || name.find(L':') != std::wstring::npos) return false;
+    const std::filesystem::path path(name);
+    if (path.is_absolute() || path.has_root_name() || path.has_root_directory())
+        return false;
+    for (const auto& component : path) {
+        if (component == L"." || component == L".." || component.empty())
+            return false;
+    }
+    return true;
+}
+
+bool Utf8ToWide(const std::string& text, std::wstring& result) {
+    if (text.empty()) return false;
+    const int count = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+                                          text.data(), (int)text.size(),
+                                          nullptr, 0);
+    if (count <= 0) return false;
+    result.resize((size_t)count);
+    return MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+                               text.data(), (int)text.size(), result.data(),
+                               count) == count;
+}
+
+bool PayloadHashMatches(const PayloadEntry& entry,
+                        const std::vector<BYTE>& payload) {
+    if (entry.offset > payload.size() || entry.size > payload.size() - entry.offset ||
+        entry.size > (std::numeric_limits<ULONG>::max)()) return false;
+    BCRYPT_ALG_HANDLE algorithm = nullptr;
+    BCRYPT_HASH_HANDLE hash = nullptr;
+    DWORD objectSize = 0, hashSize = 0, returned = 0;
+    bool ok = BCryptOpenAlgorithmProvider(&algorithm, BCRYPT_SHA256_ALGORITHM,
+                                          nullptr, 0) == 0 &&
+              BCryptGetProperty(algorithm, BCRYPT_OBJECT_LENGTH,
+                                reinterpret_cast<BYTE*>(&objectSize),
+                                sizeof(objectSize), &returned, 0) == 0 &&
+              BCryptGetProperty(algorithm, BCRYPT_HASH_LENGTH,
+                                reinterpret_cast<BYTE*>(&hashSize),
+                                sizeof(hashSize), &returned, 0) == 0 &&
+              hashSize == sizeof(entry.sha256);
+    std::vector<BYTE> object(ok ? objectSize : 0);
+    BYTE digest[32] = {};
+    if (ok)
+        ok = BCryptCreateHash(algorithm, &hash, object.data(), objectSize,
+                              nullptr, 0, 0) == 0 &&
+             BCryptHashData(hash, const_cast<BYTE*>(payload.data() + entry.offset),
+                            (ULONG)entry.size, 0) == 0 &&
+             BCryptFinishHash(hash, digest, sizeof(digest), 0) == 0 &&
+             memcmp(digest, entry.sha256, sizeof(digest)) == 0;
+    if (hash) BCryptDestroyHash(hash);
+    if (algorithm) BCryptCloseAlgorithmProvider(algorithm, 0);
+    return ok;
 }
 
 // Scan Program Files\SpeedTree for any installed "SpeedTree Modeler vX.Y.Z"
@@ -375,6 +432,7 @@ bool ReadWholeFile(const std::wstring& path, std::vector<BYTE>& out) {
 }
 
 bool LoadPayload(InstallerState& st) {
+    st.entries.clear();
     std::vector<BYTE> bytes;
     if (!ReadWholeFile(ExePath(), bytes)) return false;
     if (bytes.size() < 16) return false;
@@ -388,19 +446,22 @@ bool LoadPayload(InstallerState& st) {
     if (manifestSize > tail) return false;      // guard against offset underflow
     const size_t manifest = tail - manifestSize;
     const char* p = (const char*)&bytes[manifest];
+    const char* manifestEnd = (const char*)&bytes[tail];
     for (uint32_t i = 0; i < count; ++i) {
-        if (p + 4 > (const char*)&bytes[tail]) return false;
+        if (manifestEnd - p < 4) return false;
         uint32_t nameLen = 0; memcpy(&nameLen, p, 4); p += 4;
-        if (nameLen > 512 || p + nameLen > (const char*)&bytes[tail]) return false;
+        if (nameLen > 512 || (size_t)(manifestEnd - p) < nameLen) return false;
         PayloadEntry e;
         std::string name(p, nameLen); p += nameLen;
-        e.name = std::wstring(name.begin(), name.end());
-        if (p + 24 > (const char*)&bytes[tail]) return false;
+        if (!Utf8ToWide(name, e.name) || !IsSafePayloadName(e.name)) return false;
+        // offset (8) + size (8) + SHA-256 (32)
+        if (manifestEnd - p < 48) return false;
         memcpy(&e.offset, p, 8); p += 8;
         memcpy(&e.size, p, 8); p += 8;
         memcpy(e.sha256, p, 32); p += 32;
         st.entries.push_back(e);
     }
+    if (p != manifestEnd) return false;
     // Every payload blob must lie entirely before the manifest/tail, otherwise
     // WriteFileFromPayload would read into (or past) the manifest region.
     for (const auto& e : st.entries) {
@@ -411,7 +472,7 @@ bool LoadPayload(InstallerState& st) {
 
 bool WriteFileFromPayload(const std::wstring& dest, const PayloadEntry& e,
                           const std::vector<BYTE>& payload) {
-    if (e.offset > payload.size() || e.size > payload.size() - e.offset) return false;
+    if (!PayloadHashMatches(e, payload)) return false;
     HANDLE h = CreateFileW(dest.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
                            FILE_ATTRIBUTE_NORMAL, nullptr);
     if (h == INVALID_HANDLE_VALUE) return false;
