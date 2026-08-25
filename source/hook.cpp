@@ -420,15 +420,8 @@ static QString labelSource(QLabel* lbl) {
         if (!tip.isEmpty()) return tip;
         return t;
     }
-    // Generic eliding-QLabel fallback: the full source lives in the toolTip.
-    if (t.isEmpty()) return t;
-    bool elided = t.endsWith(QChar(0x2026)) || t.endsWith(QLatin1String("..."));
-    QString tip = lbl->toolTip();
-    if (elided && !tip.isEmpty() && tip.size() > t.size()) {
-        int chop = t.endsWith(QChar(0x2026)) ? 1 : 3;
-        if (tip.startsWith(t.left(t.size() - chop)))
-            return tip;
-    }
+    // 原生控件（普通 QLabel）:text() 就是完整原文（省略只发生在绘制阶段，
+    // 不修改存值），直接返回即可。不再回退到 toolTip。
     return t;
 }
 
