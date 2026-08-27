@@ -3,9 +3,9 @@ setlocal
 
 rem ---------------------------------------------------------------------------
 rem SpeedTree Chinese Localizer - build script
-rem Prereq: Visual Studio 2022 C++ build tools, and the Qt SDKs bundled under
-rem         third_party\qt6sdk (Qt 6.6.0 MSVC x64) and third_party\qt5sdk
-rem         (Qt 5.12 MSVC x64). Both are trimmed to the 3 modules the hook uses.
+rem Prereq: Visual Studio 2022 C++ build tools, and the Qt SDKs (by default the
+rem         workspace-shared ..\_ThirdParty\qt6sdk and ..\_ThirdParty\qt5sdk,
+rem         falling back to third_party\qt6sdk / third_party\qt5sdk).
 rem Output:
 rem   build\out\*   intermediate binaries (hook DLLs, launcher, installer shell,
 rem                 runtime dictionary) - not intended for direct distribution
@@ -18,13 +18,15 @@ set "CPP=%ROOT%\source"
 set "OUT=%ROOT%\build\out"
 set "OBJDIR=%ROOT%\build\obj"
 set "RES=%ROOT%\icon"
-set "QT=%ROOT%\third_party\qt6sdk"
+rem ä¼åä½¿ç¨ä»åºå¤å±äº« Qt SDKï¼_ThirdParty\qt6sdkï¼ï¼å¶æ¬¡ä»åºå third_party\qt6sdk
+set "QT=%ROOT%\..\_ThirdParty\qt6sdk"
+if not exist "%QT%\lib\Qt6Widgets.lib" set "QT=%ROOT%\third_party\qt6sdk"
 if not exist "%OUT%" mkdir "%OUT%"
 if not exist "%OBJDIR%" mkdir "%OBJDIR%"
 
 if not exist "%QT%\lib\Qt6Widgets.lib" (
     echo [ERROR] A complete Qt SDK was not found at %QT%.
-    echo         third_party\qt6sdk must contain Qt 6.6.0 headers and .lib files.
+    echo         Expected %ROOT%\..\_ThirdParty\qt6sdk or %ROOT%\third_party\qt6sdk.
     exit /b 1
 )
 
@@ -47,7 +49,9 @@ cl /nologo /O2 /W3 /LD /EHsc /std:c++17 /Zc:__cplusplus /permissive- /utf-8 ^
 if errorlevel 1 exit /b 1
 
 echo === Compiling Qt5 hook DLL ===
-set "QT5_SDK=%ROOT%\third_party\qt5sdk"
+rem ä¼åä½¿ç¨ä»åºå¤å±äº« Qt SDKï¼_ThirdParty\qt5sdkï¼ï¼å¶æ¬¡ä»åºå third_party\qt5sdk
+set "QT5_SDK=%ROOT%\..\_ThirdParty\qt5sdk"
+if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" set "QT5_SDK=%ROOT%\third_party\qt5sdk"
 if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" (
     echo [WARN] Qt5 SDK not found at %QT5_SDK%; skipping SpeedTree 9.x Qt5 hook.
 ) else (
