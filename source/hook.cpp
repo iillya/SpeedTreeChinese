@@ -608,30 +608,30 @@ static void captureUntranslated() {
     for (const auto& kv : pending) {
         if (merged.emplace(kv.first, "").second) ++added;
     }
-    if (added <= 0) return;   // nothing new this press; leave the file untouched
-
-    std::string json = "{\n  \"$schema\": \"sp-translation-v1\",\n"
-                       "  \"id\": \"speedtree-untranslated\",\n"
-                       "  \"language\": \"zh-CN\",\n"
-                       "  \"description\": \"Shift+` 增量采集的未翻译词条（待填写）\",\n"
-                       "  \"translations\": {\n";
-    bool first = true;
-    for (const auto& kv : merged) {
-        if (!first) json += ",\n";
-        json += "    \"" + jsonEscape(kv.first) + "\": \"" + jsonEscape(kv.second) + "\"";
-        first = false;
+    // 有新增才写文件（避免无意义改写）；无论新增多少都弹窗反馈。
+    if (added > 0) {
+        std::string json = "{\n  \"$schema\": \"sp-translation-v1\",\n"
+                           "  \"id\": \"speedtree-untranslated\",\n"
+                           "  \"language\": \"zh-CN\",\n"
+                           "  \"description\": \"Shift+` 增量采集的未翻译词条（待填写）\",\n"
+                           "  \"translations\": {\n";
+        bool first = true;
+        for (const auto& kv : merged) {
+            if (!first) json += ",\n";
+            json += "    \"" + jsonEscape(kv.first) + "\": \"" + jsonEscape(kv.second) + "\"";
+            first = false;
+        }
+        json += "\n  }\n}\n";
+        HANDLE h = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+                               FILE_ATTRIBUTE_NORMAL, nullptr);
+        if (h != INVALID_HANDLE_VALUE) {
+            DWORD wr = 0;
+            const bool wrote = WriteFile(h, json.data(), (DWORD)json.size(), &wr, nullptr) &&
+                               wr == json.size();
+            CloseHandle(h);
+            (void)wrote;
+        }
     }
-    json += "\n  }\n}\n";
-    HANDLE h = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
-                           FILE_ATTRIBUTE_NORMAL, nullptr);
-    bool wrote = false;
-    if (h != INVALID_HANDLE_VALUE) {
-        DWORD wr = 0;
-        wrote = WriteFile(h, json.data(), (DWORD)json.size(), &wr, nullptr) &&
-                wr == json.size();
-        CloseHandle(h);
-    }
-    if (!wrote) return;
     // Defer the pop-up until after this key-release event is fully processed, so
     // a modal dialog is never shown from inside the event filter.
     const int         addedCount = added;
