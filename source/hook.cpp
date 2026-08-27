@@ -180,10 +180,7 @@ static void LoadDictionaries() {
             const QString value = it.value().toString();
             if (it.key().isEmpty() || value.isEmpty()) continue;
             const std::string key = it.key().toUtf8().toStdString();
-            // Control-ID keys ("Parent||Self||objectName||text") are no longer
-            // used by the pure display-layer lookup, so skip them entirely.
-            if (key.find("||") == std::string::npos)
-                g_translations[key] = value.toUtf8().toStdString();
+            g_translations[key] = value.toUtf8().toStdString();
         }
     }
     // Build the fuzzy index (normalized English key -> Chinese).
