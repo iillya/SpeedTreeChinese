@@ -1,0 +1,23 @@
+SpeedTree 中文汉化补丁 · 安装方法
+
+适用：SpeedTree Modeler 9.x / 10.x（自动识别 Qt5 / Qt6）
+
+【安装】
+1. 右键 SpeedTreeChineseInstaller.exe → 以管理员身份运行
+2. 选择含 SpeedTree_Modeler.exe 的 win64 目录
+   （默认 C:\Program Files\SpeedTree\SpeedTree Modeler v10.2.0\win64）
+3. 点「安装汉化」
+
+【使用】
+· 桌面/开始菜单打开「SpeedTree 中文版」
+· 或直接双击 .spm 文件
+· 找不到就手动开：<SpeedTree 目录>\win64\ChineseLauncher\SpeedTreeChineseLauncher.exe
+
+【切换中/英】快捷键 F3（或菜单栏「中/英」）
+
+【卸载】
+再运行安装器，选同一目录，点「卸载汉化」。
+
+【提示】
+· 启动还是英文：先关闭所有 SpeedTree，用「SpeedTree 中文版」打开
+· 本补丁不改原程序，不影响 .spm 工程数据
