@@ -516,7 +516,7 @@ static bool isTranslatableString(const QString& s) {
 // ---------------------------------------------------------------------------
 // Manual untranslated-text sniffer (Shift + `): walk the live UI read-only and
 // append every English string not yet in the dictionary to the user's Desktop
-// as <Desktop>\untranslated_zh.json (sp-translation-v1, empty values).  Each
+// as <Desktop>\SpeedTree_untranslated_zh.json (sp-translation-v1, empty values). Each
 // press only ADDS entries that aren't already there, never overwrites existing
 // ones (so manually filled values survive).  Unlike the old ST_TOUR/ST_TRPROBE
 // probes it never mutates the UI and only runs on hotkey.
@@ -529,6 +529,31 @@ static void collectMenuActions(QMenu* menu, std::function<void(const QString&)> 
     }
 }
 
+// Walk each item's model recursively so collapsed branches are searched too.
+// This reads DisplayRole only; it does not expand nodes or mutate the control.
+// Depth and cell budgets keep pathological or cyclic custom models bounded.
+static void collectModelDeep(QAbstractItemModel* model,
+                             const QModelIndex& parent,
+                             const std::function<void(const QString&)>& add,
+                             int depth, int& budget, int maxDepth = 64) {
+    if (!model || depth > maxDepth || budget <= 0) return;
+
+    const int rows = model->rowCount(parent);
+    const int columns = model->columnCount(parent);
+    if (rows <= 0 || columns <= 0) return;
+
+    for (int row = 0; row < rows && budget > 0; ++row) {
+        const QModelIndex childParent = model->index(row, 0, parent);
+        for (int column = 0; column < columns && budget > 0; ++column) {
+            const QModelIndex child = model->index(row, column, parent);
+            const QVariant value = child.data(Qt::DisplayRole);
+            if (value.isValid()) add(value.toString());
+            --budget;
+        }
+        collectModelDeep(model, childParent, add, depth + 1, budget, maxDepth);
+    }
+}
+
 static void captureUntranslated() {
     std::map<std::string, std::string> pending;
     auto add = [&](const QString& s) {
@@ -538,8 +563,8 @@ static void captureUntranslated() {
         pending.emplace(k, "");
     };
     const auto widgets = QApplication::allWidgets();
-    // Cap how many model cells we read on a single press, so an enormously
-    // expanded tree can't stall the GUI thread for seconds.
+    // Shared across all controls so deeply nested or very large models cannot
+    // stall the GUI thread for an unbounded amount of time.
     int cellBudget = 200000;
     for (QWidget* w : widgets) {
         if (auto* lbl = qobject_cast<QLabel*>(w)) add(labelSource(lbl));
@@ -562,17 +587,9 @@ static void captureUntranslated() {
         if (auto* tb2 = qobject_cast<QToolBar*>(w))
             for (QAction* a : tb2->actions()) add(a->text());
         if (auto* view = qobject_cast<QAbstractItemView*>(w)) {
-            if (view->model() && cellBudget > 0) {
-                auto* model = view->model();
-                int rows = model->rowCount(), cols = model->columnCount();
-                if (rows > 0 && rows < 100000 && cols > 0 && cols < 64) {
-                    for (int r = 0; r < rows && cellBudget > 0; ++r)
-                        for (int c = 0; c < cols && cellBudget > 0; ++c) {
-                            add(model->data(model->index(r, c), Qt::DisplayRole).toString());
-                            --cellBudget;
-                        }
-                }
-            }
+            if (view->model() && cellBudget > 0)
+                collectModelDeep(view->model(), QModelIndex(), add,
+                                 0, cellBudget);
         }
     }
     // drawText / custom-painted strings captured since launch.
@@ -585,7 +602,8 @@ static void captureUntranslated() {
     if (FAILED(SHGetFolderPathW(nullptr, CSIDL_DESKTOPDIRECTORY, nullptr, 0, desktop)) ||
         !desktop[0])
         return;
-    const std::wstring path = std::wstring(desktop) + L"\\untranslated_zh.json";
+    const std::wstring path =
+        std::wstring(desktop) + L"\\SpeedTree_untranslated_zh.json";
 
     // Load whatever was captured on a previous press so we only ADD new keys
     // and never clobber existing ones (including any values already filled in).
@@ -1453,6 +1471,8 @@ private:
 };
 
 static QPointer<QAction> g_langAction;
+static QPointer<QAction> g_authorAction;
+static QPointer<QAction> g_githubAction;
 static QPointer<QMenuBar> g_authorLinkBar;   // kept for the hotkey-dialog parent
 
 static void doToggleLanguage() {
@@ -1481,6 +1501,23 @@ class LangMouseFilter : public QObject {
 public:
     LangMouseFilter(QObject* p) : QObject(p) {}
     bool eventFilter(QObject* obj, QEvent* ev) override {
+        auto* mb = qobject_cast<QMenuBar*>(obj);
+        if (!mb) return false;
+        if (ev->type() == QEvent::MouseMove) {
+            auto* me = static_cast<QMouseEvent*>(ev);
+            const bool overLink =
+                (g_authorAction &&
+                 mb->actionGeometry(g_authorAction).contains(me->pos())) ||
+                (g_githubAction &&
+                 mb->actionGeometry(g_githubAction).contains(me->pos()));
+            if (overLink) mb->setCursor(Qt::PointingHandCursor);
+            else mb->unsetCursor();
+            return false;
+        }
+        if (ev->type() == QEvent::Leave) {
+            mb->unsetCursor();
+            return false;
+        }
         // Qt reports the second press of a double-click as MouseButtonDblClick,
         // not MouseButtonPress. Handle both so a double-click's second release
         // still reaches the toggle below instead of falling through to the
@@ -1489,7 +1526,6 @@ public:
                     ev->type() == QEvent::MouseButtonDblClick) && g_langAction) {
             if (!ev->spontaneous()) return false;           // ignore synthetic events
             auto* me = static_cast<QMouseEvent*>(ev);
-            auto* mb = qobject_cast<QMenuBar*>(obj);
             if (mb && mb->actionGeometry(g_langAction).contains(me->pos())) {
                 if (me->button() == Qt::RightButton) {
                     openHotkeyDialog();
@@ -1503,7 +1539,6 @@ public:
         } else if (obj && ev->type() == QEvent::MouseButtonRelease && g_langAction && pressed_) {
             if (!ev->spontaneous()) return false;           // ignore synthetic events
             auto* me = static_cast<QMouseEvent*>(ev);
-            auto* mb = qobject_cast<QMenuBar*>(obj);
             if (me->button() == Qt::LeftButton) {
                 pressed_ = false;
                 if (mb && mb->actionGeometry(g_langAction).contains(me->pos()))
@@ -1542,6 +1577,7 @@ static void installAuthorLink() {
     langAct->setObjectName(QStringLiteral("speedtree_lang"));
     g_langAction = langAct;
     mb->installEventFilter(new LangMouseFilter(mb));   // right-click -> hotkey dialog
+    mb->setMouseTracking(true);
     const auto acts = mb->actions();
     int idx = helpAction ? acts.indexOf(helpAction) : -1;
     QAction* after = (idx >= 0 && idx + 1 < acts.size()) ? acts[idx + 1] : nullptr;
@@ -1556,7 +1592,8 @@ static void installAuthorLink() {
         int li = as.indexOf(langAct);
         afterLang = (li >= 0 && li + 1 < as.size()) ? as[li + 1] : nullptr;
     }
-    auto addLink = [&](const QString& label, const QString& url, const char* obj) {
+    auto addLink = [&](const QString& label, const QString& url,
+                       const char* obj) -> QAction* {
         auto* act = new QAction(label, mb);
         act->setObjectName(QLatin1String(obj));
         act->setData(url);
@@ -1566,9 +1603,12 @@ static void installAuthorLink() {
         });
         if (afterLang) mb->insertAction(afterLang, act);
         else mb->addAction(act);
+        return act;
     };
-    addLink(QStringLiteral("Bilibili神说要凑数汉化"), kAuthorUrl, "speedtree_author");
-    addLink(QStringLiteral("Github仓库"), kGitHubUrl, "speedtree_github");
+    g_authorAction = addLink(QStringLiteral("Bilibili神说要凑数汉化"),
+                             kAuthorUrl, "speedtree_author");
+    g_githubAction = addLink(QStringLiteral("Github仓库"),
+                             kGitHubUrl, "speedtree_github");
 
     g_authorLinkBar = mb;
 }
