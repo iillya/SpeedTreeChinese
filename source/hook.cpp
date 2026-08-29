@@ -130,7 +130,6 @@ static std::vector<std::pair<std::string, std::string>> g_sortedKeys;     // low
 static std::unordered_map<std::string, std::string> g_normCache;          // text -> normalized
 static constexpr size_t kMaxNormCache = 100000;
 
-static std::set<std::string> g_paintSeen;   // untranslated drawText strings (Shift+` dump)
 
 static QString normalizeForMatch(QString text);
 static bool containsCjk(const QString& text);
@@ -594,10 +593,7 @@ static void captureUntranslated() {
                                  0, cellBudget);
         }
     }
-    // drawText / custom-painted strings captured since launch.
-    for (const std::string& s : g_paintSeen)
-        if (!s.empty() && !g_translations.count(s))
-            pending.emplace(s, "");
+
 
     // Save to the user's Desktop so it is easy to find.
     wchar_t desktop[MAX_PATH] = {};
@@ -791,16 +787,6 @@ static QString translatePaint(QPainter* painter, const QString& text) {
                 if (!fullTr.isEmpty()) return fullTr;
             }
         }
-    }
-    // Record untranslated paint strings (custom-drawn property labels, etc.)
-    // so Shift+` can dump them.  Bounded so a long session never grows without
-    // limit.  Re-check the set first so a string that is repainted every frame
-    // only pays the expensive isTranslatableString() on its first appearance.
-    if (g_paintSeen.size() < 100000) {
-        std::string k = text.trimmed().toUtf8().constData();
-        if (!k.empty() && g_paintSeen.find(k) == g_paintSeen.end() &&
-            isTranslatableString(text))
-            g_paintSeen.insert(k);
     }
     return {};
 }
