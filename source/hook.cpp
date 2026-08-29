@@ -31,6 +31,8 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
+#include "hook_lifecycle.h"
 #include <shlobj.h>
 #include <tlhelp32.h>
 #include <string>
@@ -1614,6 +1616,8 @@ static void installAuthorLink() {
 }
 
 static void RunOnGuiThread(QApplication* app) {
+    // Phase 1: QApplication exists and execution is on its GUI thread.
+    // Install every hook that can be resolved immediately.
     LoadDictionaries();
     installProxyStyle();
     applyTranslations();
@@ -1623,18 +1627,24 @@ static void RunOnGuiThread(QApplication* app) {
     app->installEventFilter(new TranslatorFilter(app));
     installAuthorLink();
 
-    // Late-loaded plugin DLLs (e.g. on-demand imports) would otherwise escape the
-    // drawText / font-measurement IAT hooks, which only scan modules at startup.
-    // Re-scan periodically (idempotent, cheap), but stop after 60 s so we don't
-    // burn cycles for the whole session while still catching late-loaded DLLs.
+    // Phase 2: TranslatorFilter handles widgets created later. Phase 3 is an
+    // optional bounded fallback for plug-in DLLs that load after startup and
+    // therefore escape the initial drawText/font-measurement IAT scan.
+    if (!SpeedTreeHookLifecycle::kEnableDeferredPolling)
+        return;
+
     auto* rescanTimer = new QTimer(app);
-    rescanTimer->setInterval(2000);
+    rescanTimer->setInterval(SpeedTreeHookLifecycle::kDeferredScanIntervalMs);
     QObject::connect(rescanTimer, &QTimer::timeout, [] {
         patchDrawTextModules();
         patchFontModules();
     });
     rescanTimer->start();
-    QTimer::singleShot(60000, app, [rescanTimer] { rescanTimer->stop(); });
+    QTimer::singleShot(SpeedTreeHookLifecycle::kDeferredScanWindowMs, app,
+                       [rescanTimer] {
+                           rescanTimer->stop();
+                           rescanTimer->deleteLater();
+                       });
 }
 
 static DWORD WINAPI Worker(LPVOID) {
@@ -1642,12 +1652,13 @@ static DWORD WINAPI Worker(LPVOID) {
     // Wait up to ~300s for QApplication. SpeedTree can block on licensing /
     // update checks before the GUI is created, so allow a generous window and
     // report a clear diagnostic if we ever give up.
-    for (int i = 0; i < 3000; ++i) {
+    for (int i = 0;
+         i < SpeedTreeHookLifecycle::kApplicationWaitAttempts; ++i) {
         if (QCoreApplication::instance()) {
             app = qobject_cast<QApplication*>(QCoreApplication::instance());
             if (app) break;
         }
-        Sleep(100);
+        Sleep(SpeedTreeHookLifecycle::kApplicationWaitIntervalMs);
     }
     if (!app) {
         return 1;
