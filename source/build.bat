@@ -4,7 +4,7 @@ setlocal
 rem ---------------------------------------------------------------------------
 rem SpeedTree Chinese Localizer - build script
 rem Prereq: Visual Studio 2022 C++ build tools, and the Qt SDKs (by default the
-rem         workspace-shared ..\_ThirdParty\qt6sdk and ..\_ThirdParty\qt5sdk,
+rem         workspace-shared ..\_ThirdParty\Qt versioned SDK directories,
 rem         falling back to third_party\qt6sdk / third_party\qt5sdk).
 rem Output:
 rem   build\out\*   intermediate binaries (hook DLLs, launcher, installer shell,
@@ -19,14 +19,14 @@ set "OUT=%ROOT%\build\out"
 set "OBJDIR=%ROOT%\build\obj"
 set "RES=%ROOT%\icon"
 rem ä¼åä½¿ç¨ä»åºå¤å±äº« Qt SDKï¼_ThirdParty\qt6sdkï¼ï¼å¶æ¬¡ä»åºå third_party\qt6sdk
-set "QT=%ROOT%\..\_ThirdParty\qt6sdk"
+set "QT=%ROOT%\..\_ThirdParty\Qt\6.6.0\msvc2019_64"
 if not exist "%QT%\lib\Qt6Widgets.lib" set "QT=%ROOT%\third_party\qt6sdk"
 if not exist "%OUT%" mkdir "%OUT%"
 if not exist "%OBJDIR%" mkdir "%OBJDIR%"
 
 if not exist "%QT%\lib\Qt6Widgets.lib" (
     echo [ERROR] A complete Qt SDK was not found at %QT%.
-    echo         Expected %ROOT%\..\_ThirdParty\qt6sdk or %ROOT%\third_party\qt6sdk.
+    echo         Expected %ROOT%\..\_ThirdParty\Qt\6.6.0\msvc2019_64 or %ROOT%\third_party\qt6sdk.
     exit /b 1
 )
 
@@ -50,7 +50,7 @@ if errorlevel 1 exit /b 1
 
 echo === Compiling Qt5 hook DLL ===
 rem ä¼åä½¿ç¨ä»åºå¤å±äº« Qt SDKï¼_ThirdParty\qt5sdkï¼ï¼å¶æ¬¡ä»åºå third_party\qt5sdk
-set "QT5_SDK=%ROOT%\..\_ThirdParty\qt5sdk"
+set "QT5_SDK=%ROOT%\..\_ThirdParty\Qt\5.12.5\msvc2017_64"
 if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" set "QT5_SDK=%ROOT%\third_party\qt5sdk"
 if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" (
     echo [WARN] Qt5 SDK not found at %QT5_SDK%; skipping SpeedTree 9.x Qt5 hook.
