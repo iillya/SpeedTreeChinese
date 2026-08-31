@@ -172,7 +172,7 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR cmdLine, int) {
         ok = false;
         TerminateProcess(pi.hProcess, 3);
         WaitForSingleObject(pi.hProcess, 5000);
-        MessageBoxW(nullptr, L"汉化注入失败，已终止 SpeedTree（原文件未受影响）。",
+        MessageBoxW(nullptr, L"汉化加载失败，已取消本次 SpeedTree 启动。原程序文件未修改。",
                     L"SpeedTree 中文补丁", MB_OK | MB_ICONERROR);
     }
 

@@ -33,6 +33,7 @@
 #include <windows.h>
 
 #include "hook_lifecycle.h"
+#include "hotkey_settings.h"
 #include <shlobj.h>
 #include <tlhelp32.h>
 #include <string>
@@ -340,8 +341,8 @@ public:
         const QString draw = tr.isEmpty() ? text : tr;
         // The two attribution menu items keep the default menu look but their
         // label is tinted blue (they used to be rich-text links).
-        if (text == QStringLiteral("Bilibili神说要凑数汉化") ||
-            text == QStringLiteral("Github仓库")) {
+        if (text == QStringLiteral("Bilibili 神说要凑数汉化") ||
+            text == QStringLiteral("GitHub 仓库")) {
             // The base drawItemText() re-selects the pen from the palette, so a
             // setPen() here would be overridden.  Pass a palette whose ButtonText
             // (the role CE_MenuBarItem uses) is blue instead.
@@ -688,7 +689,7 @@ public:
                 captureUntranslated();
                 return true;
             }
-            if (ke->key() == g_toggleKey) {
+            if (ke->key() == g_toggleKey && ke->modifiers() == Qt::NoModifier) {
                 toggleTranslation();
                 return true;
             }
@@ -1340,17 +1341,6 @@ static void installDrawTextHooks() {
 static const QString kAuthorUrl = QStringLiteral("https://space.bilibili.com/281243426?spm_id_from=333.1007.0.0");
 static const QString kGitHubUrl = QStringLiteral("https://github.com/iillya/SpeedTreeChinese");
 
-static QString keyName(int key) {
-    if (key >= Qt::Key_F1 && key <= Qt::Key_F12)
-        return QStringLiteral("F") + QString::number(key - Qt::Key_F1 + 1);
-    switch (key) {
-        case Qt::Key_Space: return QStringLiteral("Space");
-        case Qt::Key_Escape: return QStringLiteral("Esc");
-        case Qt::Key_Return: case Qt::Key_Enter: return QStringLiteral("Enter");
-        case Qt::Key_Tab: return QStringLiteral("Tab");
-        default: return QKeySequence(key).toString(QKeySequence::NativeText);
-    }
-}
 
 static void repaintAll() {
     for (QWidget* w : QApplication::allWidgets()) {
@@ -1388,75 +1378,6 @@ static void refreshLayouts() {
     }
 }
 
-class ToggleHotkeyDialog : public QDialog {
-public:
-    explicit ToggleHotkeyDialog(QWidget* parent) : QDialog(parent) {
-        setWindowTitle(QStringLiteral("设置 中/英 切换快捷键"));
-        setAttribute(Qt::WA_DeleteOnClose);
-        auto* lay = new QVBoxLayout(this);
-        lay->addWidget(new QLabel(
-            QStringLiteral("点击下方按钮后按下新快捷键（Esc 取消）："), this));
-        capBtn_ = new QPushButton(QStringLiteral("当前：") + keyName(g_toggleKey), this);
-        auto* ok = new QPushButton(QStringLiteral("确定"), this);
-        auto* reset = new QPushButton(QStringLiteral("重置"), this);
-        lay->addWidget(capBtn_);
-        auto* row = new QHBoxLayout();
-        row->addWidget(ok);
-        row->addWidget(reset);
-        lay->addLayout(row);
-        // Tidy button highlight state:
-        //   - OK is the default button (Enter accepts) -> gets the default ring.
-        //   - Reset / capture are NOT default buttons, so they are not auto-highlighted.
-        //   - Initial focus goes to OK so Reset never appears focused on open.
-        ok->setDefault(true);
-        ok->setAutoDefault(true);
-        reset->setAutoDefault(false);
-        capBtn_->setAutoDefault(false);
-        row->setSpacing(8);
-        setFocusProxy(ok);
-        setStyleSheet(QStringLiteral(
-            "QPushButton { background:#3f3f3f; color:#e6e6e6; border:1px solid #565656;"
-            " border-radius:4px; padding:6px 16px; }"
-            "QPushButton:hover { background:#4c4c4c; }"
-            "QPushButton:pressed { background:#333333; }"
-            "QPushButton:default { border:1px solid #66aaff; }"));
-        QObject::connect(capBtn_, &QPushButton::clicked, this, [this] { startListen(); });
-        QObject::connect(ok, &QPushButton::clicked, this, [this] { stopListen(); accept(); });
-        QObject::connect(reset, &QPushButton::clicked, this, [this] {
-            g_toggleKey = Qt::Key_F3;
-            stopListen();
-            capBtn_->setText(QStringLiteral("当前：") + keyName(g_toggleKey));
-        });
-    }
-private:
-    QPushButton* capBtn_;
-    bool listening_ = false;
-    void startListen() {
-        listening_ = true;
-        QApplication::instance()->installEventFilter(this);
-        capBtn_->setText(QStringLiteral("请按下新的快捷键…"));
-    }
-    void stopListen() {
-        if (listening_) {
-            listening_ = false;
-            QApplication::instance()->removeEventFilter(this);
-        }
-        capBtn_->setText(QStringLiteral("当前：") + keyName(g_toggleKey));
-    }
-    bool eventFilter(QObject*, QEvent* e) override {
-        if (!listening_) return false;
-        if (e->type() == QEvent::KeyPress) {
-            auto* ke = static_cast<QKeyEvent*>(e);
-            if (ke->key() == Qt::Key_Escape) { stopListen(); return true; }
-            g_toggleKey = ke->key();
-            stopListen();
-            return true;
-        }
-        return false;
-    }
-    void reject() override { stopListen(); QDialog::reject(); }
-    void closeEvent(QCloseEvent* e) override { stopListen(); QDialog::closeEvent(e); }
-};
 
 static QPointer<QAction> g_langAction;
 static QPointer<QAction> g_authorAction;
@@ -1475,7 +1396,14 @@ static void openHotkeyDialog() {
         return;
     }
     QWidget* parent = g_authorLinkBar ? g_authorLinkBar->window() : nullptr;
-    auto* dlg = new ToggleHotkeyDialog(parent);
+    auto* dlg = new ToggleHotkeyDialog(parent, g_toggleKey, g_hotkeyDlgOpen,
+        ChineseHotkeyConfig::path(QStringLiteral("SpeedTreeChinese")));
+    dlg->setStyleSheet(QStringLiteral(
+        "QPushButton { background:#3f3f3f; color:#e6e6e6; border:1px solid #565656;"
+        " border-radius:4px; padding:6px 16px; }"
+        "QPushButton:hover { background:#4c4c4c; }"
+        "QPushButton:pressed { background:#333333; }"
+        "QPushButton:default { border:1px solid #66aaff; }"));
     g_hotkeyDlg = dlg;
     g_hotkeyDlgOpen = true;
     QObject::connect(dlg, &QObject::destroyed, [] {
@@ -1593,15 +1521,20 @@ static void installAuthorLink() {
         else mb->addAction(act);
         return act;
     };
-    g_authorAction = addLink(QStringLiteral("Bilibili神说要凑数汉化"),
+    g_authorAction = addLink(QStringLiteral("Bilibili 神说要凑数汉化"),
                              kAuthorUrl, "speedtree_author");
-    g_githubAction = addLink(QStringLiteral("Github仓库"),
+    g_githubAction = addLink(QStringLiteral("GitHub 仓库"),
                              kGitHubUrl, "speedtree_github");
 
     g_authorLinkBar = mb;
 }
 
 static void RunOnGuiThread(QApplication* app) {
+    QString hotkeyError;
+    g_toggleKey = ChineseHotkeyConfig::load(
+        ChineseHotkeyConfig::path(QStringLiteral("SpeedTreeChinese")), &hotkeyError);
+    if (!hotkeyError.isEmpty()) OutputDebugStringW(
+        reinterpret_cast<LPCWSTR>(hotkeyError.utf16()));
     // Phase 1: QApplication exists and execution is on its GUI thread.
     // Install every hook that can be resolved immediately.
     LoadDictionaries();

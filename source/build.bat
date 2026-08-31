@@ -1,5 +1,6 @@
 @echo off
 setlocal
+rem INNO_PRIMARY_BUILD
 
 rem ---------------------------------------------------------------------------
 rem SpeedTree Chinese Localizer - build script
@@ -7,10 +8,9 @@ rem Prereq: Visual Studio 2022 C++ build tools, and the Qt SDKs (by default the
 rem         workspace-shared ..\_ThirdParty\Qt versioned SDK directories,
 rem         falling back to third_party\qt6sdk / third_party\qt5sdk).
 rem Output:
-rem   build\out\*   intermediate binaries (hook DLLs, launcher, installer shell,
+rem   build\out\*   intermediate binaries (hook DLLs, launcher,
 rem                 runtime dictionary) - not intended for direct distribution
-rem   dist\         SpeedTreeChineseInstaller.exe (single distributable, embeds
-rem                 the payload above via embed_files.py)
+rem   dist\         SpeedTreeChineseInstaller.exe (Inno Setup package)
 rem ---------------------------------------------------------------------------
 
 set "ROOT=%~dp0.."
@@ -18,7 +18,6 @@ set "CPP=%ROOT%\source"
 set "OUT=%ROOT%\build\out"
 set "OBJDIR=%ROOT%\build\obj"
 set "RES=%ROOT%\icon"
-rem ä¼åä½¿ç¨ä»åºå¤å±äº« Qt SDKï¼_ThirdParty\qt6sdkï¼ï¼å¶æ¬¡ä»åºå third_party\qt6sdk
 set "QT=%ROOT%\..\_ThirdParty\Qt\6.6.0\msvc2019_64"
 if not exist "%QT%\lib\Qt6Widgets.lib" set "QT=%ROOT%\third_party\qt6sdk"
 if not exist "%OUT%" mkdir "%OUT%"
@@ -49,7 +48,6 @@ cl /nologo /O2 /W3 /LD /EHsc /std:c++17 /Zc:__cplusplus /permissive- /utf-8 ^
 if errorlevel 1 exit /b 1
 
 echo === Compiling Qt5 hook DLL ===
-rem ä¼åä½¿ç¨ä»åºå¤å±äº« Qt SDKï¼_ThirdParty\qt5sdkï¼ï¼å¶æ¬¡ä»åºå third_party\qt5sdk
 set "QT5_SDK=%ROOT%\..\_ThirdParty\Qt\5.12.5\msvc2017_64"
 if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" set "QT5_SDK=%ROOT%\third_party\qt5sdk"
 if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" (
@@ -76,23 +74,13 @@ cl /nologo /O2 /W3 /EHsc /utf-8 ^
    /link /SUBSYSTEM:WINDOWS user32.lib
 if errorlevel 1 exit /b 1
 
-echo === Compiling installer (elevated) ===
-cl /nologo /O2 /W3 /EHsc /std:c++17 /utf-8 ^
-   "%CPP%\installer.cpp" ^
-   /Fo"%OBJDIR%\installer.obj" ^
-   "%OBJDIR%\app_icon.res" ^
-   /Fe:"%OUT%\SpeedTreeChineseInstaller.exe" ^
-   /link /SUBSYSTEM:WINDOWS user32.lib shell32.lib ole32.lib gdi32.lib advapi32.lib ^
-   /MANIFEST:EMBED /MANIFESTUAC:"level='requireAdministrator' uiAccess='false'"
-if errorlevel 1 exit /b 1
-
-echo.
 echo === Staging runtime dictionary (next to the hook for dev launches) ===
 if not exist "%OUT%\translations" mkdir "%OUT%\translations"
 copy /Y "%ROOT%\translations\dictionary_zh.json" "%OUT%\translations\dictionary_zh.json" >nul
 
 echo === Packing dist installer ===
-python "%ROOT%\source\embed_files.py"
+if /I "%~1"=="--runtime-only" exit /b 0
+call "%~dp0build_inno.bat" --package-only
 if errorlevel 1 exit /b 1
 
 echo Build complete:

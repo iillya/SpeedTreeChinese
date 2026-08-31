@@ -1,0 +1,40 @@
+{
+  "product": "SpeedTree",
+  "exe": "SpeedTree_Modeler.exe",
+  "default": "SpeedTree\\SpeedTree Modeler v10.2.0\\win64",
+  "icon": "speedtree.ico",
+  "qt": [
+    [
+      5,
+      12,
+      5
+    ],
+    [
+      6,
+      6,
+      0
+    ]
+  ],
+  "modules": [
+    "Core",
+    "Gui",
+    "Widgets"
+  ],
+  "handlers": [
+    "SPM File",
+    "Applications\\SpeedTree_Modeler.exe"
+  ],
+  "extensions": [
+    ".spm"
+  ],
+  "legacy": [
+    "SpeedTreeChinese.spm"
+  ],
+  "payload": {
+    "SpeedTreeChineseHook.dll": "build/out/SpeedTreeChineseHook.dll",
+    "SpeedTreeChineseHook-qt5.dll": "build/out/SpeedTreeChineseHook-qt5.dll",
+    "SpeedTreeChineseLauncher.exe": "build/out/SpeedTreeChineseLauncher.exe",
+    "translations/dictionary_zh.json": "translations/dictionary_zh.json"
+  },
+  "id": "SpeedTreeChinese"
+}
