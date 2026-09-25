@@ -8,4 +8,4 @@ inline const std::vector<const wchar_t*> kKnownHandlers = {L"SPM File",L"Applica
 inline const std::vector<const wchar_t*> kExtensions = {L".spm"};
 inline const std::vector<const wchar_t*> kLegacyHandlers = {L"SpeedTreeChinese.spm"};
 inline const std::vector<const wchar_t*> kQtModules = {L"Core",L"Gui",L"Widgets"};
-inline const std::vector<std::vector<DWORD>> kQtVersions = {{5,12,5},{6,6,0}};
+inline const std::vector<DWORD> kQtMajors = {5, 6};

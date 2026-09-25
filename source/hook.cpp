@@ -33,6 +33,7 @@
 #include <windows.h>
 
 #include "hook_lifecycle.h"
+#include "qt_compatibility.h"
 #include "hotkey_settings.h"
 #include <shlobj.h>
 #include <tlhelp32.h>
@@ -130,7 +131,6 @@ static std::unordered_map<std::string, std::string> g_foldedTranslations; // fuz
 static std::vector<std::pair<std::string, std::string>> g_sortedKeys;     // lowercased -> original
 static std::unordered_map<std::string, std::string> g_normCache;          // text -> normalized
 static constexpr size_t kMaxNormCache = 100000;
-
 
 static QString normalizeForMatch(QString text);
 static bool containsCjk(const QString& text);
@@ -649,7 +649,7 @@ static void captureUntranslated() {
             (void)wrote;
         }
     }
-    // Defer the pop-up until after this key-release event is fully processed, so
+    // Defer the pop-up until after this shortcut event is fully processed, so
     // a modal dialog is never shown from inside the event filter.
     const int         addedCount = added;
     const int         totalCount = static_cast<int>(merged.size());
@@ -668,14 +668,8 @@ class TranslatorFilter : public QObject {
 public:
     using QObject::QObject;
     bool eventFilter(QObject* object, QEvent* event) override {
-        if (!g_enabled && event->type() != QEvent::KeyRelease)
-            return false;
-        if (event->type() == QEvent::KeyRelease) {
+        if (event->type() == QEvent::KeyPress) {
             auto* ke = static_cast<QKeyEvent*>(event);
-            // Ignore OS auto-repeat: a held key emits a burst of repeat events,
-            // so without this guard holding F3 (or Shift+`) fires continuously.
-            // We act only on the genuine release (isAutoRepeat()==false).
-            if (ke->isAutoRepeat()) return false;
             // While the rebind dialog is open, it owns the keyboard to capture a
             // new hotkey.  Never toggle / sniff in that window, or pressing F3
             // to rebind would also flip the language.
@@ -686,15 +680,16 @@ public:
             const bool isTildeKey = ke->key() == Qt::Key_AsciiTilde ||
                                     ke->key() == Qt::Key_QuoteLeft;
             if (isTildeKey && (ke->modifiers() & Qt::ShiftModifier)) {
-                captureUntranslated();
+                if (!ke->isAutoRepeat()) captureUntranslated();
                 return true;
             }
             if (ke->key() == g_toggleKey && ke->modifiers() == Qt::NoModifier) {
-                toggleTranslation();
+                if (!ke->isAutoRepeat()) toggleTranslation();
                 return true;
             }
             return false;
         }
+        if (!g_enabled) return false;
         if (event->type() == QEvent::Show || event->type() == QEvent::UpdateRequest ||
             event->type() == QEvent::Paint) {
             if (auto* w = qobject_cast<QWidget*>(object))
@@ -1567,6 +1562,15 @@ static void RunOnGuiThread(QApplication* app) {
 }
 
 static DWORD WINAPI Worker(LPVOID) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    constexpr unsigned requiredQtMajor = 5;
+#else
+    constexpr unsigned requiredQtMajor = 6;
+#endif
+    if (!SpeedTreeQtCompatibility::supportedRuntime(qVersion(),
+                                                     requiredQtMajor)) {
+        return 2;
+    }
     QApplication* app = nullptr;
     // Wait up to ~300s for QApplication. SpeedTree can block on licensing /
     // update checks before the GUI is created, so allow a generous window and

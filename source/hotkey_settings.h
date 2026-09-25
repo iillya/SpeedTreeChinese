@@ -22,6 +22,15 @@ class ToggleHotkeyDialog final : public QDialog {
     QPushButton* capture_;
     QPushButton* ok_;
     QLabel* error_;
+    bool saveKey(int key) {
+        QString error;
+        if (!ChineseHotkeyConfig::save(configPath_, key, &error)) {
+            error_->setText(QStringLiteral("保存失败：") + error);
+            return false;
+        }
+        currentKey_ = key;
+        return true;
+    }
     void stopListen() {
         listening_ = false;
         ok_->setEnabled(true);
@@ -98,7 +107,9 @@ public:
         QObject::connect(ok_, &QPushButton::clicked, this, [this] { accept(); });
         QObject::connect(cancel, &QPushButton::clicked, this, [this] { reject(); });
         QObject::connect(reset, &QPushButton::clicked, this, [this] {
-            pendingKey_ = ChineseHotkeyConfig::defaultKey;
+            const int defaultKey = ChineseHotkeyConfig::defaultKey;
+            if (!saveKey(defaultKey)) return;
+            pendingKey_ = defaultKey;
             error_->clear();
             stopListen();
         });
@@ -113,12 +124,7 @@ public:
 protected:
     void accept() override {
         if (listening_) return;
-        QString error;
-        if (!ChineseHotkeyConfig::save(configPath_, pendingKey_, &error)) {
-            error_->setText(QStringLiteral("保存失败：") + error);
-            return;
-        }
-        currentKey_ = pendingKey_;
+        if (!saveKey(pendingKey_)) return;
         QDialog::accept();
     }
     void reject() override { stopListen(); QDialog::reject(); }

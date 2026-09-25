@@ -71,7 +71,7 @@ cl /nologo /O2 /W3 /EHsc /utf-8 ^
    /Fo"%OBJDIR%\launcher.obj" ^
    "%OBJDIR%\app_icon.res" ^
    /Fe:"%OUT%\SpeedTreeChineseLauncher.exe" ^
-   /link /SUBSYSTEM:WINDOWS user32.lib
+   /link /SUBSYSTEM:WINDOWS user32.lib version.lib
 if errorlevel 1 exit /b 1
 
 echo === Staging runtime dictionary (next to the hook for dev launches) ===

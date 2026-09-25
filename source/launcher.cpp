@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+#include "qt_compatibility.h"
+
 namespace {
 
 std::wstring ParentDir(const std::wstring& path) {
@@ -40,7 +42,11 @@ std::wstring ExePath() {
 std::wstring FindSpeedTreeRoot(const std::wstring& start) {
     std::wstring dir = start;
     for (int depth = 0; depth < 12; ++depth) {
-        if (IsFile(dir + L"\\SpeedTree_Modeler.exe")) return dir;
+        if (IsFile(dir + L"\\SpeedTree_Modeler.exe") &&
+            SpeedTreeQtCompatibility::isAmd64Image(
+                dir + L"\\SpeedTree_Modeler.exe") &&
+            SpeedTreeQtCompatibility::detectFamily(dir) !=
+                SpeedTreeQtCompatibility::Family::none) return dir;
         std::wstring parent = ParentDir(dir);
         if (parent.empty() || parent == dir) break;
         dir = parent;
@@ -57,18 +63,24 @@ std::wstring FindSpeedTreeRoot(const std::wstring& start) {
         WIN32_FIND_DATAW fd{};
         HANDLE h = FindFirstFileW((root + L"\\SpeedTree Modeler v*").c_str(), &fd);
         if (h != INVALID_HANDLE_VALUE) {
+            std::wstring selected;
             do {
                 if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) continue;
                 const std::wstring base = root + L"\\" + fd.cFileName;
                 for (const wchar_t* sub : {L"win64", L""}) {
                     std::wstring candidate = sub[0] ? (base + L"\\" + sub) : base;
-                    if (IsFile(candidate + L"\\SpeedTree_Modeler.exe")) {
-                        FindClose(h);
-                        return candidate;
+                    if (IsFile(candidate + L"\\SpeedTree_Modeler.exe") &&
+                        SpeedTreeQtCompatibility::isAmd64Image(
+                            candidate + L"\\SpeedTree_Modeler.exe") &&
+                        SpeedTreeQtCompatibility::detectFamily(candidate) !=
+                            SpeedTreeQtCompatibility::Family::none) {
+                        if (selected.empty() || candidate > selected)
+                            selected = candidate;
                     }
                 }
             } while (FindNextFileW(h, &fd));
             FindClose(h);
+            if (!selected.empty()) return selected;
         }
     }
     return L"";
@@ -111,12 +123,17 @@ int APIENTRY wWinMain(HINSTANCE, HINSTANCE, PWSTR cmdLine, int) {
     // Qt5 builds (SpeedTree 9.x) need the separate Qt5 hook DLL; Qt6 builds
     // (SpeedTree 10.x) use the default Qt6 hook DLL. Detect by the GUI DLL
     // that ships beside the executable.
+    const SpeedTreeQtCompatibility::Family family =
+        SpeedTreeQtCompatibility::detectFamily(root);
     std::wstring dllPath = dir + L"\\SpeedTreeChineseHook.dll";
-    if (IsFile(root + L"\\Qt5Gui.dll") &&
+    if (family == SpeedTreeQtCompatibility::Family::qt5 &&
         IsFile(dir + L"\\SpeedTreeChineseHook-qt5.dll")) {
         dllPath = dir + L"\\SpeedTreeChineseHook-qt5.dll";
-    } else if (IsFile(dir + L"\\SpeedTreeChineseHook.dll")) {
+    } else if (family == SpeedTreeQtCompatibility::Family::qt6 &&
+               IsFile(dir + L"\\SpeedTreeChineseHook.dll")) {
         dllPath = dir + L"\\SpeedTreeChineseHook.dll";
+    } else {
+        dllPath.clear();
     }
 
     if (root.empty() || !IsFile(dllPath) || !IsFile(exePath)) {

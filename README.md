@@ -18,12 +18,14 @@
 
 ---
 
-## 支持版本
+## 兼容范围
 
-- **SpeedTree Modeler 10.x**（Qt 6.6，如 10.2.0）
-- **SpeedTree Modeler 9.x**（Qt 5.12）
+- 使用完整 Qt 6 x64 运行时的 SpeedTree Modeler
+- 使用完整 Qt 5 x64 运行时的 SpeedTree Modeler
 
-安装器会自动识别 SpeedTree 使用的是 Qt5 还是 Qt6，并加载对应的汉化引擎，无需手动选择。
+安装器不维护具体 SpeedTree 版本白名单，会检查 Qt 组件完整性和一致性，
+再自动加载对应的 Qt5 或 Qt6 汉化引擎。当前覆盖验证包括 9.x/Qt5 和
+10.x/Qt6（实测 10.2.0）。
 
 ---
 
