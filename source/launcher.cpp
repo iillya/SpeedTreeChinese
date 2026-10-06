@@ -91,13 +91,24 @@ LPTHREAD_START_ROUTINE ResolveLoadLibrary(DWORD pid) {
     if (!local) return nullptr;
     FARPROC fn = GetProcAddress(local, "LoadLibraryW");
     if (!fn) return nullptr;
-    uintptr_t rva = (uintptr_t)fn - (uintptr_t)local;
+    // A Windows export can be forwarded to KernelBase. Use the module that
+    // actually contains its code, not a cross-module offset from kernel32.
+    HMODULE owner = nullptr;
+    if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                            GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                            reinterpret_cast<LPCWSTR>(fn), &owner)) return nullptr;
+    wchar_t ownerPath[MAX_PATH] = {};
+    const DWORD ownerLength = GetModuleFileNameW(owner, ownerPath, MAX_PATH);
+    if (!ownerLength || ownerLength >= MAX_PATH) return nullptr;
+    const wchar_t* ownerName = wcsrchr(ownerPath, L'\\');
+    ownerName = ownerName ? ownerName + 1 : ownerPath;
+    const uintptr_t rva = reinterpret_cast<uintptr_t>(fn) - reinterpret_cast<uintptr_t>(owner);
     HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, pid);
     if (snap != INVALID_HANDLE_VALUE) {
         MODULEENTRY32W mod{}; mod.dwSize = sizeof(mod);
         if (Module32FirstW(snap, &mod)) {
             do {
-                if (_wcsicmp(mod.szModule, L"kernel32.dll") == 0) {
+                if (_wcsicmp(mod.szModule, ownerName) == 0 && rva < mod.modBaseSize) {
                     CloseHandle(snap);
                     return (LPTHREAD_START_ROUTINE)((uintptr_t)mod.modBaseAddr + rva);
                 }

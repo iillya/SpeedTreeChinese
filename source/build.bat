@@ -35,6 +35,7 @@ if not exist "%VCVARS%" (
     exit /b 1
 )
 call "%VCVARS%" >nul
+if errorlevel 1 exit /b 1
 
 echo === Compiling hook DLL ===
 cl /nologo /O2 /W3 /LD /EHsc /std:c++17 /Zc:__cplusplus /permissive- /utf-8 ^
@@ -51,7 +52,8 @@ echo === Compiling Qt5 hook DLL ===
 set "QT5_SDK=%ROOT%\..\_ThirdParty\Qt\5.12.5\msvc2017_64"
 if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" set "QT5_SDK=%ROOT%\third_party\qt5sdk"
 if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" (
-    echo [WARN] Qt5 SDK not found at %QT5_SDK%; skipping SpeedTree 9.x Qt5 hook.
+    echo [ERROR] Qt5 SDK not found at %QT5_SDK%; both engines are required for this release.
+    exit /b 1
 ) else (
     cl /nologo /O2 /W3 /LD /EHsc /std:c++17 /Zc:__cplusplus /permissive- /utf-8 ^
        /I"%QT5_SDK%\include" ^
@@ -61,6 +63,7 @@ if not exist "%QT5_SDK%\lib\Qt5Widgets.lib" (
        /link /IMPLIB:"%OBJDIR%\SpeedTreeChineseHook-qt5.lib" ^
        "%QT5_SDK%\lib\Qt5Core.lib" "%QT5_SDK%\lib\Qt5Gui.lib" "%QT5_SDK%\lib\Qt5Widgets.lib" ^
        user32.lib shell32.lib version.lib
+    if errorlevel 1 exit /b 1
 )
 
 echo === Compiling launcher ===
@@ -77,6 +80,7 @@ if errorlevel 1 exit /b 1
 echo === Staging runtime dictionary (next to the hook for dev launches) ===
 if not exist "%OUT%\translations" mkdir "%OUT%\translations"
 copy /Y "%ROOT%\translations\dictionary_zh.json" "%OUT%\translations\dictionary_zh.json" >nul
+if errorlevel 1 exit /b 1
 
 echo === Packing dist installer ===
 if /I "%~1"=="--runtime-only" exit /b 0
