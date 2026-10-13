@@ -9,7 +9,7 @@
 
 #include "product_config.h"
 namespace CascadeurProxy { struct Value; }
-namespace ProductLegacy { bool importOriginal(HKEY, const std::wstring&, const std::wstring&,
+namespace ProductLegacy { bool importOriginal(HKEY, HKEY, const std::wstring&, const std::wstring&,
     const std::wstring&, CascadeurProxy::Value&, std::wstring&); }
 namespace CascadeurProxy {
 constexpr wchar_t kJournal[] = L"Software\\SpeedTreeChineseLocalizer\\InnoProxyV1";
@@ -223,7 +223,7 @@ inline bool prepare(HKEY user, HKEY machine, const std::wstring& root,
             if (!effective.present) continue; // Do not invent optional handlers.
             record.original = current;
             const auto official = root + L"\\" + hostName(root);
-            if (!ProductLegacy::importOriginal(user, kHandlers[i], launcher, official, record.original, error)) return false;
+            if (!ProductLegacy::importOriginal(user, machine, kHandlers[i], launcher, official, record.original, error)) return false;
             // An old proxy cannot serve as its own original command.
             Value source = effective;
             if (!(record.original == current)) {

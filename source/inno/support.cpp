@@ -11,6 +11,8 @@
 #include <vector>
 
 
+#include "association_user.h"
+
 namespace {
 struct Handle {
     HANDLE value;
@@ -109,33 +111,7 @@ bool hostStopped(const std::wstring& root) {
 }
 
 std::wstring interactiveSid() {
-    DWORD session = 0;
-    if (!ProcessIdToSessionId(GetCurrentProcessId(), &session)) return {};
-    Handle snapshot(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0));
-    if (snapshot.value == INVALID_HANDLE_VALUE) return {};
-    PROCESSENTRY32W item{};
-    item.dwSize = sizeof(item);
-    if (!Process32FirstW(snapshot.value, &item)) return {};
-    do {
-        DWORD candidateSession = 0;
-        if (_wcsicmp(item.szExeFile, L"explorer.exe") != 0 ||
-            !ProcessIdToSessionId(item.th32ProcessID, &candidateSession) || candidateSession != session) continue;
-        Handle process(OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, item.th32ProcessID));
-        HANDLE rawToken = nullptr;
-        if (!process.value || !OpenProcessToken(process.value, TOKEN_QUERY, &rawToken)) continue;
-        Handle token(rawToken);
-        DWORD size = 0;
-        GetTokenInformation(token.value, TokenUser, nullptr, 0, &size);
-        if (!size || size > 65536) continue;
-        std::vector<BYTE> bytes(size);
-        if (!GetTokenInformation(token.value, TokenUser, bytes.data(), size, &size)) continue;
-        LPWSTR sid = nullptr;
-        if (!ConvertSidToStringSidW(reinterpret_cast<TOKEN_USER*>(bytes.data())->User.Sid, &sid)) continue;
-        const std::wstring result(sid);
-        LocalFree(sid);
-        return result;
-    } while (Process32NextW(snapshot.value, &item));
-    return {};
+    return InstallerUser::interactiveSid();
 }
 }
 
@@ -163,22 +139,28 @@ extern "C" __declspec(dllexport) BOOL __stdcall CheckTarget(
     } catch (...) { return fail(L"目录检查出现异常，未执行安装或卸载。", message, capacity); }
 }
 
-extern "C" __declspec(dllexport) BOOL __stdcall LegacyOwner(
-    const wchar_t* launcher, wchar_t* owner, unsigned capacity) {
-    if (!launcher || !owner || capacity < 185) return FALSE;
+extern "C" __declspec(dllexport) BOOL __stdcall LegacyOwnerEx(
+    const wchar_t* launcher, wchar_t* owner, unsigned ownerCapacity, wchar_t* message, unsigned capacity) {
+    if (!launcher || !owner || ownerCapacity < 185) return fail(L"旧关联检查参数无效。", message, capacity);
+    owner[0] = L'\0';
+    if (message && capacity) message[0] = L'\0';
     try {
         const auto sid = interactiveSid();
         CascadeurProxy::Key user;
-        if (sid.empty() || RegOpenKeyExW(HKEY_USERS, sid.c_str(), 0, KEY_READ, &user.value) != ERROR_SUCCESS) return FALSE;
+        if (sid.empty()) return fail(L"无法识别当前登录用户。请在原安装用户的桌面会话中运行安装器。", message, capacity);
+        if (RegOpenKeyExW(HKEY_USERS, sid.c_str(), 0, KEY_READ, &user.value) != ERROR_SUCCESS)
+            return fail(L"原安装用户的注册表不可读。请登录该用户后重试。", message, capacity);
         const auto root = std::filesystem::path(launcher).parent_path().parent_path().wstring();
         std::wstring error;
-        // Reject an unrecoverable legacy install before replacing any files,
-        // even when the user deselects the new association task.
-        if (!ProductLegacy::restoreExtensions(user.value, root, error, true)) return FALSE;
-        wcscpy_s(owner, capacity, sid.c_str());
+        bool owned = false;
+        if (!ProductLegacy::ownedLegacy(user.value, root, owned, error))
+            return fail(error.c_str(), message, capacity);
+        if (!owned) return TRUE; // Fresh install: no journal or migration required.
+        if (!ProductLegacy::restoreExtensions(user.value, root, error, true))
+            return fail(error.empty() ? L"旧关联检查失败；请保留旧备份与安装目录。" : error.c_str(), message, capacity);
+        wcscpy_s(owner, ownerCapacity, sid.c_str());
         return TRUE;
-    }
-    catch (...) { return FALSE; }
+    } catch (...) { return fail(L"旧关联检查出现异常，未修改文件关联。", message, capacity); }
 }
 extern "C" __declspec(dllexport) BOOL __stdcall RestoreLegacy(const wchar_t* sid, const wchar_t* launcher) {
     if (!sid || !*sid) return TRUE;

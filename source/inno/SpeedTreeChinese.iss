@@ -92,10 +92,12 @@ var
 
 function CheckTarget(Directory: String; CheckVersion: Boolean; Message: String; Capacity: Cardinal): Boolean;
 external 'CheckTarget@files:support.dll stdcall setuponly';
-function LegacyOwner(Launcher: String; Owner: String; Capacity: Cardinal): Boolean;
-external 'LegacyOwner@files:support.dll stdcall setuponly';
+function LegacyOwnerEx(Launcher, Owner: String; OwnerCapacity: Cardinal; Message: String; Capacity: Cardinal): Boolean;
+external 'LegacyOwnerEx@files:support.dll stdcall setuponly';
 function CheckTargetUninstall(Directory: String; CheckVersion: Boolean; Message: String; Capacity: Cardinal): Boolean;
 external 'CheckTarget@{app}\ChineseLauncher\.inno\support.dll stdcall uninstallonly delayload';
+function RestoreLegacySetup(Sid, Launcher: String): Boolean;
+external 'RestoreLegacy@files:support.dll stdcall setuponly';
 function RestoreLegacy(Sid, Launcher: String): Boolean;
 external 'RestoreLegacy@{app}\ChineseLauncher\.inno\support.dll stdcall uninstallonly delayload';
 function PlanProxy(Directory, Owner: String; OwnerCapacity: Cardinal; Message: String; Capacity: Cardinal): Boolean;
@@ -213,8 +215,9 @@ begin
   end;
   if LegacySid = '' then begin
     SetLength(Owner, 185);
-    if not LegacyOwner(InstallRoot + '\SpeedTreeChineseLauncher.exe', Owner, 185) then begin
-      Result := '无法读取旧版工程关联的归属，已停止迁移。';
+    SetLength(Message, 1024);
+    if not LegacyOwnerEx(InstallRoot + '\SpeedTreeChineseLauncher.exe', Owner, 185, Message, 1024) then begin
+      Result := BufferText(Message);
       Exit;
     end;
     LegacySid := BufferText(Owner);
@@ -286,6 +289,8 @@ begin
         'Software\Microsoft\Windows\CurrentVersion\Uninstall\SpeedTreeChinese.Inno.Experimental_is1');
       #endif
     #ifndef TestMode
+    if (LegacySid <> '') and not RestoreLegacySetup(LegacySid, InstallRoot + '\SpeedTreeChineseLauncher.exe') then
+      RaiseException('旧版工程关联恢复失败。请保留安装目录和备份后重试。');
     if WizardIsTaskSelected('fileassoc') then begin
       SetLength(Message, 1024);
       if not ApplyProxy(ExpandConstant('{app}'), ProxySid, Message, 1024) then
